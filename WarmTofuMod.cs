@@ -7,7 +7,7 @@ using CodeStage.AntiCheat.ObscuredTypes;
 
 namespace WarmTofuMod
 {
-    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.0.0")]
+    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.1.0")]
     public class WarmTofuMod : BaseUnityPlugin
     {
         public enum Menus
@@ -23,6 +23,8 @@ namespace WarmTofuMod
         public static GUIStyle sliderStyleThumb;
         public static GUIStyle boxStyle;
         public static GUIStyle buttonStyle;
+        public static float lastSkyUpdateTime = Time.time;
+
         private void Awake()
         {
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
@@ -42,6 +44,11 @@ namespace WarmTofuMod
 
                 // mod GUI and logic
                 On.RCC_PhotonManager.OnGUI += RCC_PhotonManager_OnGUI;
+				
+				// performance fixes
+				On.SRPlayerCollider.Update += SRPlayerCollider_Update;
+				On.SRMessageOther.Update += SRMessageOther_Update;
+				On.SRSkyManager.Update += SRSkyManager_Update;
             }
             catch (Exception e)
             {
@@ -49,7 +56,31 @@ namespace WarmTofuMod
                 Logger.LogError(e);
                 throw;
             }
-
+			
+			void SRPlayerCollider_Update(On.SRPlayerCollider.orig_Update orig, SRPlayerCollider self)
+			{
+				
+			}
+			
+			void SRMessageOther_Update(On.SRMessageOther.orig_Update orig, SRMessageOther self)
+			{
+				
+			}
+			
+			void SRSkyManager_Update(On.SRSkyManager.orig_Update orig, SRSkyManager self)
+			{
+                // don't become sync origin for map time for now
+                // todo: make this faster
+                // // update once a second
+                // const float skyUpdateInterval = 1;
+                // if(Time.time - lastSkyUpdateTime > skyUpdateInterval)
+                // {
+                //     Debug.Log(lastSkyUpdateTime);
+                //     orig(self);
+                //     lastSkyUpdateTime = Time.time;
+                // }
+			}
+			
             void RCC_Camera_ChangeCamera(On.RCC_Camera.orig_ChangeCamera orig, RCC_Camera self)
             {
                 orig(self);
