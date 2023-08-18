@@ -29,7 +29,7 @@ Take mod's *.dll file and put it into ```%game folder%/BepInEx/plugins/```
 Compiled WarmTofuMod *.dll files are [here]([https://github.com/Kert/WarmTofuMod/releases](https://github.com/Kert/WarmTofuMod/releases/tag/MMHOOK_Assembly-CSharp.dll))
 
 # Compiling mod yourself
-Copy original game's Assembly-CSharp.dll from ```%game folder%\Initial Drift_Data\Managed``` to ```%game folder%/BepInEx/utils/``` and rename it to ```PUBLIC-Assembly-CSharp.dll```
+Copy original game's ```Assembly-CSharp.dll``` from ```%game folder%\Initial Drift_Data\Managed``` to ```%game folder%/BepInEx/utils/``` and rename it to ```PUBLIC-Assembly-CSharp.dll```
 
 You need a compiler that can target **netstandard2.0**
 
