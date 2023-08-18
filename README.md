@@ -19,14 +19,14 @@ Then Open ```%game folder%/BepInEx/config/BepInEx.cfg``` and change entry point 
 [Preloader.Entrypoint]
 Type = MonoBehaviour
 ```
-Then grab ```MMHOOK_Assembly-CSharp.dll``` from [releases](https://github.com/Kert/WarmTofuMod/releases) and put it into ```%game folder%/BepInEx/plugins/```
+Then grab ```MMHOOK_Assembly-CSharp.dll``` from [here](https://github.com/Kert/WarmTofuMod/releases/tag/MMHOOK_Assembly-CSharp.dll) and put it into ```%game folder%/BepInEx/plugins/```
 
 It's a pre-compiled library that was made using [MonoMod HookGen](https://github.com/MonoMod/MonoMod/blob/master/README-RuntimeDetour.md) to make modding easier
 
 ## WarmTofuMod Install (or any other mod)
 Take mod's *.dll file and put it into ```%game folder%/BepInEx/plugins/```
 
-Compiled WarmTofuMod *.dll files are [here]([https://github.com/Kert/WarmTofuMod/releases](https://github.com/Kert/WarmTofuMod/releases/tag/MMHOOK_Assembly-CSharp.dll))
+Compiled WarmTofuMod *.dll files are [here](https://github.com/Kert/WarmTofuMod/releases)
 
 # Compiling mod yourself
 Copy original game's ```Assembly-CSharp.dll``` from ```%game folder%\Initial Drift_Data\Managed``` to ```%game folder%/BepInEx/utils/``` and rename it to ```PUBLIC-Assembly-CSharp.dll```
