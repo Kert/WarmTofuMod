@@ -14,7 +14,7 @@ Grab an x64 zip with [BepInEx 5](https://github.com/BepInEx/BepInEx/releases/tag
 
 Read [BepInEx 5 Installing](https://docs.bepinex.dev/articles/user_guide/installation/index.html) for more info
 
-Then Open ```%game folder%/BepInEx/config/BepInEx.cfg``` and change entry point type under ```[Preloader.Entrypoint]``` to ```Monobehaviour``` like this:
+Then Open ```%game folder%/BepInEx/config/BepInEx.cfg``` and change entry point type under ```[Preloader.Entrypoint]``` to ```MonoBehaviour``` like this:
 ```
 [Preloader.Entrypoint]
 Type = MonoBehaviour
