@@ -44,11 +44,11 @@ namespace WarmTofuMod
 
                 // mod GUI and logic
                 On.RCC_PhotonManager.OnGUI += RCC_PhotonManager_OnGUI;
-				
-				// performance fixes
-				On.SRPlayerCollider.Update += SRPlayerCollider_Update;
-				On.SRMessageOther.Update += SRMessageOther_Update;
-				On.SRSkyManager.Update += SRSkyManager_Update;
+
+                // performance fixes
+                On.SRPlayerCollider.Update += SRPlayerCollider_Update;
+                On.SRMessageOther.Update += SRMessageOther_Update;
+                On.SRSkyManager.Update += SRSkyManager_Update;
             }
             catch (Exception e)
             {
@@ -56,19 +56,19 @@ namespace WarmTofuMod
                 Logger.LogError(e);
                 throw;
             }
-			
-			void SRPlayerCollider_Update(On.SRPlayerCollider.orig_Update orig, SRPlayerCollider self)
-			{
-				
-			}
-			
-			void SRMessageOther_Update(On.SRMessageOther.orig_Update orig, SRMessageOther self)
-			{
-				
-			}
-			
-			void SRSkyManager_Update(On.SRSkyManager.orig_Update orig, SRSkyManager self)
-			{
+
+            void SRPlayerCollider_Update(On.SRPlayerCollider.orig_Update orig, SRPlayerCollider self)
+            {
+
+            }
+
+            void SRMessageOther_Update(On.SRMessageOther.orig_Update orig, SRMessageOther self)
+            {
+
+            }
+
+            void SRSkyManager_Update(On.SRSkyManager.orig_Update orig, SRSkyManager self)
+            {
                 // don't become sync origin for map time for now
                 // todo: make this faster
                 // // update once a second
@@ -79,8 +79,8 @@ namespace WarmTofuMod
                 //     orig(self);
                 //     lastSkyUpdateTime = Time.time;
                 // }
-			}
-			
+            }
+
             void RCC_Camera_ChangeCamera(On.RCC_Camera.orig_ChangeCamera orig, RCC_Camera self)
             {
                 orig(self);
