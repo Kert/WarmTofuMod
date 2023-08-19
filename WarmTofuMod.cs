@@ -4,10 +4,11 @@ using UnityEngine;
 using BepInEx;
 using CodeStage.AntiCheat.Storage;
 using CodeStage.AntiCheat.ObscuredTypes;
+using System.Collections.Generic;
 
 namespace WarmTofuMod
 {
-    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.1.0")]
+    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.2.0")]
     public class WarmTofuMod : BaseUnityPlugin
     {
         public enum Menus
@@ -24,6 +25,34 @@ namespace WarmTofuMod
         public static GUIStyle boxStyle;
         public static GUIStyle buttonStyle;
         public static float lastSkyUpdateTime = Time.time;
+        const int INT_PREF_NOT_EXIST_VAL = -999;
+        const float FLOAT_PREF_NOT_EXIST_VAL = -999;
+        const string STRING_PREF_NOT_EXIST_VAL = "";
+        int ontyping = 0;
+
+        Dictionary<string, int> prefsInt = new Dictionary<string, int>
+        {
+            { "ImInRun", INT_PREF_NOT_EXIST_VAL },
+            { "MenuOpen", INT_PREF_NOT_EXIST_VAL },
+            { "TEMPODPAD", INT_PREF_NOT_EXIST_VAL },
+            { "InputOn", INT_PREF_NOT_EXIST_VAL },
+            { "PS4enable", INT_PREF_NOT_EXIST_VAL },
+            { "Vibration", INT_PREF_NOT_EXIST_VAL },
+            { "WANTROT", INT_PREF_NOT_EXIST_VAL},
+            { "DisableRearRotation_Value", INT_PREF_NOT_EXIST_VAL}
+        };
+        Dictionary<string, float> prefsFloat = new Dictionary<string, float>
+        {
+            { "SteeringSensivity", FLOAT_PREF_NOT_EXIST_VAL},
+            { "SteeringhelperValue", FLOAT_PREF_NOT_EXIST_VAL}
+        };
+        Dictionary<string, string> prefsString = new Dictionary<string, string>
+        {
+            { "ControllerTypeChoose", STRING_PREF_NOT_EXIST_VAL},
+            { "BreakBtnUsedMX5(Clone", STRING_PREF_NOT_EXIST_VAL},
+            { "HistoriqueDesMessages", STRING_PREF_NOT_EXIST_VAL},
+            { "DERNIERMESSAGE", STRING_PREF_NOT_EXIST_VAL}
+        };
 
         private void Awake()
         {
@@ -49,12 +78,125 @@ namespace WarmTofuMod
                 On.SRPlayerCollider.Update += SRPlayerCollider_Update;
                 On.SRMessageOther.Update += SRMessageOther_Update;
                 On.SRSkyManager.Update += SRSkyManager_Update;
+
+                On.UnityEngine.PlayerPrefs.SetInt += PlayerPrefs_SetInt;
+                On.UnityEngine.PlayerPrefs.SetFloat += PlayerPrefs_SetFloat;
+                On.UnityEngine.PlayerPrefs.SetString += PlayerPrefs_SetString;
+
+                On.UnityEngine.PlayerPrefs.GetInt_string += PlayerPrefs_GetInt_string;
+                On.UnityEngine.PlayerPrefs.GetFloat_string += PlayerPrefs_GetFloat_string;
+                On.UnityEngine.PlayerPrefs.GetString_string += PlayerPrefs_GetString_string;
+
+                On.CodeStage.AntiCheat.Storage.ObscuredPrefs.GetInt += ObscuredPrefs_GetInt;
+                On.CodeStage.AntiCheat.Storage.ObscuredPrefs.SetInt += ObscuredPrefs_SetInt;
             }
             catch (Exception e)
             {
                 Logger.LogError("Failed to initialize");
                 Logger.LogError(e);
                 throw;
+            }
+
+            int PlayerPrefs_GetInt_string(On.UnityEngine.PlayerPrefs.orig_GetInt_string orig, string str)
+            {
+                if (prefsInt.ContainsKey(str))
+                {
+                    int val = prefsInt[str];
+                    if (val == INT_PREF_NOT_EXIST_VAL)
+                        return orig(str);
+                    return val;
+                }
+                else
+                {
+                    Debug.Log("Reading int " + str);
+                    return orig(str);
+                }
+            }
+
+            float PlayerPrefs_GetFloat_string(On.UnityEngine.PlayerPrefs.orig_GetFloat_string orig, string str)
+            {
+                if (prefsFloat.ContainsKey(str))
+                {
+                    float val = prefsFloat[str];
+                    if (val == FLOAT_PREF_NOT_EXIST_VAL)
+                        return orig(str);
+                    return val;
+                }
+                else
+                {
+                    Debug.Log("Reading float " + str);
+                    return orig(str);
+                }
+            }
+
+            string PlayerPrefs_GetString_string(On.UnityEngine.PlayerPrefs.orig_GetString_string orig, string str)
+            {
+                if (prefsString.ContainsKey(str))
+                {
+                    string val = prefsString[str];
+                    if (val == STRING_PREF_NOT_EXIST_VAL)
+                        return orig(str);
+                    return val;
+                }
+                else
+                {
+                    Debug.Log("Reading string " + str);
+                    return orig(str);
+                }
+            }
+
+            void PlayerPrefs_SetInt(On.UnityEngine.PlayerPrefs.orig_SetInt orig, string str, int value)
+            {
+                if (prefsInt.ContainsKey(str))
+                    prefsInt[str] = value;
+                else
+                {
+                    Debug.Log("Setting int " + str);
+                }
+                if (!(str == "MenuOpen" || str == "InputOn"))
+                {
+                    orig(str, value);
+                }
+            }
+
+
+            void PlayerPrefs_SetFloat(On.UnityEngine.PlayerPrefs.orig_SetFloat orig, string str, float value)
+            {
+                if (prefsFloat.ContainsKey(str))
+                    prefsFloat[str] = value;
+                else
+                {
+                    Debug.Log("Setting float " + str);
+                }
+                orig(str, value);
+            }
+
+            void PlayerPrefs_SetString(On.UnityEngine.PlayerPrefs.orig_SetString orig, string str, string value)
+            {
+                if (prefsString.ContainsKey(str))
+                    prefsString[str] = value;
+                else
+                {
+                    Debug.Log("Setting string " + str);
+                }
+                orig(str, value);
+            }
+
+            int ObscuredPrefs_GetInt(On.CodeStage.AntiCheat.Storage.ObscuredPrefs.orig_GetInt orig, string key, int defaultValue)
+            {
+                if (key == "ONTYPING")
+                    return ontyping;
+                return orig(key, defaultValue);
+            }
+
+            void ObscuredPrefs_SetInt(On.CodeStage.AntiCheat.Storage.ObscuredPrefs.orig_SetInt orig, string key, int value)
+            {
+                if (key == "ONTYPING")
+                {
+                    ontyping = value;
+                    return;
+                }
+                orig(key, value);
             }
 
             void SRPlayerCollider_Update(On.SRPlayerCollider.orig_Update orig, SRPlayerCollider self)

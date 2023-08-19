@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>WarmTofuMod</AssemblyName>
     <Description>Initial Drift Online mod by Kert</Description>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
@@ -64,8 +64,14 @@
     <Reference Include="HSVPicker">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Initial Drift Online\Initial Drift_Data\Managed\HSVPicker.dll</HintPath>
     </Reference>
+    <Reference Include="MMHOOK_ACTk.Runtime">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Initial Drift Online\BepInEx\plugins\MMHOOK_ACTk.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="MMHOOK_Assembly-CSharp">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Initial Drift Online\BepInEx\plugins\MMHOOK_Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="MMHOOK_UnityEngine.CoreModule">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Initial Drift Online\BepInEx\plugins\MMHOOK_UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Initial Drift Online\BepInEx\core\Mono.Cecil.dll</HintPath>
