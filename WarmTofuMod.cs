@@ -5,10 +5,12 @@ using BepInEx;
 using CodeStage.AntiCheat.Storage;
 using CodeStage.AntiCheat.ObscuredTypes;
 using System.Collections.Generic;
+using MonoMod.Cil;
+using BepInEx.Logging;
 
 namespace WarmTofuMod
 {
-    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.2.0")]
+    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.3.0")]
     public class WarmTofuMod : BaseUnityPlugin
     {
         public enum Menus
@@ -28,7 +30,9 @@ namespace WarmTofuMod
         const int INT_PREF_NOT_EXIST_VAL = -999;
         const float FLOAT_PREF_NOT_EXIST_VAL = -999;
         const string STRING_PREF_NOT_EXIST_VAL = "";
-        int ontyping = 0;
+        bool achievements100kmh = false;
+        bool achievements200kmh = false;
+        bool inTuningMenu = false;
 
         Dictionary<string, int> prefsInt = new Dictionary<string, int>
         {
@@ -49,10 +53,25 @@ namespace WarmTofuMod
         Dictionary<string, string> prefsString = new Dictionary<string, string>
         {
             { "ControllerTypeChoose", STRING_PREF_NOT_EXIST_VAL},
-            { "BreakBtnUsedMX5(Clone", STRING_PREF_NOT_EXIST_VAL},
             { "HistoriqueDesMessages", STRING_PREF_NOT_EXIST_VAL},
             { "DERNIERMESSAGE", STRING_PREF_NOT_EXIST_VAL}
         };
+
+        Dictionary<string, int> obscuredInt = new Dictionary<string, int>
+        {
+            {"ONTYPING", INT_PREF_NOT_EXIST_VAL},
+            {"BoostQuantity", INT_PREF_NOT_EXIST_VAL},
+            {"TOTALWINMONEY", INT_PREF_NOT_EXIST_VAL},
+            {"MyLvl", INT_PREF_NOT_EXIST_VAL},
+            {"XP", INT_PREF_NOT_EXIST_VAL}
+        };
+
+        Dictionary<string, bool> obscuredBool = new Dictionary<string, bool>
+        {
+            {"TOFU RUN", false},
+            {"BackCamToogle", false}
+        };
+
 
         private void Awake()
         {
@@ -89,6 +108,25 @@ namespace WarmTofuMod
 
                 On.CodeStage.AntiCheat.Storage.ObscuredPrefs.GetInt += ObscuredPrefs_GetInt;
                 On.CodeStage.AntiCheat.Storage.ObscuredPrefs.SetInt += ObscuredPrefs_SetInt;
+                On.CodeStage.AntiCheat.Storage.ObscuredPrefs.GetBool += ObscuredPrefs_GetBool;
+                On.CodeStage.AntiCheat.Storage.ObscuredPrefs.SetBool += ObscuredPrefs_SetBool;
+                On.CodeStage.AntiCheat.Storage.ObscuredPrefs.HasKey += ObscuredPrefs_HasKey;
+
+                IL.SRConcessionManager.Update += SRConcessionManager_Update;
+                On.EnterArea.Update += EnterArea_Update;
+                On.EnterAreaGarage.Update += EnterAreaGarage_Update;
+                On.SRTransitionMap.Update += SRTransitionMap_Update;
+                IL.SRUIManager.Update += SRUIManager_Update;
+
+                // missing lights fix
+                On.RCC_LightEmission.Update += RCC_LightEmission_Update;
+
+                // don't grant achievements all the time
+                On.SRPlayerFonction.More100kmh += SRPlayerFonction_More100kmh;
+                On.SRPlayerFonction.More200kmh += SRPlayerFonction_More200kmh;
+
+                // Skidmarks amount config
+                On.RCC_Skidmarks.Start += RCC_Skidmarks_Start;
             }
             catch (Exception e)
             {
@@ -103,7 +141,10 @@ namespace WarmTofuMod
                 {
                     int val = prefsInt[str];
                     if (val == INT_PREF_NOT_EXIST_VAL)
-                        return orig(str);
+                    {
+                        val = orig(str);
+                        prefsInt[str] = val;
+                    }
                     return val;
                 }
                 else
@@ -119,7 +160,10 @@ namespace WarmTofuMod
                 {
                     float val = prefsFloat[str];
                     if (val == FLOAT_PREF_NOT_EXIST_VAL)
-                        return orig(str);
+                    {
+                        val = orig(str);
+                        prefsFloat[str] = val;
+                    }
                     return val;
                 }
                 else
@@ -131,11 +175,16 @@ namespace WarmTofuMod
 
             string PlayerPrefs_GetString_string(On.UnityEngine.PlayerPrefs.orig_GetString_string orig, string str)
             {
-                if (prefsString.ContainsKey(str))
+                if (prefsString.ContainsKey(str) || str.StartsWith("BreakBtnUsed"))
                 {
+                    if (!prefsString.ContainsKey(str))
+                        prefsString[str] = orig(str);
                     string val = prefsString[str];
                     if (val == STRING_PREF_NOT_EXIST_VAL)
-                        return orig(str);
+                    {
+                        val = orig(str);
+                        prefsString[str] = val;
+                    }
                     return val;
                 }
                 else
@@ -184,19 +233,196 @@ namespace WarmTofuMod
 
             int ObscuredPrefs_GetInt(On.CodeStage.AntiCheat.Storage.ObscuredPrefs.orig_GetInt orig, string key, int defaultValue)
             {
-                if (key == "ONTYPING")
-                    return ontyping;
+                if (obscuredInt.ContainsKey(key) || key.StartsWith("UsedPlateForFutureSpawn") || key.StartsWith("BuyPlateNumber"))
+                {
+                    if (!obscuredInt.ContainsKey(key))
+                    {
+                        obscuredInt[key] = orig(key, defaultValue);
+                    }
+                    int val = obscuredInt[key];
+                    if (val == INT_PREF_NOT_EXIST_VAL)
+                    {
+                        val = orig(key, defaultValue);
+                        obscuredInt[key] = val;
+                    }
+                    return val;
+                }
                 return orig(key, defaultValue);
             }
 
             void ObscuredPrefs_SetInt(On.CodeStage.AntiCheat.Storage.ObscuredPrefs.orig_SetInt orig, string key, int value)
             {
-                if (key == "ONTYPING")
+                if (obscuredInt.ContainsKey(key))
+                    obscuredInt[key] = value;
+                else
                 {
-                    ontyping = value;
+                    //Debug.Log("Setting int " + key);
+                }
+                if (key == "ONTYPING")
+                    return;
+                Debug.Log("Setting int " + key);
+                orig(key, value);
+            }
+
+            bool ObscuredPrefs_GetBool(On.CodeStage.AntiCheat.Storage.ObscuredPrefs.orig_GetBool orig, string key, bool defaultValue)
+            {
+                if (obscuredBool.ContainsKey(key))
+                {
+                    return obscuredBool[key];
+                }
+                else
+                {
+                    return orig(key, defaultValue);
+                }
+            }
+
+            bool ObscuredPrefs_HasKey(On.CodeStage.AntiCheat.Storage.ObscuredPrefs.orig_HasKey orig, string key)
+            {
+                if (!obscuredInt.ContainsKey(key))
+                {
+                    if (key.StartsWith("UsedPlateForFutureSpawn"))
+                    {
+                        if (orig(key))
+                        {
+                            obscuredInt[key] = ObscuredPrefs.GetInt(key, 0);
+                            return true;
+                        }
+                        obscuredInt[key] = INT_PREF_NOT_EXIST_VAL;
+                        return false;
+                    }
+                    else
+                        return orig(key);
+                }
+                else
+                {
+                    if (obscuredInt[key] == INT_PREF_NOT_EXIST_VAL)
+                        return false;
+                    return true;
+                }
+            }
+
+            void ObscuredPrefs_SetBool(On.CodeStage.AntiCheat.Storage.ObscuredPrefs.orig_SetBool orig, string key, bool value)
+            {
+                if (obscuredBool.ContainsKey(key))
+                    obscuredBool[key] = value;
+                else
+                {
+                    Debug.Log("Setting bool " + key);
+                }
+                Debug.Log("Setting bool " + key);
+                orig(key, value);
+            }
+
+            void SRConcessionManager_Update(ILContext il)
+            {
+                try
+                {
+                    var c = new ILCursor(il);
+                    c.GotoNext(MoveType.After,
+                        i => i.MatchStfld<SRConcessionManager>("NombreDeSkin")
+                        );
+
+                    // skip the rest of the code
+                    c.Emit(Mono.Cecil.Cil.OpCodes.Ret);
+                }
+                catch (Exception e)
+                {
+                    Logger.LogError(e);
+                    throw;
+                }
+            }
+
+            void EnterArea_Update(On.EnterArea.orig_Update orig, EnterArea self)
+            {
+                if (self.CarDealer.activeSelf)
+                    GameObject.FindObjectOfType<SRConcessionManager>().MoneyDisplay.text = ObscuredPrefs.GetInt("MyBalance", 0) + "¥";
+                orig(self);
+            }
+
+            void EnterAreaGarage_Update(On.EnterAreaGarage.orig_Update orig, EnterAreaGarage self)
+            {
+                if (self.GarageMana.ButtonList != null && self.GarageMana.ButtonList.active)
+                    inTuningMenu = true;
+                else
+                    inTuningMenu = false;
+
+                orig(self);
+            }
+
+            void RCC_Skidmarks_Start(On.RCC_Skidmarks.orig_Start orig, RCC_Skidmarks self)
+            {
+                orig(self);
+                self.maxMarks = 256;
+            }
+
+            void SRTransitionMap_Update(On.SRTransitionMap.orig_Update orig, SRTransitionMap self)
+            {
+                // changed order of conditions
+                int lint = (int)typeof(SRTransitionMap).GetField("lint", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(self);
+                if (lint == 0 && self.UIFadeout.activeSelf)
+                {
+                    typeof(SRTransitionMap).GetField("lint", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).SetValue(self, 1);
+                    base.GetComponentInChildren<UnityEngine.UI.Text>().text = self.lestips[UnityEngine.Random.Range(0, self.lestips.Length)];
+                }
+                if (lint == 1 && GameObject.FindGameObjectsWithTag("CanvasFadeOut").Length > 1)
+                    GameObject.Destroy(self.RCCCanvasPhoton);
+            }
+
+            void SRUIManager_Update(ILContext il)
+            {
+                try
+                {
+                    var c = new ILCursor(il);
+                    c.GotoNext(MoveType.After,
+                        i => i.MatchCall<SRUIManager>("ExitMenuNo")
+                        );
+
+                    c.EmitDelegate<Action>(() =>
+                    {
+                        if (ObscuredPrefs.GetInt("MyLvl", 0) >= 1000 && ObscuredPrefs.GetInt("TOTALWINMONEY", 0) < 5000)
+                        {
+                            obscuredInt["Mylvl"] = 0;
+                            obscuredInt["XP"] = 0;
+                        }
+                    });
+
+                    // skip the rest of the code
+                    c.Emit(Mono.Cecil.Cil.OpCodes.Ret);
+                }
+                catch (Exception e)
+                {
+                    Logger.LogError(e);
+                    throw;
+                }
+            }
+
+            void RCC_LightEmission_Update(On.RCC_LightEmission.orig_Update orig, RCC_LightEmission self)
+            {
+                if (typeof(RCC_LightEmission).GetField("material", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(self) == null)
+                {
                     return;
                 }
-                orig(key, value);
+                orig(self);
+            }
+
+            void SRPlayerFonction_More100kmh(On.SRPlayerFonction.orig_More100kmh orig, SRPlayerFonction self)
+            {
+                if (!achievements100kmh)
+                {
+                    Steamworks.SteamUserStats.GetAchievement("100KMH", out achievements100kmh);
+                    if (!achievements100kmh)
+                        orig(self);
+                }
+            }
+
+            void SRPlayerFonction_More200kmh(On.SRPlayerFonction.orig_More200kmh orig, SRPlayerFonction self)
+            {
+                if (!achievements200kmh)
+                {
+                    Steamworks.SteamUserStats.GetAchievement("200KMH", out achievements200kmh);
+                    if (!achievements200kmh)
+                        orig(self);
+                }
             }
 
             void SRPlayerCollider_Update(On.SRPlayerCollider.orig_Update orig, SRPlayerCollider self)
@@ -270,11 +496,8 @@ namespace WarmTofuMod
                     InitMenuStyles();
 
                 // Additional suspension settings menus
-                GameObject gameObject = GameObject.Find("Button_List"); // Original game tuning shop menu
-                if (gameObject != null && gameObject.activeSelf)
-                {
+                if (inTuningMenu)
                     ShowModTuningMenu();
-                }
                 else if (currentMenu != Menus.MENU_NONE)
                 {
                     RCC_CarControllerV3 activePlayerVehicle = RCC_SceneManager.Instance.activePlayerVehicle;
