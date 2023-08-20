@@ -6,6 +6,14 @@ This is a mod for Initial Drift Online. The goal is to fix various issues and ad
 - Transmission mode no longer resets when you restart the game
 - Camera mode no longer resets when you change maps/restart the game
 - Added realtime tofu delivery timer
+- Huge performance optimizations
+<details>
+  <summary>Screenshot comparisons</summary>
+  Before
+  <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/0b9eee6e-5726-4617-a347-8b8939899f3c">
+  After
+  <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/5709990f-edb9-4e56-b9fa-0d59df03a4d9">
+</details>
 
 # How to install
 First you need to prepare the game for using mods
@@ -19,9 +27,9 @@ Then Open ```%game folder%/BepInEx/config/BepInEx.cfg``` and change entry point 
 [Preloader.Entrypoint]
 Type = MonoBehaviour
 ```
-Then grab ```MMHOOK_Assembly-CSharp.dll``` from [here](https://github.com/Kert/WarmTofuMod/releases/tag/MMHOOK_Assembly-CSharp.dll) and put it into ```%game folder%/BepInEx/plugins/```
+Then grab ```MMHOOK.zip``` from [here](https://github.com/Kert/WarmTofuMod/releases/tag/MMHOOK) and extract archive into your game folder
 
-It's a pre-compiled library that was made using [MonoMod HookGen](https://github.com/MonoMod/MonoMod/blob/master/README-RuntimeDetour.md) to make modding easier
+It's pre-compiled libraries that were made using [MonoMod HookGen](https://github.com/MonoMod/MonoMod/blob/master/README-RuntimeDetour.md) to make modding easier
 
 ## WarmTofuMod Install (or any other mod)
 Take mod's *.dll file and put it into ```%game folder%/BepInEx/plugins/```
