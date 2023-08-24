@@ -10,7 +10,7 @@ using BepInEx.Logging;
 
 namespace WarmTofuMod
 {
-    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.3.0")]
+    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.3.2")]
     public class WarmTofuMod : BaseUnityPlugin
     {
         public enum Menus
@@ -91,6 +91,9 @@ namespace WarmTofuMod
 
                 // mod GUI and logic
                 On.RCC_PhotonManager.OnGUI += RCC_PhotonManager_OnGUI;
+
+                // Front suspension not saving fix
+                On.GarageManager.Start += GarageManager_Start;
 
                 // performance fixes
                 On.SRPlayerCollider.Update += SRPlayerCollider_Update;
@@ -450,6 +453,19 @@ namespace WarmTofuMod
                 //     orig(self);
                 //     lastSkyUpdateTime = Time.time;
                 // }
+            }
+
+            void GarageManager_Start(On.GarageManager.orig_Start orig, GarageManager self)
+            {
+                orig(self);
+                self.frontSuspensionDistances.onValueChanged.AddListener(delegate
+                {
+                    RCC_CustomizerExample.Instance.SaveStatsTemp();
+                });
+                self.frontSuspensionDistances.onValueChanged.AddListener(delegate
+                {
+                    self.SendInfo3RPC();
+                });
             }
 
             void RCC_Camera_ChangeCamera(On.RCC_Camera.orig_ChangeCamera orig, RCC_Camera self)
