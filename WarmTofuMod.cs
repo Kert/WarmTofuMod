@@ -68,8 +68,7 @@ namespace WarmTofuMod
 
         Dictionary<string, bool> obscuredBool = new Dictionary<string, bool>
         {
-            {"TOFU RUN", false},
-            {"BackCamToogle", false}
+            {"TOFU RUN", false}
         };
 
 
@@ -266,8 +265,12 @@ namespace WarmTofuMod
 
             bool ObscuredPrefs_GetBool(On.CodeStage.AntiCheat.Storage.ObscuredPrefs.orig_GetBool orig, string key, bool defaultValue)
             {
-                if (obscuredBool.ContainsKey(key))
+                if (obscuredBool.ContainsKey(key) || key.StartsWith("BackCamToogle"))
                 {
+                    if (!obscuredBool.ContainsKey(key))
+                    {
+                        obscuredBool[key] = orig(key, defaultValue);
+                    }
                     return obscuredBool[key];
                 }
                 else
