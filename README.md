@@ -5,6 +5,7 @@ This is a mod for Initial Drift Online. The goal is to fix various issues and ad
 - Added suspension spring force and damper customization. Check garage for options
 - Transmission mode no longer resets when you restart the game
 - Camera mode no longer resets when you change maps/restart the game
+- Fixed front suspension not saving during tuning
 - Added realtime tofu delivery timer
 - Huge performance optimizations
 <details>
