@@ -476,9 +476,10 @@ namespace WarmTofuMod
                 if (self.GetComponent<PhotonView>().IsMine)
                 {
                     GameObject[] cams = GameObject.FindGameObjectsWithTag("cam");
-                    if (cams.Length < 2)
-                        return;
-                    Quaternion rotation = cams[1].transform.rotation;
+                    int camIndex = 0;
+                    if (cams.Length == 2)
+                        camIndex = 1;
+                    Quaternion rotation = cams[camIndex].transform.rotation;
                     GameObject[] array = GameObject.FindGameObjectsWithTag("3DPSEUDO");
                     for (int i = 0; i < array.Length; i++)
                     {
