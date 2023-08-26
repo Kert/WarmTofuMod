@@ -7,6 +7,7 @@ using CodeStage.AntiCheat.ObscuredTypes;
 using System.Collections.Generic;
 using MonoMod.Cil;
 using BepInEx.Logging;
+using Photon.Pun;
 
 namespace WarmTofuMod
 {
@@ -95,6 +96,9 @@ namespace WarmTofuMod
 
                 // Front suspension not saving fix
                 On.GarageManager.Start += GarageManager_Start;
+
+                // Fixed player name labels not rotating properly
+                On.SRPlayerFonction.Update += SRPlayerFonction_Update;
 
                 // performance fixes
                 On.SRPlayerCollider.Update += SRPlayerCollider_Update;
@@ -465,6 +469,33 @@ namespace WarmTofuMod
                     }
                 }
                 self.SetSky();
+            }
+
+            void SRPlayerFonction_Update(On.SRPlayerFonction.orig_Update orig, SRPlayerFonction self)
+            {
+                if (self.GetComponent<PhotonView>().IsMine)
+                {
+                    GameObject[] cams = GameObject.FindGameObjectsWithTag("cam");
+                    if (cams.Length < 2)
+                        return;
+                    Quaternion rotation = cams[1].transform.rotation;
+                    GameObject[] array = GameObject.FindGameObjectsWithTag("3DPSEUDO");
+                    for (int i = 0; i < array.Length; i++)
+                    {
+                        array[i].transform.rotation = rotation;
+                    }
+                }
+                if (base.gameObject.transform.rotation.z <= -0.2507755f || base.gameObject.transform.rotation.z >= 0.2507755f)
+                {
+                    self.TopCamera.SetActive(false);
+                    typeof(SRPlayerFonction).GetField("OK", bindingFlags).SetValue(self, true);
+                    return;
+                }
+                if ((bool)typeof(SRPlayerFonction).GetField("OK", bindingFlags).GetValue(self))
+                {
+                    self.TopCamera.SetActive(true);
+                    typeof(SRPlayerFonction).GetField("OK", bindingFlags).SetValue(self, false);
+                }
             }
 
             void GarageManager_Start(On.GarageManager.orig_Start orig, GarageManager self)
