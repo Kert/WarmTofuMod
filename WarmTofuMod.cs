@@ -71,6 +71,7 @@ namespace WarmTofuMod
             {"TOFU RUN", false}
         };
 
+        const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
         private void Awake()
         {
@@ -364,10 +365,10 @@ namespace WarmTofuMod
             void SRTransitionMap_Update(On.SRTransitionMap.orig_Update orig, SRTransitionMap self)
             {
                 // changed order of conditions
-                int lint = (int)typeof(SRTransitionMap).GetField("lint", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(self);
+                int lint = (int)typeof(SRTransitionMap).GetField("lint", bindingFlags).GetValue(self);
                 if (lint == 0 && self.UIFadeout.activeSelf)
                 {
-                    typeof(SRTransitionMap).GetField("lint", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).SetValue(self, 1);
+                    typeof(SRTransitionMap).GetField("lint", bindingFlags).SetValue(self, 1);
                     base.GetComponentInChildren<UnityEngine.UI.Text>().text = self.lestips[UnityEngine.Random.Range(0, self.lestips.Length)];
                 }
                 if (lint == 1 && GameObject.FindGameObjectsWithTag("CanvasFadeOut").Length > 1)
@@ -404,7 +405,7 @@ namespace WarmTofuMod
 
             void RCC_LightEmission_Update(On.RCC_LightEmission.orig_Update orig, RCC_LightEmission self)
             {
-                if (typeof(RCC_LightEmission).GetField("material", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(self) == null)
+                if (typeof(RCC_LightEmission).GetField("material", bindingFlags).GetValue(self) == null)
                 {
                     return;
                 }
@@ -443,16 +444,27 @@ namespace WarmTofuMod
 
             void SRSkyManager_Update(On.SRSkyManager.orig_Update orig, SRSkyManager self)
             {
-                // don't become sync origin for map time for now
-                // todo: make this faster
-                // // update once a second
-                // const float skyUpdateInterval = 1;
-                // if(Time.time - lastSkyUpdateTime > skyUpdateInterval)
-                // {
-                //     Debug.Log(lastSkyUpdateTime);
-                //     orig(self);
-                //     lastSkyUpdateTime = Time.time;
-                // }
+                int PeopleNbr = (int)typeof(SRSkyManager).GetField("PeopleNbr", bindingFlags).GetValue(self);
+                RCC_CarControllerV3[] playerCars = GameObject.FindObjectsOfType<RCC_CarControllerV3>();
+                if (playerCars.Length != PeopleNbr && self.Autorisation)
+                {
+                    typeof(SRSkyManager).GetField("PeopleNbr", bindingFlags).SetValue(self, playerCars.Length);
+                    RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<SRPlayerCollider>().SendTheTimeOfRoom(self.Minute);
+                }
+                if (!self.Autorisation && !(GameObject)typeof(SRSkyManager).GetField("TargetMec", bindingFlags).GetValue(self) && (int)typeof(SRSkyManager).GetField("ReceidMaster", bindingFlags).GetValue(self) == 1)
+                {
+                    if (playerCars[0].gameObject.name == RCC_SceneManager.Instance.activePlayerVehicle.gameObject.name)
+                    {
+                        self.Autorisation = true;
+                        self.ImMaster = 10;
+                    }
+                    else
+                    {
+                        typeof(SRSkyManager).GetField("TargetMec", bindingFlags).SetValue(self, playerCars[0].gameObject);
+                        self.ImMaster = 5;
+                    }
+                }
+                self.SetSky();
             }
 
             void GarageManager_Start(On.GarageManager.orig_Start orig, GarageManager self)
@@ -666,7 +678,7 @@ namespace WarmTofuMod
 
             static void ShowTofuTimer()
             {
-                int tofuTimer = (ObscuredInt)typeof(SRToffuManager).GetField("Compteur", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(GameObject.FindObjectOfType<SRToffuManager>());
+                int tofuTimer = (ObscuredInt)typeof(SRToffuManager).GetField("Compteur", bindingFlags).GetValue(GameObject.FindObjectOfType<SRToffuManager>());
                 GUILayout.BeginArea(new Rect((float)(Screen.width / 2) - 120f, (float)Screen.height - 50f, 800f, 100f));
                 GUIStyle guistyle = new GUIStyle();
                 guistyle.font = buttonStyle.font;
