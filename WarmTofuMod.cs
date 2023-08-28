@@ -181,9 +181,6 @@ namespace WarmTofuMod
 
             ShowFooter();
 
-            if (buttonStyle == null)
-                InitMenuStyles();
-
             // Additional suspension settings menus
             if (inTuningMenu)
                 ShowModTuningMenu();
@@ -198,6 +195,9 @@ namespace WarmTofuMod
 
         static void ShowModTuningMenu()
         {
+            if (buttonStyle == null)
+                InitMenuStyles();
+
             if (currentMenu == Menus.MENU_NONE)
                 currentMenu = Menus.MENU_TUNING;
 
@@ -336,6 +336,8 @@ namespace WarmTofuMod
 
         static void ShowTofuTimer()
         {
+            if (buttonStyle == null)
+                InitMenuStyles();
             int tofuTimer = (ObscuredInt)typeof(SRToffuManager).GetField("Compteur", bindingFlags).GetValue(GameObject.FindObjectOfType<SRToffuManager>());
             GUILayout.BeginArea(new Rect((float)(Screen.width / 2) - 120f, (float)Screen.height - 50f, 800f, 100f));
             GUIStyle guistyle = new GUIStyle();
