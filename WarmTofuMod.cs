@@ -8,13 +8,12 @@ using System.Collections.Generic;
 using MonoMod.Cil;
 using Photon.Pun;
 using UnityEngine.UI;
-using System.Collections;
 using UnityEngine.SceneManagement;
 
 namespace WarmTofuMod
 {
-    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.4.0")]
-    public class WarmTofuMod : BaseUnityPlugin
+    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.5.0")]
+    public partial class WarmTofuMod : BaseUnityPlugin
     {
         public enum Menus
         {
@@ -108,6 +107,11 @@ namespace WarmTofuMod
 
                 // Fixed player name labels not rotating properly
                 On.SRPlayerFonction.Update += SRPlayerFonction_Update;
+
+                // Broken spawns fixes
+                On.RespawnCube.Update += RespawnCube_Update;
+                On.RespawnCube.TPSOUSMAP += RespawnCube_TPSOUSMAP;
+                On.RCC_PhotonDemo.Spawn += RCC_PhotonDemo_Spawn;
 
                 // performance fixes
                 On.SRPlayerCollider.Update += SRPlayerCollider_Update;
@@ -557,29 +561,6 @@ namespace WarmTofuMod
                     Cursor.visible = true;
                     prefsInt["MenuOpen"] = 1;
                 }
-            }
-
-            IEnumerator TeleportPlayerVehicle(Vector3 pos, Quaternion rot)
-            {
-                RCC_CarControllerV3 vehicle = RCC_SceneManager.Instance.activePlayerVehicle;
-                GameObject gameObject = vehicle.gameObject;
-                Rigidbody rb = gameObject.GetComponent<Rigidbody>();
-                Transform t = gameObject.transform;
-                rb.isKinematic = true;
-                rb.velocity = rb.angularVelocity = new Vector3(0f, 0f, 0f);
-                t.position = pos;
-                t.rotation = rot;
-                vehicle.currentGear = 0;
-                vehicle.KillEngine();
-                vehicle.StartEngine();
-                GameObject[] cams = GameObject.FindGameObjectsWithTag("cam");
-                foreach (GameObject cam in cams)
-                {
-                    cam.GetComponent<RCC_Camera>().ResetCamera();
-                }
-                yield return new WaitForSeconds(0.1f);
-                rb.isKinematic = false;
-                yield break;
             }
 
             void TeleportPlayer(TeleportPoints tp)
