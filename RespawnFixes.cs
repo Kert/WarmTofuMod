@@ -104,7 +104,21 @@ namespace WarmTofuMod
         {
             if (ObscuredPrefs.GetBool("TOFU RUN", false))
                 ObscuredPrefs.SetBool("RespawnInTofu", true);
-            base.StartCoroutine(TeleportPlayerVehicle(self.RespawnPointer.position, self.RespawnPointer.rotation));
+
+            if (IsInUphillTofu() && SceneManager.GetActiveScene().name == "Akina")
+                base.StartCoroutine(TeleportPlayerVehicle(self.RespawnPointer.position + self.RespawnPointer.TransformDirection(Vector3.left * 3f), self.RespawnPointer.rotation * Quaternion.Euler(Vector3.up * 180)));
+            else
+                base.StartCoroutine(TeleportPlayerVehicle(self.RespawnPointer.position, self.RespawnPointer.rotation));
+        }
+
+        bool IsInUphillTofu()
+        {
+            if (ObscuredPrefs.GetString("TOFULOCATION") == "ReverseNew")
+            {
+                if (SceneManager.GetActiveScene().name != "Akagi")
+                    return true;
+            }
+            return false;
         }
 
         void RespawnCube_Update(On.RespawnCube.orig_Update orig, RespawnCube self)
