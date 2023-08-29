@@ -4,14 +4,17 @@ This is a mod for Initial Drift Online. The goal is to fix various issues and ad
 # List of changes
 - Added suspension spring force and damper customization. Check garage for options
 - Replaced Lobby button with Teleport button that can take you Downhill or Uphill
-- Fixed player name labels sometimes not rotating properly
+- Huge performance optimizations
+- Added realtime tofu delivery timer
 - Transmission mode no longer resets when you restart the game
 - Camera mode no longer resets when you change maps/restart the game
 - Fixed front suspension not saving during tuning
-- Added realtime tofu delivery timer
-- Huge performance optimizations
+- Fixed broken physics when cars are respawned
+- Removed "wait" when respawning
+- All Haruna (Akina) map respawns in air e.t.c. fixed
+- Fixed player name labels sometimes not rotating properly
 <details>
-  <summary>Screenshot comparisons</summary>
+  <summary>Performance screenshot comparisons</summary>
   Before
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/0b9eee6e-5726-4617-a347-8b8939899f3c">
   After
