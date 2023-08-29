@@ -12,6 +12,10 @@ This is a mod for Initial Drift Online. The goal is to fix various issues and ad
 - Fixed broken physics when cars are respawned
 - Removed "wait" when respawning
 - All Haruna (Akina) map respawns in air e.t.c. fixed
+- Rotate the car 180 degrees and place it on an oncoming lane if respawned during uphill tofu delivery on Haruna
+- Fixed 3D leaderboard on Akagi downhill
+- Fixed Akagi menu leaderboard not working sometimes
+- Optimized 3D leaderboard updating
 - Fixed player name labels sometimes not rotating properly
 <details>
   <summary>Performance screenshot comparisons</summary>
