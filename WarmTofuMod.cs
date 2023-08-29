@@ -179,14 +179,7 @@ namespace WarmTofuMod
                 foreach (SR3DLB lb in LBobjs)
                 {
                     if (lb != leaderboard)
-                    {
-                        Debug.Log("IS NOT MY LB");
                         entries = lb.EnableLB.GetComponentsInChildren<BasicLeaderboardEntry>();
-                    }
-                    else
-                    {
-                        Debug.Log("IS MY LB");
-                    }
                 }
             }
 
