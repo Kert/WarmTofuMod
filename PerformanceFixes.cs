@@ -105,16 +105,6 @@ namespace WarmTofuMod
             }
         }
 
-        void SRPlayerCollider_Update(On.SRPlayerCollider.orig_Update orig, SRPlayerCollider self)
-        {
-
-        }
-
-        void SRMessageOther_Update(On.SRMessageOther.orig_Update orig, SRMessageOther self)
-        {
-
-        }
-
         void SRSkyManager_Update(On.SRSkyManager.orig_Update orig, SRSkyManager self)
         {
             int PeopleNbr = (int)typeof(SRSkyManager).GetField("PeopleNbr", bindingFlags).GetValue(self);

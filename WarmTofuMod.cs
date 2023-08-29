@@ -4,10 +4,16 @@ using UnityEngine;
 using BepInEx;
 using CodeStage.AntiCheat.Storage;
 using CodeStage.AntiCheat.ObscuredTypes;
+using ZionBandwidthOptimizer.Examples;
+using HeathenEngineering.SteamApi.PlayerServices.UI;
+using UnityEngine.UI;
+using HeathenEngineering.SteamApi.PlayerServices;
+using System.Collections;
+using UnityEngine.SceneManagement;
 
 namespace WarmTofuMod
 {
-    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.5.0")]
+    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.5.1")]
     public partial class WarmTofuMod : BaseUnityPlugin
     {
         public enum Menus
@@ -62,9 +68,18 @@ namespace WarmTofuMod
                 On.RespawnCube.TPSOUSMAP += RespawnCube_TPSOUSMAP;
                 On.RCC_PhotonDemo.Spawn += RCC_PhotonDemo_Spawn;
 
+                // 3d leaderboard fixes
+                On.SR3DLBZONE.OnTriggerEnter += SR3DLBZONE_OnTriggerEnter;
+                On.SR3DLBZONE.OnTriggerExit += SR3DLBZONE_OnTriggerExit;
+                On.SR3DLB.EnableLBB += SR3DLB_EnableLBB;
+                On.SR3DLB.Update += delegate { };
+
+                // Akagi Menu Leaderboard fix
+                On.LeaderboardUsersManager.RefreshScore2 += LeaderboardUsersManager_RefreshScore2;
+
                 // performance fixes
-                On.SRPlayerCollider.Update += SRPlayerCollider_Update;
-                On.SRMessageOther.Update += SRMessageOther_Update;
+                On.SRPlayerCollider.Update += delegate { };
+                On.SRMessageOther.Update += delegate { };
                 On.SRSkyManager.Update += SRSkyManager_Update;
 
                 On.UnityEngine.PlayerPrefs.SetInt += PlayerPrefs_SetInt;
@@ -123,6 +138,95 @@ namespace WarmTofuMod
             if (typeof(RCC_LightEmission).GetField("material", bindingFlags).GetValue(self) == null)
                 return;
             orig(self);
+        }
+
+        void SR3DLBZONE_OnTriggerEnter(On.SR3DLBZONE.orig_OnTriggerEnter orig, SR3DLBZONE self, Collider other)
+        {
+            if (other.GetComponentInParent<RCC_PhotonNetwork>().isMine)
+            {
+                SR3DLB[] lbs = GameObject.FindObjectsOfType<SR3DLB>();
+                foreach (SR3DLB lb in lbs)
+                    lb.EnableLBB(true);
+            }
+        }
+
+        void SR3DLBZONE_OnTriggerExit(On.SR3DLBZONE.orig_OnTriggerExit orig, SR3DLBZONE self, Collider other)
+        {
+            if (other.GetComponentInParent<RCC_PhotonNetwork>().isMine)
+            {
+                SR3DLB[] lbs = GameObject.FindObjectsOfType<SR3DLB>();
+                foreach (SR3DLB lb in lbs)
+                    lb.EnableLBB(false);
+            }
+        }
+
+        void SR3DLB_EnableLBB(On.SR3DLB.orig_EnableLBB orig, SR3DLB self, bool jack)
+        {
+            self.EnableLB.SetActive(jack);
+            if (jack)
+            {
+                self.EnableLB.GetComponentInChildren<SteamworksLeaderboardList>().QueryTopEntries(5);
+                UpdateLeaderboard3D(self);
+            }
+        }
+
+        void UpdateLeaderboard3D(SR3DLB leaderboard)
+        {
+            BasicLeaderboardEntry[] entries = leaderboard.EnableLB.GetComponentsInChildren<BasicLeaderboardEntry>();
+            if (SceneManager.GetActiveScene().name == "USUI")
+            {
+                SR3DLB[] LBobjs = GameObject.FindObjectsOfType<SR3DLB>();
+                foreach (SR3DLB lb in LBobjs)
+                {
+                    if (lb != leaderboard)
+                    {
+                        Debug.Log("IS NOT MY LB");
+                        entries = lb.EnableLB.GetComponentsInChildren<BasicLeaderboardEntry>();
+                    }
+                    else
+                    {
+                        Debug.Log("IS MY LB");
+                    }
+                }
+            }
+
+            leaderboard.score.text = "";
+            int i = 0;
+            foreach (BasicLeaderboardEntry entry in entries)
+            {
+                if (i >= 5)
+                    break;
+                leaderboard.score.text += entry.score.text + "<size=" + leaderboard.ssize + "> 's </size>\n";
+                leaderboard.nameA[i].text = entry.GetComponentInChildren<Text>().text;
+                i++;
+            }
+        }
+
+        IEnumerator LeaderboardUsersManager_RefreshScore2(On.LeaderboardUsersManager.orig_RefreshScore2 orig, LeaderboardUsersManager self, int target)
+        {
+            switch (target)
+            {
+                case 10:
+                    if (self.MyRankAkagiDH.GetComponent<SRMyLBRank>().ScoreText.text == "N/A" || self.MyRankAkagiDH.GetComponent<SRMyLBRank>().MyRank.text == "N/A")
+                    {
+                        self.RVAkagiBT.QueryPeerEntries(0);
+                        yield return new WaitForSeconds(0.4f);
+                        self.RVAkagiBT.QueryTopEntries(100);
+                    }
+                    break;
+                case 11:
+                    if (self.MyRankAkagiUH.GetComponent<SRMyLBRank>().ScoreText.text == "N/A" || self.MyRankAkagiUH.GetComponent<SRMyLBRank>().MyRank.text == "N/A")
+                    {
+                        self.AkagiBT.QueryPeerEntries(0);
+                        yield return new WaitForSeconds(0.4f);
+                        self.AkagiBT.QueryTopEntries(100);
+                    }
+                    break;
+                default:
+                    yield return orig(self, target);
+                    break;
+            }
+            yield break;
         }
 
         void GarageManager_Start(On.GarageManager.orig_Start orig, GarageManager self)
