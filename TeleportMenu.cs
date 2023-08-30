@@ -128,7 +128,6 @@ namespace WarmTofuMod
         void SRUIManager_OpenMenu(On.SRUIManager.orig_OpenMenu orig, SRUIManager self)
         {
             orig(self);
-            Ping();
             self.BtnLobby.GetComponentInChildren<Text>().text = "Teleport";
             teleportMenu.SetActive(false);
         }

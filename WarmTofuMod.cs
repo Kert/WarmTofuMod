@@ -10,7 +10,6 @@ using UnityEngine.UI;
 using HeathenEngineering.SteamApi.PlayerServices;
 using System.Collections;
 using UnityEngine.SceneManagement;
-using Photon.Pun;
 
 namespace WarmTofuMod
 {
@@ -57,6 +56,12 @@ namespace WarmTofuMod
 
                 // mod GUI and logic
                 On.RCC_PhotonManager.OnGUI += RCC_PhotonManager_OnGUI;
+
+                // Mod network code
+                On.RCC_PhotonManager.OnJoinedRoom += RCC_PhotonManager_OnJoinedRoom;
+                On.RaceManager.ReposP1 += RaceManager_ReposP1;
+                On.RaceManager.ReposP2 += RaceManager_ReposP2;
+                On.RaceManager.AskToPlayer += RaceManager_AskToPlayer;
 
                 // Front suspension not saving fix
                 On.GarageManager.Start += GarageManager_Start;
@@ -221,45 +226,6 @@ namespace WarmTofuMod
                     break;
             }
             yield break;
-        }
-
-        void Ping()
-        {
-            SRPlayerCollider col = RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<SRPlayerCollider>();
-
-            PhotonView view = (PhotonView)typeof(SRPlayerCollider).GetField("view", bindingFlags).GetValue(col);
-
-            view.RPC("WarmTofuModReceivePing", RpcTarget.Others, new object[]
-            {
-                this.gameObject.name,
-                PlayerPrefs.GetString("PLAYERNAMEE"),
-                PluginInfo.PLUGIN_VERSION
-            });
-        }
-
-        [PunRPC]
-        private void WarmTofuModReceivePing(string senderPhotonName, string senderName, string modVersion)
-        {
-            Debug.Log("Received ping from " + senderPhotonName + " " + senderName + " " + modVersion);
-            Pong();
-        }
-
-        void Pong()
-        {
-            SRPlayerCollider col = RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<SRPlayerCollider>();
-            PhotonView view = (PhotonView)typeof(SRPlayerCollider).GetField("view", bindingFlags).GetValue(col);
-            view.RPC("WarmTofuModReceivePong", RpcTarget.Others, new object[]
-            {
-                this.gameObject.name,
-                PlayerPrefs.GetString("PLAYERNAMEE"),
-                PluginInfo.PLUGIN_VERSION
-            });
-        }
-
-        [PunRPC]
-        private void WarmTofuModReceivePong(string senderPhotonName, string senderName, string modVersion)
-        {
-            Debug.Log("Received pong from " + senderPhotonName + " " + senderName + " " + modVersion);
         }
 
         void GarageManager_Start(On.GarageManager.orig_Start orig, GarageManager self)
