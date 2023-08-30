@@ -64,6 +64,7 @@ namespace WarmTofuMod
                 On.RaceManager.ReposP1 += RaceManager_ReposP1;
                 On.RaceManager.ReposP2 += RaceManager_ReposP2;
                 On.RaceManager.AskToPlayer += RaceManager_AskToPlayer;
+                On.RaceManager.ShowMyInvitation += RaceManager_ShowMyInvitation;
 
                 // Front suspension not saving fix
                 On.GarageManager.Start += GarageManager_Start;

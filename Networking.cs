@@ -25,7 +25,7 @@ namespace WarmTofuMod
                 Debug.Log("Sending ping");
                 try
                 {
-                    view.RPC("WarmTofuModReceivePing", RpcTarget.All, new object[]
+                    view.RPC("WarmTofuModReceivePing", RpcTarget.Others, new object[]
                     {
                         this.gameObject.name,
                         //RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<SRPlayerCollider>().name,
@@ -54,7 +54,7 @@ namespace WarmTofuMod
                 Debug.Log("Sending pong");
                 try
                 {
-                    view.RPC("WarmTofuModReceivePong", RpcTarget.All, new object[]
+                    view.RPC("WarmTofuModReceivePong", RpcTarget.Others, new object[]
                     {
                         this.gameObject.name,
                         PlayerPrefs.GetString("PLAYERNAMEE"),
@@ -108,7 +108,21 @@ namespace WarmTofuMod
         public void RaceManager_AskToPlayer(On.RaceManager.orig_AskToPlayer orig, RaceManager self, string EnemyPhoton, string EnemyUI)
         {
             orig(self, EnemyPhoton, EnemyUI);
+            Debug.Log("Race asked " + EnemyPhoton);
             if (NetworkTest.PlayerHasMod(EnemyPhoton))
+            {
+                self.StartingPointP1.position = new Vector3(-216.9f, 203.8f, 560.0f);
+                self.StartingPointP1.rotation = new Quaternion(0.0f, -0.8f, 0.0f, -0.7f);
+                self.StartingPointP2.position = new Vector3(-217.9f, 203.8f, 555.0f);
+                self.StartingPointP2.rotation = new Quaternion(0.0f, -0.8f, 0.0f, -0.7f);
+            }
+        }
+
+        void RaceManager_ShowMyInvitation(On.RaceManager.orig_ShowMyInvitation orig, RaceManager self, string Sender, string EnvoyeurDelaDemande)
+        {
+            orig(self, Sender, EnvoyeurDelaDemande);
+            Debug.Log("Race asked by " + EnvoyeurDelaDemande);
+            if (NetworkTest.PlayerHasMod(EnvoyeurDelaDemande))
             {
                 self.StartingPointP1.position = new Vector3(-216.9f, 203.8f, 560.0f);
                 self.StartingPointP1.rotation = new Quaternion(0.0f, -0.8f, 0.0f, -0.7f);
