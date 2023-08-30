@@ -13,14 +13,10 @@ namespace WarmTofuMod
         class NetworkTest : MonoBehaviour
         {
             public PhotonView view;
-            public static NetworkTest Instance;
             static Dictionary<string, string> playerModVersions = new();
             NetworkTest()
             {
-                view = this.gameObject.AddComponent<PhotonView>();
-                PhotonNetwork.AllocateViewID(view);
-                Instance = this;
-                this.gameObject.name = PluginInfo.PLUGIN_NAME + view.ViewID;
+                view = this.gameObject.GetComponent<PhotonView>();
             }
 
             public void Ping()
@@ -29,20 +25,9 @@ namespace WarmTofuMod
                 Debug.Log("Sending ping");
                 try
                 {
-                    string photonOldString = "";
-                    RCC_PhotonNetwork[] networks = GameObject.FindObjectsOfType<RCC_PhotonNetwork>();
-                    foreach (RCC_PhotonNetwork network in networks)
-                    {
-                        if (network.gameObject.GetComponent<PhotonView>().IsMine)
-                        {
-                            photonOldString = network.gameObject.name;
-                            break;
-                        }
-                    }
                     view.RPC("WarmTofuModReceivePing", RpcTarget.All, new object[]
                     {
                         this.gameObject.name,
-                        photonOldString,
                         //RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<SRPlayerCollider>().name,
                         PlayerPrefs.GetString("PLAYERNAMEE"),
                         PluginInfo.PLUGIN_VERSION
@@ -56,9 +41,9 @@ namespace WarmTofuMod
             }
 
             [PunRPC]
-            public void WarmTofuModReceivePing(string senderPhotonName, string senderPhotonOldName, string senderName, string modVersion)
+            public void WarmTofuModReceivePing(string senderPhotonName, string senderName, string modVersion)
             {
-                Debug.Log("Received ping from " + senderPhotonName + " " + senderPhotonOldName + " " + senderName + " " + modVersion);
+                Debug.Log("Received ping from " + senderPhotonName + " " + senderName + " " + modVersion);
                 if (!playerModVersions.ContainsKey(senderPhotonName))
                     playerModVersions.Add(senderPhotonName, modVersion);
                 Pong();
@@ -72,7 +57,6 @@ namespace WarmTofuMod
                     view.RPC("WarmTofuModReceivePong", RpcTarget.All, new object[]
                     {
                         this.gameObject.name,
-                        RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<SRPlayerCollider>().name,
                         PlayerPrefs.GetString("PLAYERNAMEE"),
                         PluginInfo.PLUGIN_VERSION
                     });
@@ -84,9 +68,9 @@ namespace WarmTofuMod
             }
 
             [PunRPC]
-            private void WarmTofuModReceivePong(string senderPhotonName, string senderPhotonOldName, string senderName, string modVersion)
+            private void WarmTofuModReceivePong(string senderPhotonName, string senderName, string modVersion)
             {
-                Debug.Log("Received pong from " + senderPhotonName + " " + senderPhotonOldName + " " + senderName + " " + modVersion);
+                Debug.Log("Received pong from " + senderPhotonName + " " + senderName + " " + modVersion);
                 if (!playerModVersions.ContainsKey(senderPhotonName))
                     playerModVersions.Add(senderPhotonName, modVersion);
             }
@@ -108,15 +92,13 @@ namespace WarmTofuMod
         public void RCC_PhotonManager_OnJoinedRoom(On.RCC_PhotonManager.orig_OnJoinedRoom orig, RCC_PhotonManager self)
         {
             orig(self);
-
         }
 
         public void RCC_PhotonNetwork_Start(On.ZionBandwidthOptimizer.Examples.RCC_PhotonNetwork.orig_Start orig, ZionBandwidthOptimizer.Examples.RCC_PhotonNetwork self)
         {
             orig(self);
             Debug.Log("Photon network started");
-            GameObject go = new();
-            NetworkTest nt = go.AddComponent<NetworkTest>();
+            NetworkTest nt = self.gameObject.AddComponent<NetworkTest>();
             if (self.gameObject.GetComponent<PhotonView>().IsMine)
             {
                 nt.Ping();
