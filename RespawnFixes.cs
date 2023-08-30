@@ -147,8 +147,6 @@ namespace WarmTofuMod
         {
             orig(self);
 
-            NetworkTest.Instance.Ping();
-
             if (SceneManager.GetActiveScene().name != "Akina")
                 return;
 

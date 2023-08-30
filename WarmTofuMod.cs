@@ -58,6 +58,8 @@ namespace WarmTofuMod
                 On.RCC_PhotonManager.OnGUI += RCC_PhotonManager_OnGUI;
 
                 // Mod network code
+                On.ZionBandwidthOptimizer.Examples.RCC_PhotonNetwork.Start += RCC_PhotonNetwork_Start;
+
                 On.RCC_PhotonManager.OnJoinedRoom += RCC_PhotonManager_OnJoinedRoom;
                 On.RaceManager.ReposP1 += RaceManager_ReposP1;
                 On.RaceManager.ReposP2 += RaceManager_ReposP2;
