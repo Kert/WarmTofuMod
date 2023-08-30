@@ -25,10 +25,10 @@ namespace WarmTofuMod
                 Debug.Log("Sending ping");
                 try
                 {
-                    view.RPC("WarmTofuModReceivePing", RpcTarget.Others, new object[]
+                    view.RPC("WarmTofuModReceivePing", RpcTarget.All, new object[]
                     {
-                        this.gameObject.name,
-                        //RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<SRPlayerCollider>().name,
+                        //this.gameObject.name,
+                        RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<SRPlayerCollider>().name,
                         PlayerPrefs.GetString("PLAYERNAMEE"),
                         PluginInfo.PLUGIN_VERSION
                     });
@@ -54,9 +54,10 @@ namespace WarmTofuMod
                 Debug.Log("Sending pong");
                 try
                 {
-                    view.RPC("WarmTofuModReceivePong", RpcTarget.Others, new object[]
+                    view.RPC("WarmTofuModReceivePong", RpcTarget.All, new object[]
                     {
-                        this.gameObject.name,
+                        //this.gameObject.name,
+                        RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<SRPlayerCollider>().name,
                         PlayerPrefs.GetString("PLAYERNAMEE"),
                         PluginInfo.PLUGIN_VERSION
                     });
@@ -111,6 +112,7 @@ namespace WarmTofuMod
             Debug.Log("Race asked " + EnemyPhoton);
             if (NetworkTest.PlayerHasMod(EnemyPhoton))
             {
+                Debug.Log("Race positions asking set");
                 self.StartingPointP1.position = new Vector3(-216.9f, 203.8f, 560.0f);
                 self.StartingPointP1.rotation = new Quaternion(0.0f, -0.8f, 0.0f, -0.7f);
                 self.StartingPointP2.position = new Vector3(-217.9f, 203.8f, 555.0f);
@@ -124,6 +126,7 @@ namespace WarmTofuMod
             Debug.Log("Race asked by " + EnvoyeurDelaDemande);
             if (NetworkTest.PlayerHasMod(EnvoyeurDelaDemande))
             {
+                Debug.Log("Race positions receiver set");
                 self.StartingPointP1.position = new Vector3(-216.9f, 203.8f, 560.0f);
                 self.StartingPointP1.rotation = new Quaternion(0.0f, -0.8f, 0.0f, -0.7f);
                 self.StartingPointP2.position = new Vector3(-217.9f, 203.8f, 555.0f);
