@@ -157,6 +157,7 @@ namespace WarmTofuMod
         }
 
         GameObject battleGameObject = new GameObject();
+        List<GameObject> playerListItems = new();
         void SRPlayerListRoom_Start(On.SRPlayerListRoom.orig_Start orig, SRPlayerListRoom self)
         {
             orig(self);
@@ -179,19 +180,21 @@ namespace WarmTofuMod
                     smallButton.gameObject.AddComponent<BattleHover>();
                     smallButton.transform.SetParent(text.gameObject.transform);
                     RectTransform r = smallButton.GetComponent<RectTransform>();
-                    r.anchoredPosition = new Vector3(0, 0, 0);
-                    r.anchorMin = r.anchorMax = new Vector2(0.5f, 0.5f);
-                    r.sizeDelta = new Vector2(190f, 20f);
+                    r.anchoredPosition = new Vector3(120, 0, 0);
+                    r.anchorMin = r.anchorMax = new Vector2(0, 0.5f);
+                    r.sizeDelta = new Vector2(260f, 27f);
+                    r.localScale = new Vector3(1, 1, 1);
                     Text t = smallButton.GetComponentInChildren<Text>();
                     t.fontSize = t.resizeTextMaxSize = 20;
                     t.resizeTextMinSize = 1;
+                    playerListItems.Add(smallButton.gameObject);
                 }
             }
         }
 
         public class BattleHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         {
-            private string playerName;
+            public string playerName;
             private Text hoverName;
             RectTransform rect;
             void Start()
@@ -213,6 +216,44 @@ namespace WarmTofuMod
                 hoverName.text = playerName;
                 rect.anchorMax = new Vector2(rect.anchorMax.x, 0.5f);
             }
+        }
+
+        void UpdateBattleHovers()
+        {
+            string playerPhotonName = RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<SRPlayerCollider>().name;
+            foreach (GameObject playerItem in playerListItems)
+            {
+                playerItem.SetActive(false);
+                SRCheckOtherPlayerCam obj = playerItem.transform.GetParent().transform.GetParent().GetComponentInChildren<SRCheckOtherPlayerCam>();
+                if (!obj.MyTargetPlayer_Go)
+                    continue;
+                string photonName = obj.MyTargetPlayer_Go.name;
+                if (name == "")
+                    continue;
+                if (name != playerPhotonName)
+                {
+                    // disable everyone who is not warmtofu
+                    if (!NetworkTest.PlayerHasMod(photonName))
+                        playerItem.gameObject.GetComponentInChildren<Text>().color = Color.blue;
+                    else
+                        playerItem.gameObject.GetComponentInChildren<Text>().color = Color.yellow;
+                    playerItem.GetComponentInChildren<Text>().text = playerItem.gameObject.GetComponent<BattleHover>().playerName = playerItem.gameObject.transform.GetParent().GetComponent<Text>().text;
+                    if (playerItem.transform.GetParent().transform.GetParent().GetComponentInChildren<Image>().enabled)
+                        playerItem.SetActive(true);
+                }
+            }
+        }
+
+        void SRPlayerListRoom_PlayerListing(On.SRPlayerListRoom.orig_PlayerListing orig, SRPlayerListRoom self)
+        {
+            orig(self);
+            UpdateBattleHovers();
+        }
+        void SRPlayerListRoom_PlayerListingRefresh(On.SRPlayerListRoom.orig_PlayerListingRefresh orig, SRPlayerListRoom self)
+        {
+            orig(self);
+            Debug.Log("Refresh called");
+            UpdateBattleHovers();
         }
     }
 }
