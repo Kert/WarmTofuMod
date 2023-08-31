@@ -19,15 +19,15 @@ namespace WarmTofuMod
                 view = this.gameObject.GetComponent<PhotonView>();
             }
 
-            public void Ping()
+            public void SendModInfo(string oldPhotonName)
             {
                 playerModVersions.Clear();
-                Debug.Log("Sending ping");
+                Debug.Log("Sending mod info");
                 try
                 {
-                    view.RPC("WarmTofuModReceivePing", RpcTarget.All, new object[]
+                    view.RPC("ReceiveModInfo", RpcTarget.All, new object[]
                     {
-                        //this.gameObject.name,
+                        oldPhotonName,
                         RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<SRPlayerCollider>().name,
                         PlayerPrefs.GetString("PLAYERNAMEE"),
                         PluginInfo.PLUGIN_VERSION
@@ -41,22 +41,24 @@ namespace WarmTofuMod
             }
 
             [PunRPC]
-            public void WarmTofuModReceivePing(string senderPhotonName, string senderName, string modVersion)
+            public void ReceiveModInfo(string oldPhotonName, string senderPhotonName, string senderName, string modVersion)
             {
-                Debug.Log("Received ping from " + senderPhotonName + " " + senderName + " " + modVersion);
+                Debug.Log("Received mod info from " + oldPhotonName + " " + senderPhotonName + " " + senderName + " " + modVersion);
+                // if car is changed - forget old photon name
+                if (oldPhotonName != "" && playerModVersions.ContainsKey(oldPhotonName))
+                    playerModVersions.Remove(oldPhotonName);
                 if (!playerModVersions.ContainsKey(senderPhotonName))
                     playerModVersions.Add(senderPhotonName, modVersion);
-                Pong();
+                SendModInfoReply();
             }
 
-            void Pong()
+            void SendModInfoReply()
             {
-                Debug.Log("Sending pong");
+                Debug.Log("Sending mod info reply");
                 try
                 {
-                    view.RPC("WarmTofuModReceivePong", RpcTarget.All, new object[]
+                    view.RPC("SendModInfoReply", RpcTarget.All, new object[]
                     {
-                        //this.gameObject.name,
                         RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<SRPlayerCollider>().name,
                         PlayerPrefs.GetString("PLAYERNAMEE"),
                         PluginInfo.PLUGIN_VERSION
@@ -69,9 +71,9 @@ namespace WarmTofuMod
             }
 
             [PunRPC]
-            private void WarmTofuModReceivePong(string senderPhotonName, string senderName, string modVersion)
+            private void SendModInfoReply(string senderPhotonName, string senderName, string modVersion)
             {
-                Debug.Log("Received pong from " + senderPhotonName + " " + senderName + " " + modVersion);
+                Debug.Log("Received mod info reply from " + senderPhotonName + " " + senderName + " " + modVersion);
                 if (!playerModVersions.ContainsKey(senderPhotonName))
                     playerModVersions.Add(senderPhotonName, modVersion);
             }
@@ -90,60 +92,18 @@ namespace WarmTofuMod
             }
         }
 
-        public void RCC_PhotonManager_OnJoinedRoom(On.RCC_PhotonManager.orig_OnJoinedRoom orig, RCC_PhotonManager self)
-        {
-            orig(self);
-        }
-
         public void RCC_PhotonNetwork_Start(On.ZionBandwidthOptimizer.Examples.RCC_PhotonNetwork.orig_Start orig, ZionBandwidthOptimizer.Examples.RCC_PhotonNetwork self)
         {
+            string oldPhotonName = "";
+            if (RCC_SceneManager.Instance.activePlayerVehicle)
+                oldPhotonName = RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<SRPlayerCollider>().name;
             orig(self);
             Debug.Log("Photon network started");
             NetworkTest nt = self.gameObject.AddComponent<NetworkTest>();
             if (self.gameObject.GetComponent<PhotonView>().IsMine)
             {
-                nt.Ping();
+                nt.SendModInfo(oldPhotonName);
             }
-        }
-
-        public void RaceManager_AskToPlayer(On.RaceManager.orig_AskToPlayer orig, RaceManager self, string EnemyPhoton, string EnemyUI)
-        {
-            orig(self, EnemyPhoton, EnemyUI);
-            Debug.Log("Race asked " + EnemyPhoton);
-            if (NetworkTest.PlayerHasMod(EnemyPhoton))
-            {
-                Debug.Log("Race positions asking set");
-                self.StartingPointP1.position = new Vector3(-216.9f, 203.8f, 560.0f);
-                self.StartingPointP1.rotation = new Quaternion(0.0f, -0.8f, 0.0f, -0.7f);
-                self.StartingPointP2.position = new Vector3(-217.9f, 203.8f, 555.0f);
-                self.StartingPointP2.rotation = new Quaternion(0.0f, -0.8f, 0.0f, -0.7f);
-            }
-        }
-
-        void RaceManager_ShowMyInvitation(On.RaceManager.orig_ShowMyInvitation orig, RaceManager self, string Sender, string EnvoyeurDelaDemande)
-        {
-            orig(self, Sender, EnvoyeurDelaDemande);
-            Debug.Log("Race asked by " + EnvoyeurDelaDemande);
-            if (NetworkTest.PlayerHasMod(EnvoyeurDelaDemande))
-            {
-                Debug.Log("Race positions receiver set");
-                self.StartingPointP1.position = new Vector3(-216.9f, 203.8f, 560.0f);
-                self.StartingPointP1.rotation = new Quaternion(0.0f, -0.8f, 0.0f, -0.7f);
-                self.StartingPointP2.position = new Vector3(-217.9f, 203.8f, 555.0f);
-                self.StartingPointP2.rotation = new Quaternion(0.0f, -0.8f, 0.0f, -0.7f);
-            }
-        }
-
-        IEnumerator RaceManager_ReposP1(On.RaceManager.orig_ReposP1 orig, RaceManager self)
-        {
-            orig(self);
-            yield break;
-        }
-
-        IEnumerator RaceManager_ReposP2(On.RaceManager.orig_ReposP2 orig, RaceManager self)
-        {
-            orig(self);
-            yield break;
         }
     }
 }
