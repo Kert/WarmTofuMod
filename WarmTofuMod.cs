@@ -13,7 +13,7 @@ using UnityEngine.SceneManagement;
 
 namespace WarmTofuMod
 {
-    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.5.1")]
+    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.5.2")]
     public partial class WarmTofuMod : BaseUnityPlugin
     {
         public enum Menus
@@ -33,6 +33,7 @@ namespace WarmTofuMod
         bool achievements100kmh = false;
         bool achievements200kmh = false;
         bool inTuningMenu = false;
+        static SRToffuManager tofuManager;
 
         // used to get data from private fields with reflection
         const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
@@ -442,7 +443,9 @@ namespace WarmTofuMod
         {
             if (buttonStyle == null)
                 InitMenuStyles();
-            int tofuTimer = (ObscuredInt)typeof(SRToffuManager).GetField("Compteur", bindingFlags).GetValue(GameObject.FindObjectOfType<SRToffuManager>());
+            if(!tofuManager)
+                tofuManager = GameObject.FindObjectOfType<SRToffuManager>();
+            int tofuTimer = (ObscuredInt)typeof(SRToffuManager).GetField("Compteur", bindingFlags).GetValue(tofuManager);
             GUILayout.BeginArea(new Rect((float)(Screen.width / 2) - 120f, (float)Screen.height - 50f, 800f, 100f));
             GUIStyle guistyle = new GUIStyle();
             guistyle.font = buttonStyle.font;
