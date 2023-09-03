@@ -57,7 +57,7 @@ namespace WarmTofuMod
                 Debug.Log("Sending mod info reply");
                 try
                 {
-                    view.RPC("SendModInfoReply", RpcTarget.All, new object[]
+                    view.RPC("SendModInfoReply", RpcTarget.Others, new object[]
                     {
                         RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<SRPlayerCollider>().name,
                         PlayerPrefs.GetString("PLAYERNAMEE"),
@@ -76,6 +76,23 @@ namespace WarmTofuMod
                 Debug.Log("Received mod info reply from " + senderPhotonName + " " + senderName + " " + modVersion);
                 if (!playerModVersions.ContainsKey(senderPhotonName))
                     playerModVersions.Add(senderPhotonName, modVersion);
+            }
+
+            [PunRPC]
+            private void ReceiveBattleInvitationRPC(string rivalPhotonName, string playerName, string playerPhotonName, string direction, string order, bool nitro, bool collision)
+            {
+                //if (RCC_SceneManager.Instance.activePlayerVehicle.gameObject.transform.name == rivalPhotonName)
+                //{
+                Debug.Log("Received battle invitation from " + playerName + " " + playerPhotonName + " " + direction + " " + order + " Nitro: " + nitro + " Collision: " + collision);
+                WarmTofuBattleManager warmTofuBattleManager = GameObject.FindObjectOfType<WarmTofuBattleManager>();
+                warmTofuBattleManager.isCustomRace = true;
+                warmTofuBattleManager.isMyInvitation = false;
+                warmTofuBattleManager.raceSettings.direction = direction;
+                warmTofuBattleManager.raceSettings.order = order;
+                warmTofuBattleManager.raceSettings.nitro = nitro;
+                warmTofuBattleManager.raceSettings.collision = collision;
+                GameObject.FindGameObjectWithTag("RaceManager").GetComponent<RaceManager>().ShowMyInvitation(playerName, playerPhotonName);
+                //}
             }
 
             public static bool PlayerHasMod(string colliderName)

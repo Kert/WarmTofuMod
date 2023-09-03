@@ -147,6 +147,10 @@ namespace WarmTofuMod
         {
             orig(self);
 
+            // Akagi race without finish fix
+            if (SceneManager.GetActiveScene().name == "Akagi")
+                GameObject.Find("Scene Objects").transform.Find("Zone_RACE_Arriver").gameObject.SetActive(true);
+
             if (SceneManager.GetActiveScene().name != "Akina")
                 return;
 

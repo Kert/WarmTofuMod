@@ -66,6 +66,7 @@ namespace WarmTofuMod
                 On.SRPlayerListRoom.Start += SRPlayerListRoom_Start;
                 On.SRPlayerListRoom.PlayerListing += SRPlayerListRoom_PlayerListing;
                 On.SRPlayerListRoom.PlayerListingRefresh += SRPlayerListRoom_PlayerListingRefresh;
+                On.SRPlayerCollider.SendRaceInvitation += SRPlayerCollider_SendRaceInvitation;
 
                 // Front suspension not saving fix
                 On.GarageManager.Start += GarageManager_Start;
