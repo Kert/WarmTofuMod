@@ -2,20 +2,18 @@
 using UnityEngine;
 using Photon.Pun;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using ZionBandwidthOptimizer.Examples;
 
 namespace WarmTofuMod
 {
     public partial class WarmTofuMod : BaseUnityPlugin
     {
-        class NetworkTest : MonoBehaviour
+        class WarmTofuNetwork : MonoBehaviour
         {
             public PhotonView view;
             public static string oldPhotonName = "";
             static Dictionary<string, string> playerModVersions = new();
-            NetworkTest()
+            WarmTofuNetwork()
             {
                 view = this.gameObject.GetComponent<PhotonView>();
             }
@@ -39,7 +37,7 @@ namespace WarmTofuMod
                         PlayerPrefs.GetString("PLAYERNAMEE"),
                         PluginInfo.PLUGIN_VERSION
                     });
-                    NetworkTest.oldPhotonName = "";
+                    WarmTofuNetwork.oldPhotonName = "";
                 }
                 catch (Exception e)
                 {
@@ -103,17 +101,17 @@ namespace WarmTofuMod
                 }
             }
 
-            public static bool PlayerHasMod(string colliderName)
+            public static bool PlayerHasMod(string photonName)
             {
-                return playerModVersions.ContainsKey(colliderName);
+                return playerModVersions.ContainsKey(photonName);
             }
 
-            public string GetPlayerModVersion(string colliderName)
+            public string GetPlayerModVersion(string photonName)
             {
-                if (!playerModVersions.ContainsKey(colliderName))
+                if (!playerModVersions.ContainsKey(photonName))
                     return "";
                 else
-                    return playerModVersions[colliderName];
+                    return playerModVersions[photonName];
             }
         }
 
@@ -123,10 +121,10 @@ namespace WarmTofuMod
             Debug.Log("Photon network started");
             if (self.gameObject.GetComponent<PhotonView>().IsMine)
             {
-                NetworkTest nt = self.gameObject.GetComponent<NetworkTest>();
+                WarmTofuNetwork nt = self.gameObject.GetComponent<WarmTofuNetwork>();
                 if (!nt)
-                    nt = self.gameObject.AddComponent<NetworkTest>();
-                nt.SendModInfo(NetworkTest.oldPhotonName);
+                    nt = self.gameObject.AddComponent<WarmTofuNetwork>();
+                nt.SendModInfo(WarmTofuNetwork.oldPhotonName);
             }
         }
     }

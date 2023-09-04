@@ -150,7 +150,7 @@ namespace WarmTofuMod
             if (oldCar && oldCar.GetComponent<PhotonView>().IsMine)
             {
                 string oldPhotonName = oldCar.GetComponent<SRPlayerCollider>().name;
-                NetworkTest.oldPhotonName = oldPhotonName;
+                WarmTofuNetwork.oldPhotonName = oldPhotonName;
             }
 
             orig(self);
