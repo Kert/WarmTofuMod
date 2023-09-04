@@ -445,7 +445,7 @@ namespace WarmTofuMod
         {
             if (buttonStyle == null)
                 InitMenuStyles();
-            if(!tofuManager)
+            if (!tofuManager)
                 tofuManager = GameObject.FindObjectOfType<SRToffuManager>();
             int tofuTimer = (ObscuredInt)typeof(SRToffuManager).GetField("Compteur", bindingFlags).GetValue(tofuManager);
             GUILayout.BeginArea(new Rect((float)(Screen.width / 2) - 120f, (float)Screen.height - 50f, 800f, 100f));
