@@ -208,11 +208,6 @@ namespace WarmTofuMod
             }
         };
 
-        public void RaceManager_AskToPlayer(On.RaceManager.orig_AskToPlayer orig, RaceManager self, string EnemyPhoton, string EnemyUI)
-        {
-            orig(self, EnemyPhoton, EnemyUI);
-        }
-
         public void ApplyBattleSettings()
         {
             WarmTofuBattleManager warmTofuBattleManager = GameObject.FindObjectOfType<WarmTofuBattleManager>();

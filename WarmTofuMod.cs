@@ -60,7 +60,6 @@ namespace WarmTofuMod
 
                 // Mod network code
                 On.ZionBandwidthOptimizer.Examples.RCC_PhotonNetwork.Start += RCC_PhotonNetwork_Start;
-                On.RaceManager.AskToPlayer += RaceManager_AskToPlayer;
                 On.RaceManager.ShowMyInvitation += RaceManager_ShowMyInvitation;
                 On.SRPlayerListRoom.Update += SRPlayerListRoom_Update;
                 On.SRPlayerListRoom.Start += SRPlayerListRoom_Start;
