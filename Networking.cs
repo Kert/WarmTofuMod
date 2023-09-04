@@ -32,7 +32,7 @@ namespace WarmTofuMod
                 Debug.Log("Sending mod info");
                 try
                 {
-                    view.RPC("ReceiveModInfo", RpcTarget.All, new object[]
+                    view.RPC("ReceiveModInfo", RpcTarget.Others, new object[]
                     {
                         oldPhotonName,
                         RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<SRPlayerCollider>().name,
@@ -89,18 +89,18 @@ namespace WarmTofuMod
             [PunRPC]
             private void ReceiveBattleInvitationRPC(string rivalPhotonName, string playerName, string playerPhotonName, string direction, string order, bool nitro, bool collision)
             {
-                //if (RCC_SceneManager.Instance.activePlayerVehicle.gameObject.transform.name == rivalPhotonName)
-                //{
-                Debug.Log("Received battle invitation from " + playerName + " " + playerPhotonName + " " + direction + " " + order + " Nitro: " + nitro + " Collision: " + collision);
-                CustomRaceManager warmTofuBattleManager = GameObject.FindObjectOfType<CustomRaceManager>();
-                CustomRaceManager.customRaceInvite = true;
-                CustomRaceManager.isMyInvitation = false;
-                CustomRaceManager.raceSettings.direction = direction;
-                CustomRaceManager.raceSettings.order = order;
-                CustomRaceManager.raceSettings.nitro = nitro;
-                CustomRaceManager.raceSettings.collision = collision;
-                GameObject.FindGameObjectWithTag("RaceManager").GetComponent<RaceManager>().ShowMyInvitation(playerName, playerPhotonName);
-                //}
+                if (RCC_SceneManager.Instance.activePlayerVehicle.gameObject.transform.name == rivalPhotonName)
+                {
+                    Debug.Log("Received battle invitation from " + playerName + " " + playerPhotonName + " " + direction + " " + order + " Nitro: " + nitro + " Collision: " + collision);
+                    CustomRaceManager warmTofuBattleManager = GameObject.FindObjectOfType<CustomRaceManager>();
+                    CustomRaceManager.customRaceInvite = true;
+                    CustomRaceManager.isMyInvitation = false;
+                    CustomRaceManager.raceSettings.direction = direction;
+                    CustomRaceManager.raceSettings.order = order;
+                    CustomRaceManager.raceSettings.nitro = nitro;
+                    CustomRaceManager.raceSettings.collision = collision;
+                    GameObject.FindGameObjectWithTag("RaceManager").GetComponent<RaceManager>().ShowMyInvitation(playerName, playerPhotonName);
+                }
             }
 
             public static bool PlayerHasMod(string colliderName)

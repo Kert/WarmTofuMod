@@ -102,7 +102,7 @@ namespace WarmTofuMod
                 else if (order == "You chase")
                     order = "You lead";
 
-                view.RPC("ReceiveBattleInvitationRPC", RpcTarget.All, new object[]
+                view.RPC("ReceiveBattleInvitationRPC", RpcTarget.Others, new object[]
                 {
                     GetRivalPhotonName(),
                     PlayerPrefs.GetString("PLAYERNAMEE"),
