@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using CodeStage.AntiCheat.Storage;
+using Photon.Pun;
 
 namespace WarmTofuMod
 {
@@ -145,6 +146,13 @@ namespace WarmTofuMod
 
         void RCC_PhotonDemo_Spawn(On.RCC_PhotonDemo.orig_Spawn orig, RCC_PhotonDemo self)
         {
+            GameObject oldCar = (GameObject)typeof(RCC_PhotonDemo).GetField("MyCarr", bindingFlags).GetValue(self);
+            if (oldCar && oldCar.GetComponent<PhotonView>().IsMine)
+            {
+                string oldPhotonName = oldCar.GetComponent<SRPlayerCollider>().name;
+                NetworkTest.oldPhotonName = oldPhotonName;
+            }
+
             orig(self);
 
             // Akagi race without finish fix

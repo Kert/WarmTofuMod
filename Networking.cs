@@ -13,10 +13,17 @@ namespace WarmTofuMod
         class NetworkTest : MonoBehaviour
         {
             public PhotonView view;
+            public static string oldPhotonName = "";
             static Dictionary<string, string> playerModVersions = new();
             NetworkTest()
             {
                 view = this.gameObject.GetComponent<PhotonView>();
+            }
+
+            void OnDestroy()
+            {
+                Debug.Log("network test destroyed for " + view.gameObject.name);
+                playerModVersions.Remove(view.gameObject.name);
             }
 
             public void SendModInfo(string oldPhotonName)
@@ -32,6 +39,7 @@ namespace WarmTofuMod
                         PlayerPrefs.GetString("PLAYERNAMEE"),
                         PluginInfo.PLUGIN_VERSION
                     });
+                    NetworkTest.oldPhotonName = "";
                 }
                 catch (Exception e)
                 {
@@ -45,7 +53,7 @@ namespace WarmTofuMod
             {
                 Debug.Log("Received mod info from " + oldPhotonName + " " + senderPhotonName + " " + senderName + " " + modVersion);
                 // if car is changed - forget old photon name
-                if (oldPhotonName != "" && playerModVersions.ContainsKey(oldPhotonName))
+                if (playerModVersions.ContainsKey(oldPhotonName))
                     playerModVersions.Remove(oldPhotonName);
                 if (!playerModVersions.ContainsKey(senderPhotonName))
                     playerModVersions.Add(senderPhotonName, modVersion);
@@ -111,15 +119,14 @@ namespace WarmTofuMod
 
         public void RCC_PhotonNetwork_Start(On.ZionBandwidthOptimizer.Examples.RCC_PhotonNetwork.orig_Start orig, ZionBandwidthOptimizer.Examples.RCC_PhotonNetwork self)
         {
-            string oldPhotonName = "";
-            if (RCC_SceneManager.Instance.activePlayerVehicle)
-                oldPhotonName = RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<SRPlayerCollider>().name;
             orig(self);
             Debug.Log("Photon network started");
-            NetworkTest nt = self.gameObject.AddComponent<NetworkTest>();
             if (self.gameObject.GetComponent<PhotonView>().IsMine)
             {
-                nt.SendModInfo(oldPhotonName);
+                NetworkTest nt = self.gameObject.GetComponent<NetworkTest>();
+                if (!nt)
+                    nt = self.gameObject.AddComponent<NetworkTest>();
+                nt.SendModInfo(NetworkTest.oldPhotonName);
             }
         }
     }
