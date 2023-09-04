@@ -92,13 +92,13 @@ namespace WarmTofuMod
                 //if (RCC_SceneManager.Instance.activePlayerVehicle.gameObject.transform.name == rivalPhotonName)
                 //{
                 Debug.Log("Received battle invitation from " + playerName + " " + playerPhotonName + " " + direction + " " + order + " Nitro: " + nitro + " Collision: " + collision);
-                WarmTofuBattleManager warmTofuBattleManager = GameObject.FindObjectOfType<WarmTofuBattleManager>();
-                warmTofuBattleManager.isCustomRace = true;
-                warmTofuBattleManager.isMyInvitation = false;
-                warmTofuBattleManager.raceSettings.direction = direction;
-                warmTofuBattleManager.raceSettings.order = order;
-                warmTofuBattleManager.raceSettings.nitro = nitro;
-                warmTofuBattleManager.raceSettings.collision = collision;
+                CustomRaceManager warmTofuBattleManager = GameObject.FindObjectOfType<CustomRaceManager>();
+                CustomRaceManager.isWarmTofuModRace = true;
+                CustomRaceManager.isMyInvitation = false;
+                CustomRaceManager.raceSettings.direction = direction;
+                CustomRaceManager.raceSettings.order = order;
+                CustomRaceManager.raceSettings.nitro = nitro;
+                CustomRaceManager.raceSettings.collision = collision;
                 GameObject.FindGameObjectWithTag("RaceManager").GetComponent<RaceManager>().ShowMyInvitation(playerName, playerPhotonName);
                 //}
             }

@@ -1,26 +1,24 @@
 ﻿using BepInEx;
 using UnityEngine;
 using Photon.Pun;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ZionBandwidthOptimizer.Examples;
 using CodeStage.AntiCheat.Storage;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using TMPro;
 using CodeStage.AntiCheat.ObscuredTypes;
-using SickscoreGames.HUDNavigationSystem;
 
 namespace WarmTofuMod
 {
     public partial class WarmTofuMod : BaseUnityPlugin
     {
-        public class WarmTofuBattleManager : MonoBehaviour
+        public class CustomRaceManager : MonoBehaviour
         {
-            private RCC_CarControllerV3 rival = null;
+            private CustomRaceManager instance = null;
+            private static RCC_CarControllerV3 rival = null;
             public struct BattleSettings
             {
                 public string direction = "Downhill";
@@ -35,33 +33,45 @@ namespace WarmTofuMod
                     this.collision = collision;
                 }
             }
-            public BattleSettings raceSettings;
-            public bool isCustomRace = false;
-            public bool isMyInvitation = true;
+            public static BattleSettings raceSettings;
+            public static bool isWarmTofuModRace = false;
+            public static bool isMyInvitation = true;
 
-            public void SetRival(RCC_CarControllerV3 carController)
+            CustomRaceManager()
+            {
+                if (!instance)
+                    Debug.Log("Trying to create CustomRaceManager when it already exists");
+                instance = this;
+            }
+
+            void OnDestroy()
+            {
+                instance = null;
+            }
+
+            public static void SetRival(RCC_CarControllerV3 carController)
             {
                 rival = carController;
             }
 
-            public string GetRivalPlayerName()
+            public static string GetRivalPlayerName()
             {
                 return rival.GetComponentInParent<SRPlayerCollider>().gameObject.transform.GetComponentInChildren<TextMeshPro>()?.text;
             }
 
-            public string GetRivalPhotonName()
+            public static string GetRivalPhotonName()
             {
                 return rival.name;
             }
 
-            private string GetPlayerPhotonName()
+            private static string GetPlayerPhotonName()
             {
                 return RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<SRPlayerCollider>().name;
             }
 
-            public void SendBattleInvitation()
+            public static void SendBattleInvitation()
             {
-                isCustomRace = true;
+                isWarmTofuModRace = true;
                 isMyInvitation = true;
                 //rival.GetComponentInParent<SRPlayerCollider>().SendRaceInvitation(GetRivalPhotonName(), GetPlayerName());
                 //Debug.Log("Opened battle options against " + rivalPhotonName + " " + rivalName);
@@ -76,7 +86,7 @@ namespace WarmTofuMod
                 //GameObject.FindObjectOfType<SRPlayerListRoom>().PlayerListUI.SetActive(false);
             }
 
-            public void SendBattleInvitationRPC()
+            public static void SendBattleInvitationRPC()
             {
                 SRPlayerCollider player = RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<SRPlayerCollider>();
                 typeof(SRPlayerCollider).GetField("NameTarget", bindingFlags).SetValue(player, GetRivalPhotonName());
@@ -106,12 +116,10 @@ namespace WarmTofuMod
 
         void SRPlayerCollider_SendRaceInvitation(On.SRPlayerCollider.orig_SendRaceInvitation orig, SRPlayerCollider self, string rivalPhotonName, string playerName)
         {
-            WarmTofuBattleManager warmTofuBattleManager = GameObject.FindObjectOfType<WarmTofuBattleManager>();
-
-            if (warmTofuBattleManager.isCustomRace)
+            if (CustomRaceManager.isWarmTofuModRace)
             {
                 ApplyBattleSettings();
-                warmTofuBattleManager.SendBattleInvitationRPC();
+                CustomRaceManager.SendBattleInvitationRPC();
             }
             else
                 orig(self, rivalPhotonName, playerName);
@@ -213,8 +221,7 @@ namespace WarmTofuMod
 
         public void ApplyBattleSettings()
         {
-            WarmTofuBattleManager warmTofuBattleManager = GameObject.FindObjectOfType<WarmTofuBattleManager>();
-            WarmTofuBattleManager.BattleSettings battleSettings = warmTofuBattleManager.raceSettings;
+            CustomRaceManager.BattleSettings battleSettings = CustomRaceManager.raceSettings;
 
             var mapData = RacePositionData[SceneManager.GetActiveScene().name][battleSettings.direction];
             RaceManager rm = GameObject.FindObjectOfType<RaceManager>();
@@ -240,8 +247,8 @@ namespace WarmTofuMod
                     rm.StartingPointP1.rotation = rm.StartingPointP2.rotation;
                     break;
             }
-            Debug.Log("IS MY INVITATION " + warmTofuBattleManager.isMyInvitation);
-            if (!warmTofuBattleManager.isMyInvitation && battleSettings.order != "Parallel")
+            Debug.Log("IS MY INVITATION " + CustomRaceManager.isMyInvitation);
+            if (!CustomRaceManager.isMyInvitation && battleSettings.order != "Parallel")
             {
                 var tempP = rm.StartingPointP1.position;
                 var tempR = rm.StartingPointP1.rotation;
@@ -276,9 +283,8 @@ namespace WarmTofuMod
         void RaceManager_ShowMyInvitation(On.RaceManager.orig_ShowMyInvitation orig, RaceManager self, string Sender, string EnvoyeurDelaDemande)
         {
             orig(self, Sender, EnvoyeurDelaDemande);
-            WarmTofuBattleManager warmTofuBattleManager = GameObject.FindObjectOfType<WarmTofuBattleManager>();
-            WarmTofuBattleManager.BattleSettings battleSettings = warmTofuBattleManager.raceSettings;
-            if (warmTofuBattleManager.isCustomRace)
+            CustomRaceManager.BattleSettings battleSettings = CustomRaceManager.raceSettings;
+            if (CustomRaceManager.isWarmTofuModRace)
             {
                 self.RaceNotification.GetComponentInChildren<Text>().text = "<color=#B95353>" + Sender + "</color> \n" + self.ChallengeYou + "\n" +
                 battleSettings.direction + ". " + battleSettings.order + "\n" + "Nitro: " + (battleSettings.nitro ? "Yes" : "No") + " Collision: " + (battleSettings.collision ? "Yes" : "No");
@@ -308,7 +314,7 @@ namespace WarmTofuMod
         void SRPlayerListRoom_Start(On.SRPlayerListRoom.orig_Start orig, SRPlayerListRoom self)
         {
             orig(self);
-            WarmTofuBattleManager warmTofuBattleManager = self.gameObject.AddComponent<WarmTofuBattleManager>();
+            CustomRaceManager warmTofuBattleManager = self.gameObject.AddComponent<CustomRaceManager>();
 
 
             GameObject battleGO = Instantiate(GameObject.FindObjectOfType<SRUIManager>().BtnLobby);
@@ -339,7 +345,7 @@ namespace WarmTofuMod
             battleButtons[0].onClick.AddListener(SetBattleSettings);
             battleButtons[0].onClick.AddListener(() => self.PlayerListUI.SetActive(false));
             battleButtons[0].onClick.AddListener(() => battleMenu.SetActive(false));
-            battleButtons[0].onClick.AddListener(warmTofuBattleManager.SendBattleInvitation);
+            battleButtons[0].onClick.AddListener(CustomRaceManager.SendBattleInvitation);
             rect = battleButtons[0].GetComponent<RectTransform>();
             rect.anchorMin = new Vector2(0.6f, 0.5f);
             rect.anchorMax = new Vector2(0.78f, 0.5f);
@@ -441,17 +447,16 @@ namespace WarmTofuMod
         void SetBattleSettings()
         {
             GameObject battleOptions = battleMenu;
-            WarmTofuBattleManager warmTofuBattleManager = GameObject.FindObjectOfType<WarmTofuBattleManager>();
             Dropdown[] dropdowns = battleOptions.GetComponentsInChildren<Dropdown>();
             foreach (Dropdown dropdown in dropdowns)
             {
                 if (dropdown.name == "TrackDropdown")
                 {
-                    warmTofuBattleManager.raceSettings.direction = dropdown.options[dropdown.value].text;
+                    CustomRaceManager.raceSettings.direction = dropdown.options[dropdown.value].text;
                 }
                 else if (dropdown.name == "OrderDropdown")
                 {
-                    warmTofuBattleManager.raceSettings.order = dropdown.options[dropdown.value].text;
+                    CustomRaceManager.raceSettings.order = dropdown.options[dropdown.value].text;
                 }
             }
 
@@ -460,24 +465,23 @@ namespace WarmTofuMod
             {
                 if (toggle.name == "NitroToggle")
                 {
-                    warmTofuBattleManager.raceSettings.nitro = toggle.isOn;
+                    CustomRaceManager.raceSettings.nitro = toggle.isOn;
                 }
                 else if (toggle.name == "CollisionToggle")
                 {
-                    warmTofuBattleManager.raceSettings.collision = toggle.isOn;
+                    CustomRaceManager.raceSettings.collision = toggle.isOn;
                 }
             }
         }
 
         void BattleOptions(RCC_CarControllerV3 carControllerV3)
         {
-            WarmTofuBattleManager warmTofuBattleManager = GameObject.FindObjectOfType<WarmTofuBattleManager>();
             Debug.Log("rival is " + carControllerV3);
-            warmTofuBattleManager.SetRival(carControllerV3);
+            CustomRaceManager.SetRival(carControllerV3);
 
-            Debug.Log("Opened battle options against " + warmTofuBattleManager.GetRivalPhotonName() + " " + warmTofuBattleManager.GetRivalPlayerName());
+            Debug.Log("Opened battle options against " + CustomRaceManager.GetRivalPhotonName() + " " + CustomRaceManager.GetRivalPlayerName());
             battleMenu.SetActive(true);
-            battleMenu.GetComponentInChildren<Text>().text = "Battle against " + warmTofuBattleManager.GetRivalPlayerName();
+            battleMenu.GetComponentInChildren<Text>().text = "Battle against " + CustomRaceManager.GetRivalPlayerName();
             //GameObject.FindObjectOfType<SRPlayerListRoom>().PlayerListUI.SetActive(false);
         }
 
