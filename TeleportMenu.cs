@@ -131,7 +131,7 @@ namespace WarmTofuMod
             self.BtnLobby.GetComponentInChildren<Text>().text = "Teleport";
             teleportMenu.SetActive(false);
             GameObject.FindObjectOfType<SRPlayerListRoom>().PlayerListUI.SetActive(false);
-            battleMenu.SetActive(false);
+            CustomRaceMenu.menu.SetActive(false);
         }
 
         void SRCusorManager_Update(On.SRCusorManager.orig_Update orig, SRCusorManager self)

@@ -40,7 +40,7 @@ namespace WarmTofuMod
 
             CustomRaceManager()
             {
-                if (!instance)
+                if (instance)
                     Debug.Log("Trying to create CustomRaceManager when it already exists");
                 instance = this;
             }
@@ -178,105 +178,11 @@ namespace WarmTofuMod
             CustomRaceManager.RaceEnd();
         }
 
-        struct RacePositionsData
-        {
-            public Vector3 posP1;
-            public Quaternion rotP1;
-            public Vector3 posP2;
-            public Quaternion rotP2;
-            public Vector3 pos_lead;
-            public Quaternion rot_lead;
-            public Vector3 posFinish;
-            public Quaternion rotFinish;
-            public RacePositionsData(Vector3 _posP1, Quaternion _rotP1, Vector3 _posP2, Quaternion _rotP2,
-                Vector3 _pos_lead, Quaternion _rot_lead, Vector3 _posFinish, Quaternion _rotFinish)
-            {
-                posP1 = _posP1;
-                rotP1 = _rotP1;
-                posP2 = _posP2;
-                rotP2 = _rotP2;
-                pos_lead = _pos_lead;
-                rot_lead = _rot_lead;
-                posFinish = _posFinish;
-                rotFinish = _rotFinish;
-            }
-        }
-
-        Dictionary<string, Dictionary<string, RacePositionsData>> RacePositionData = new Dictionary<string, Dictionary<string, RacePositionsData>>
-        {
-            { "Irohazaka", new Dictionary<string, RacePositionsData>
-                {
-                    { "Downhill", new RacePositionsData(
-                        new Vector3(1232.7f, 260.2f, 55.5f), new Quaternion(0.0f, 1.0f, 0.0f, -0.3f), new Vector3(1230.2f, 260.2f, 57.0f), new Quaternion(0.0f, 1.0f, 0.0f, -0.3f),
-                        new Vector3(1232.7f, 260.2f, 59.0f), new Quaternion(0.0f, -1.0f, 0.0f, 0.3f),
-                        new Vector3(-1321.0f, -289.0f, 218.2f), new Quaternion(0.0f, 0.4f, 0.0f, -0.9f)
-                    )},
-                    { "Uphill", new RacePositionsData(
-                        new Vector3(-1223.2f, -280.6f, 132.5f), new Quaternion(0.0f, 0.9f, 0.0f, 0.4f), new Vector3(-1226.2f, -280.6f, 129.5f), new Quaternion(0.0f, 0.9f, 0.0f, 0.4f),
-                        new Vector3(-1183.1f, -276.4f, 96.1f), new Quaternion(0.0f, 0.9f, 0.0f, 0.4f),
-                        new Vector3(1232.0f, 260.0f, 55.0f), new Quaternion(0.0f, 0.3f, 0.0f, 1.0f)
-                    )},
-                    { "Downhill 2", new RacePositionsData(
-                        new Vector3(-216.9f, 203.8f, 560.0f), new Quaternion(0.0f, -0.8f, 0.0f, -0.7f), new Vector3(-217.9f, 203.8f, 555.0f), new Quaternion(0.0f, -0.8f, 0.0f, -0.7f),
-                        new Vector3(-216.3f, 203.7f, 560.1f), new Quaternion(0.0f, 0.7f, 0.0f, 0.7f),
-                        new Vector3(-1321.0f, -289.0f, 218.2f), new Quaternion(0.0f, 0.4f, 0.0f, -0.9f)
-                    )},
-                    { "Uphill 2", new RacePositionsData(
-                        new Vector3(-1303.1f, -287.6f, 211.7f), new Quaternion(0.0f, 0.9f, 0.0f, 0.4f), new Vector3(-1305.9f, -287.6f, 207.6f), new Quaternion(0.0f, 0.9f, 0.0f, 0.4f),
-                        new Vector3(-1303.1f, -287.6f, 211.7f), new Quaternion(0.0f, 0.9f, 0.0f, 0.4f),
-                        new Vector3(-234.0f, 203.0f, 560.0f), new Quaternion(0.0f, 0.7f, 0.0f, 0.7f)
-                    )}
-                }
-            },
-            { "Akina", new Dictionary<string, RacePositionsData>
-                {
-                    { "Downhill", new RacePositionsData(
-                        new Vector3(915.5f, 136.5f, 1323.3f), new Quaternion(0.0f, 1.0f, 0.0f, -0.1f), new Vector3(912.1f, 136.5f, 1323.7f), new Quaternion(0.0f, 1.0f, 0.0f, -0.1f),
-                        new Vector3(915.5f, 136.5f, 1323.3f), new Quaternion(0.0f, 1.0f, 0.0f, -0.1f),
-                        new Vector3(-1369.4f, -146.0f, -1083.6f), new Quaternion(0.0f, 0.3f, 0.0f, 1.0f)
-                    )},
-                    { "Uphill", new RacePositionsData(
-                        new Vector3(-1372.4f, -145.4f, -1081.3f), new Quaternion(0.0f, 0.2f, 0.0f, 1.0f), new Vector3(-1369.9f, -145.4f, -1082.9f), new Quaternion(0.0f, 0.2f, 0.0f, 1.0f),
-                        new Vector3(-1372.4f, -145.4f, -1081.3f), new Quaternion(0.0f, 0.2f, 0.0f, 1.0f),
-                        new Vector3(912.4f, 137.0f, 1323.0f), new Quaternion(0.0f, 0.2f, 0.0f, 1.0f)
-                    )}
-                }
-            },
-            { "Akagi", new Dictionary<string, RacePositionsData>
-                {
-                    { "Downhill", new RacePositionsData(
-                        new Vector3(-124.9f, 125.8f, -748.6f), new Quaternion(0.0f, -0.4f, 0.0f, -0.9f), new Vector3(-121.6f, 125.9f, -751.6f), new Quaternion(0.0f, -0.4f, 0.0f, -0.9f),
-                        new Vector3(-124.9f, 125.8f, -748.6f), new Quaternion(0.0f, -0.4f, 0.0f, -0.9f),
-                        new Vector3(693.2f, -134.5f, 320.0f), new Quaternion(0.0f, 0.4f, 0.0f, 0.9f)
-                    )},
-                    { "Uphill", new RacePositionsData(
-                        new Vector3(693.9f, -134.6f, 320.5f), new Quaternion(0.0f, 0.4f, 0.0f, -0.9f), new Vector3(696.1f, -134.5f, 324.5f), new Quaternion(0.0f, 0.4f, 0.0f, -0.9f),
-                        new Vector3(693.9f, -134.6f, 320.5f), new Quaternion(0.0f, 0.4f, 0.0f, -0.9f),
-                        new Vector3(-124.2f, 125.5f, -748.0f), new Quaternion(0.0f, 0.4f, 0.0f, 0.9f)
-                    )}
-                }
-            },
-            { "USUI", new Dictionary<string, RacePositionsData>
-                {
-                    { "Downhill", new RacePositionsData(
-                        new Vector3(1194.4f, 66.3f, 780.0f), new Quaternion(0.0f, -0.8f, 0.0f, 0.5f), new Vector3(1192.8f, 66.4f, 784.4f), new Quaternion(0.0f, -0.8f, 0.0f, 0.6f),
-                        new Vector3(1194.4f, 66.3f, 780.0f), new Quaternion(0.0f, -0.8f, 0.0f, 0.5f),
-                        new Vector3(-1554.9f, -211.4f, -711.5f), new Quaternion(0.0f, 0.7f, 0.0f, -0.7f)
-                    )},
-                    { "Uphill", new RacePositionsData(
-                        new Vector3(-1554.5f, -213.4f, -745.5f), new Quaternion(0.0f, 0.0f, 0.0f, 1.0f), new Vector3(-1550.4f, -213.3f, -745.6f), new Quaternion(0.0f, 0.0f, 0.0f, 1.0f),
-                        new Vector3(-1554.5f, -213.4f, -745.5f), new Quaternion(0.0f, 0.0f, 0.0f, 1.0f),
-                        new Vector3(1270.0f, 68.4f, 784.5f), new Quaternion(0.0f, 0.0f, 0.0f, 1.0f)
-                    )}
-                }
-            }
-        };
-
         public void ApplyBattleSettings()
         {
             CustomRaceManager.BattleSettings battleSettings = CustomRaceManager.raceSettings;
 
-            var mapData = RacePositionData[SceneManager.GetActiveScene().name][battleSettings.direction];
+            var mapData = customRaceData[SceneManager.GetActiveScene().name][battleSettings.direction];
             RaceManager rm = GameObject.FindObjectOfType<RaceManager>();
 
             switch (battleSettings.order)
@@ -346,107 +252,135 @@ namespace WarmTofuMod
                     self.PlayerListing();
                 }
                 else
-                    battleMenu.SetActive(false);
+                    CustomRaceMenu.menu.SetActive(false);
             }
         }
 
-        GameObject battleGameObject = new GameObject();
+        public class CustomRaceMenu : MonoBehaviour
+        {
+            public static GameObject menu;
+            private static Button start;
+            private static GameObject parentUI;
+            private static Dropdown trackDropdown;
+            private static Dropdown posDropdown;
+            private static Toggle nitroToggle;
+            private static Toggle collisionToggle;
+            private static List<string> trackList;
+
+            public CustomRaceMenu(GameObject parent)
+            {
+                Debug.Log("doing stuff");
+                menu = Instantiate(Instantiate(GameObject.FindObjectOfType<SRUIManager>().MenuExit));
+                menu.name = "Custom Race Menu";
+
+                Debug.Log("doing ui");
+                parentUI = parent.GetComponent<SRPlayerListRoom>().PlayerListUI;
+                Transform transform = menu.transform;
+                transform.SetParent(parentUI.transform);
+                transform.position = new Vector3(0, 0, 0);
+                transform.localScale = new Vector3(1f, 1f, 1f);
+
+                Debug.Log("doing text");
+                menu.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(0, 0, 0);
+                menu.GetComponentInChildren<Text>().text = "Battle settings";
+
+                Debug.Log("doing buttons");
+                Button[] battleButtons = menu.GetComponentsInChildren<Button>();
+                Destroy(battleButtons[1].gameObject);
+                start = battleButtons[0];
+
+                start.gameObject.GetComponentInChildren<Text>().text = "Send race invitation";
+                start.onClick = new Button.ButtonClickedEvent();
+                start.onClick.AddListener(SetBattleSettings);
+                start.onClick.AddListener(() => parentUI.SetActive(false));
+                start.onClick.AddListener(() => menu.SetActive(false));
+                start.onClick.AddListener(CustomRaceManager.SendBattleInvitation);
+
+                RectTransform rect = start.GetComponent<RectTransform>();
+                rect.anchorMin = new Vector2(0.6f, 0.5f);
+                rect.anchorMax = new Vector2(0.78f, 0.5f);
+                rect.anchoredPosition = new Vector2(0f, -110f);
+
+                Dropdown dummyDropdown = GameObject.FindObjectOfType<SRUIManager>().MenuSettings.GetComponentInChildren<Dropdown>();
+                Toggle dummyToggle = GameObject.FindObjectOfType<SRUIManager>().MenuSettings.GetComponentInChildren<Toggle>();
+
+                trackDropdown = Instantiate(dummyDropdown);
+                posDropdown = Instantiate(dummyDropdown);
+                nitroToggle = Instantiate(dummyToggle);
+                collisionToggle = Instantiate(dummyToggle);
+                nitroToggle.onValueChanged = new Toggle.ToggleEvent();
+                collisionToggle.onValueChanged = new Toggle.ToggleEvent();
+                trackDropdown.transform.SetParent(menu.transform);
+                Destroy(trackDropdown.gameObject.transform.FindChild("EnTutoPS4").gameObject);
+                posDropdown.transform.SetParent(menu.transform);
+                Destroy(posDropdown.gameObject.transform.FindChild("EnTutoPS4").gameObject);
+                nitroToggle.transform.SetParent(menu.transform);
+                collisionToggle.transform.SetParent(menu.transform);
+                trackDropdown.name = "TrackDropdown";
+                posDropdown.name = "OrderDropdown";
+                nitroToggle.name = "NitroToggle";
+                collisionToggle.name = "CollisionToggle";
+
+                rect = trackDropdown.GetComponent<RectTransform>();
+                rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
+                rect.anchoredPosition3D = new Vector3(-335f, 100, 0);
+                rect.sizeDelta = new Vector2(450f, 100f);
+
+                rect = posDropdown.GetComponent<RectTransform>();
+                rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
+                rect.anchoredPosition3D = new Vector3(-25f, 100, 0);
+                rect.sizeDelta = new Vector2(450f, 100f);
+
+                rect = nitroToggle.GetComponent<RectTransform>();
+                rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
+                rect.anchoredPosition3D = new Vector3(300f, 100, 0);
+                rect.sizeDelta = new Vector2(280f, 85f);
+
+                rect = collisionToggle.GetComponent<RectTransform>();
+                rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
+                rect.anchoredPosition3D = new Vector3(300f, 0, 0);
+                rect.sizeDelta = new Vector2(280f, 85f);
+
+                rect = menu.GetComponent<RectTransform>();
+                rect.anchorMin = new Vector2(0.2f, 0.1f);
+                rect.anchorMax = new Vector2(0.8f, 0.7f);
+                rect.anchoredPosition3D = new Vector3(0, 0, 0);
+                rect.sizeDelta = new Vector2(490f, 150f);
+
+                rect = menu.transform.FindChild("White_BG").gameObject.GetComponent<RectTransform>();
+                rect.anchorMin = new Vector2(0.2f, 0.22f);
+                rect.anchorMax = new Vector2(0.8f, 0.68f);
+                rect.anchoredPosition3D = new Vector3(0, 0, 0);
+                rect.sizeDelta = new Vector2(410f, 200f);
+
+                nitroToggle.gameObject.GetComponentInChildren<Text>().text = "Nitro";
+                collisionToggle.gameObject.GetComponentInChildren<Text>().text = "Collision";
+
+                posDropdown.ClearOptions();
+                posDropdown.AddOptions(new List<string> { "Parallel", "You lead", "You chase" });
+
+                trackDropdown.ClearOptions();
+                trackList = customRaceData[SceneManager.GetActiveScene().name].Keys.ToList();
+                trackDropdown.AddOptions(trackList);
+                trackDropdown.template.sizeDelta = new Vector2(0, 500f);
+            }
+
+            public void SetBattleSettings()
+            {
+                Debug.Log("Setting battle settings");
+                CustomRaceManager.raceSettings.direction = trackDropdown.options[trackDropdown.value].text;
+                CustomRaceManager.raceSettings.order = posDropdown.options[posDropdown.value].text;
+                CustomRaceManager.raceSettings.nitro = nitroToggle.isOn;
+                CustomRaceManager.raceSettings.collision = collisionToggle.isOn;
+            }
+        }
+
         List<GameObject> playerListItems = new();
-        GameObject battleMenu = new GameObject();
         void SRPlayerListRoom_Start(On.SRPlayerListRoom.orig_Start orig, SRPlayerListRoom self)
         {
             orig(self);
-            CustomRaceManager warmTofuBattleManager = self.gameObject.AddComponent<CustomRaceManager>();
-
-            RectTransform rect;
-
-            // Create Battle Menu
-            battleMenu = Instantiate(Instantiate(GameObject.FindObjectOfType<SRUIManager>().MenuExit));
-            battleMenu.name = "Battle Settings";
-            Transform transform = battleMenu.transform;
-            transform.SetParent(self.PlayerListUI.transform);
-            transform.position = new Vector3(0, 0, 0);
-            transform.localScale = new Vector3(1f, 1f, 1f);
-
-            battleMenu.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(0, 0, 0);
-            battleMenu.GetComponentInChildren<Text>().text = "Battle settings";
-            Button[] battleButtons = battleMenu.GetComponentsInChildren<Button>();
-            //Destroy(battleButtons[0].gameObject);
-            Destroy(battleButtons[1].gameObject);
-            battleButtons[0].gameObject.GetComponentInChildren<Text>().text = "Battle player";
-            battleButtons[0].onClick = new Button.ButtonClickedEvent();
-            battleButtons[0].onClick.AddListener(SetBattleSettings);
-            battleButtons[0].onClick.AddListener(() => self.PlayerListUI.SetActive(false));
-            battleButtons[0].onClick.AddListener(() => battleMenu.SetActive(false));
-            battleButtons[0].onClick.AddListener(CustomRaceManager.SendBattleInvitation);
-            rect = battleButtons[0].GetComponent<RectTransform>();
-            rect.anchorMin = new Vector2(0.6f, 0.5f);
-            rect.anchorMax = new Vector2(0.78f, 0.5f);
-            rect.anchoredPosition = new Vector2(0f, -110f);
-
-            Dropdown dummyDropdown = GameObject.FindObjectOfType<SRUIManager>().MenuSettings.GetComponentInChildren<Dropdown>();
-            Toggle dummyToggle = GameObject.FindObjectOfType<SRUIManager>().MenuSettings.GetComponentInChildren<Toggle>();
-
-            Dropdown trackDropdown = Instantiate(dummyDropdown);
-            Dropdown posDropdown = Instantiate(dummyDropdown);
-            Toggle nitroToggle = Instantiate(dummyToggle);
-            Toggle collisionToggle = Instantiate(dummyToggle);
-            nitroToggle.onValueChanged = new Toggle.ToggleEvent();
-            collisionToggle.onValueChanged = new Toggle.ToggleEvent();
-            trackDropdown.transform.SetParent(battleMenu.transform);
-            Destroy(trackDropdown.gameObject.transform.FindChild("EnTutoPS4").gameObject);
-            posDropdown.transform.SetParent(battleMenu.transform);
-            Destroy(posDropdown.gameObject.transform.FindChild("EnTutoPS4").gameObject);
-            nitroToggle.transform.SetParent(battleMenu.transform);
-            collisionToggle.transform.SetParent(battleMenu.transform);
-            trackDropdown.name = "TrackDropdown";
-            posDropdown.name = "OrderDropdown";
-            nitroToggle.name = "NitroToggle";
-            collisionToggle.name = "CollisionToggle";
-
-            rect = trackDropdown.GetComponent<RectTransform>();
-            rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
-            rect.anchoredPosition3D = new Vector3(-335f, 100, 0);
-            rect.sizeDelta = new Vector2(450f, 100f);
-
-            rect = posDropdown.GetComponent<RectTransform>();
-            rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
-            rect.anchoredPosition3D = new Vector3(-25f, 100, 0);
-            rect.sizeDelta = new Vector2(450f, 100f);
-
-            rect = nitroToggle.GetComponent<RectTransform>();
-            rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
-            rect.anchoredPosition3D = new Vector3(300f, 100, 0);
-            rect.sizeDelta = new Vector2(280f, 85f);
-
-            rect = collisionToggle.GetComponent<RectTransform>();
-            rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
-            rect.anchoredPosition3D = new Vector3(300f, 0, 0);
-            rect.sizeDelta = new Vector2(280f, 85f);
-
-            rect = battleMenu.GetComponent<RectTransform>();
-            rect.anchorMin = new Vector2(0.2f, 0.1f);
-            rect.anchorMax = new Vector2(0.8f, 0.7f);
-            rect.anchoredPosition3D = new Vector3(0, 0, 0);
-            rect.sizeDelta = new Vector2(490f, 150f);
-
-            rect = battleMenu.transform.FindChild("White_BG").gameObject.GetComponent<RectTransform>();
-            rect.anchorMin = new Vector2(0.2f, 0.22f);
-            rect.anchorMax = new Vector2(0.8f, 0.68f);
-            rect.anchoredPosition3D = new Vector3(0, 0, 0);
-            rect.sizeDelta = new Vector2(410f, 200f);
-
-            nitroToggle.gameObject.GetComponentInChildren<Text>().text = "Nitro";
-            collisionToggle.gameObject.GetComponentInChildren<Text>().text = "Collision";
-
-            posDropdown.ClearOptions();
-            posDropdown.AddOptions(new List<string> { "Parallel", "You lead", "You chase" });
-
-            trackDropdown.ClearOptions();
-            List<string> trackList = RacePositionData[SceneManager.GetActiveScene().name].Keys.ToList();
-            trackDropdown.AddOptions(trackList);
-            trackDropdown.template.sizeDelta = new Vector2(0, 500f);
-
+            self.gameObject.AddComponent<CustomRaceManager>();
+            new CustomRaceMenu(self.gameObject);
 
             playerListItems.Clear();
             Text[] texts = self.PlayerListUI.GetComponentsInChildren<Text>();
@@ -474,45 +408,14 @@ namespace WarmTofuMod
             }
         }
 
-        void SetBattleSettings()
-        {
-            GameObject battleOptions = battleMenu;
-            Dropdown[] dropdowns = battleOptions.GetComponentsInChildren<Dropdown>();
-            foreach (Dropdown dropdown in dropdowns)
-            {
-                if (dropdown.name == "TrackDropdown")
-                {
-                    CustomRaceManager.raceSettings.direction = dropdown.options[dropdown.value].text;
-                }
-                else if (dropdown.name == "OrderDropdown")
-                {
-                    CustomRaceManager.raceSettings.order = dropdown.options[dropdown.value].text;
-                }
-            }
-
-            Toggle[] toggles = battleOptions.GetComponentsInChildren<Toggle>();
-            foreach (Toggle toggle in toggles)
-            {
-                if (toggle.name == "NitroToggle")
-                {
-                    CustomRaceManager.raceSettings.nitro = toggle.isOn;
-                }
-                else if (toggle.name == "CollisionToggle")
-                {
-                    CustomRaceManager.raceSettings.collision = toggle.isOn;
-                }
-            }
-        }
-
         void BattleOptions(RCC_CarControllerV3 carControllerV3)
         {
             Debug.Log("rival is " + carControllerV3);
             CustomRaceManager.SetRival(carControllerV3);
 
             Debug.Log("Opened battle options against " + CustomRaceManager.GetRivalPhotonName() + " " + CustomRaceManager.GetRivalPlayerName());
-            battleMenu.SetActive(true);
-            battleMenu.GetComponentInChildren<Text>().text = "Battle against " + CustomRaceManager.GetRivalPlayerName();
-            //GameObject.FindObjectOfType<SRPlayerListRoom>().PlayerListUI.SetActive(false);
+            CustomRaceMenu.menu.SetActive(true);
+            CustomRaceMenu.menu.GetComponentInChildren<Text>().text = "Race against " + CustomRaceManager.GetRivalPlayerName();
         }
 
         public class BattleHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
