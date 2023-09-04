@@ -107,9 +107,12 @@ namespace WarmTofuMod
         void SRPlayerCollider_SendRaceInvitation(On.SRPlayerCollider.orig_SendRaceInvitation orig, SRPlayerCollider self, string rivalPhotonName, string playerName)
         {
             WarmTofuBattleManager warmTofuBattleManager = GameObject.FindObjectOfType<WarmTofuBattleManager>();
-            ApplyBattleSettings();
+
             if (warmTofuBattleManager.isCustomRace)
+            {
+                ApplyBattleSettings();
                 warmTofuBattleManager.SendBattleInvitationRPC();
+            }
             else
                 orig(self, rivalPhotonName, playerName);
         }
