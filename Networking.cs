@@ -93,7 +93,7 @@ namespace WarmTofuMod
                 //{
                 Debug.Log("Received battle invitation from " + playerName + " " + playerPhotonName + " " + direction + " " + order + " Nitro: " + nitro + " Collision: " + collision);
                 CustomRaceManager warmTofuBattleManager = GameObject.FindObjectOfType<CustomRaceManager>();
-                CustomRaceManager.isWarmTofuModRace = true;
+                CustomRaceManager.customRaceInvite = true;
                 CustomRaceManager.isMyInvitation = false;
                 CustomRaceManager.raceSettings.direction = direction;
                 CustomRaceManager.raceSettings.order = order;

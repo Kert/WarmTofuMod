@@ -69,6 +69,12 @@ namespace WarmTofuMod
                 On.RaceManager.DecompteRunningIE += RaceManager_DecompteRunningIE;
                 On.SRNosManager.Update += SRNosManager_Update;
                 On.RCC_CarControllerV3.Inputs += RCC_CarControllerV3_Inputs;
+                On.RaceManager.LetsGoRaceP1 += RaceManager_LetsGoRaceP1;
+                On.RaceManager.LetsGoRaceP2 += RaceManager_LetsGoRaceP2;
+                On.RaceManager.OtherLeaveRun += RaceManager_OtherLeaveRun;
+                On.RaceManager.StopRun += RaceManager_StopRun;
+                On.RaceManager.FinishFirst += RaceManager_FinishFirst;
+                On.RaceManager.FinishSecond += RaceManager_FinishSecond;
 
                 // Front suspension not saving fix
                 On.GarageManager.Start += GarageManager_Start;

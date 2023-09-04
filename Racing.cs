@@ -34,7 +34,8 @@ namespace WarmTofuMod
                 }
             }
             public static BattleSettings raceSettings;
-            public static bool isWarmTofuModRace = false;
+            public static bool customRaceStarted = false;
+            public static bool customRaceInvite = false;
             public static bool isMyInvitation = true;
 
             CustomRaceManager()
@@ -71,7 +72,7 @@ namespace WarmTofuMod
 
             public static void SendBattleInvitation()
             {
-                isWarmTofuModRace = true;
+                customRaceInvite = true;
                 isMyInvitation = true;
                 //rival.GetComponentInParent<SRPlayerCollider>().SendRaceInvitation(GetRivalPhotonName(), GetPlayerName());
                 //Debug.Log("Opened battle options against " + rivalPhotonName + " " + rivalName);
@@ -112,17 +113,69 @@ namespace WarmTofuMod
                     raceSettings.collision
                 });
             }
+
+            public static void RaceEnd()
+            {
+                customRaceStarted = false;
+            }
         }
 
         void SRPlayerCollider_SendRaceInvitation(On.SRPlayerCollider.orig_SendRaceInvitation orig, SRPlayerCollider self, string rivalPhotonName, string playerName)
         {
-            if (CustomRaceManager.isWarmTofuModRace)
-            {
-                ApplyBattleSettings();
+            if (CustomRaceManager.customRaceInvite)
                 CustomRaceManager.SendBattleInvitationRPC();
-            }
             else
                 orig(self, rivalPhotonName, playerName);
+        }
+
+        void RaceManager_ShowMyInvitation(On.RaceManager.orig_ShowMyInvitation orig, RaceManager self, string Sender, string EnvoyeurDelaDemande)
+        {
+            orig(self, Sender, EnvoyeurDelaDemande);
+            if (CustomRaceManager.customRaceInvite)
+            {
+                CustomRaceManager.BattleSettings battleSettings = CustomRaceManager.raceSettings;
+                self.RaceNotification.GetComponentInChildren<Text>().text = "<color=#B95353>" + Sender + "</color> \n" + self.ChallengeYou + "\n" +
+                battleSettings.direction + ". " + battleSettings.order + "\n" + "Nitro: " + (battleSettings.nitro ? "Yes" : "No") + " Collision: " + (battleSettings.collision ? "Yes" : "No");
+                Debug.Log("Battle settings set for receiver");
+            }
+        }
+
+        void RaceManager_LetsGoRaceP1(On.RaceManager.orig_LetsGoRaceP1 orig, RaceManager self)
+        {
+            if (CustomRaceManager.customRaceInvite)
+                ApplyBattleSettings();
+            orig(self);
+        }
+
+        void RaceManager_LetsGoRaceP2(On.RaceManager.orig_LetsGoRaceP2 orig, RaceManager self)
+        {
+            if (CustomRaceManager.customRaceInvite)
+                ApplyBattleSettings();
+            orig(self);
+        }
+
+        void RaceManager_OtherLeaveRun(On.RaceManager.orig_OtherLeaveRun orig, RaceManager self)
+        {
+            orig(self);
+            CustomRaceManager.RaceEnd();
+        }
+
+        void RaceManager_StopRun(On.RaceManager.orig_StopRun orig, RaceManager self)
+        {
+            orig(self);
+            CustomRaceManager.RaceEnd();
+        }
+
+        void RaceManager_FinishFirst(On.RaceManager.orig_FinishFirst orig, RaceManager self)
+        {
+            orig(self);
+            CustomRaceManager.RaceEnd();
+        }
+
+        void RaceManager_FinishSecond(On.RaceManager.orig_FinishSecond orig, RaceManager self)
+        {
+            orig(self);
+            CustomRaceManager.RaceEnd();
         }
 
         struct RacePositionsData
@@ -280,19 +333,6 @@ namespace WarmTofuMod
             //fz.gameObject.transform.GetChild(0).gameObject.AddComponent<HUDNavigationElement>();
         }
 
-        void RaceManager_ShowMyInvitation(On.RaceManager.orig_ShowMyInvitation orig, RaceManager self, string Sender, string EnvoyeurDelaDemande)
-        {
-            orig(self, Sender, EnvoyeurDelaDemande);
-            CustomRaceManager.BattleSettings battleSettings = CustomRaceManager.raceSettings;
-            if (CustomRaceManager.isWarmTofuModRace)
-            {
-                self.RaceNotification.GetComponentInChildren<Text>().text = "<color=#B95353>" + Sender + "</color> \n" + self.ChallengeYou + "\n" +
-                battleSettings.direction + ". " + battleSettings.order + "\n" + "Nitro: " + (battleSettings.nitro ? "Yes" : "No") + " Collision: " + (battleSettings.collision ? "Yes" : "No");
-                Debug.Log("Battle settings set for receiver");
-                ApplyBattleSettings();
-            }
-        }
-
         void SRPlayerListRoom_Update(On.SRPlayerListRoom.orig_Update orig, SRPlayerListRoom self)
         {
             if (Input.GetKeyDown(KeyCode.Tab) ||
@@ -305,6 +345,8 @@ namespace WarmTofuMod
                     self.SteamIcon();
                     self.PlayerListing();
                 }
+                else
+                    battleMenu.SetActive(false);
             }
         }
 
@@ -316,16 +358,7 @@ namespace WarmTofuMod
             orig(self);
             CustomRaceManager warmTofuBattleManager = self.gameObject.AddComponent<CustomRaceManager>();
 
-
-            GameObject battleGO = Instantiate(GameObject.FindObjectOfType<SRUIManager>().BtnLobby);
-            battleGO.name = "BattleButton";
-            Button battle = battleGO.gameObject.GetComponent<Button>();
-            battle.onClick = new Button.ButtonClickedEvent();
-            battleGO.transform.SetParent(self.PlayerListUI.transform);
-            battleGO.GetComponentInChildren<Text>().text = "Battle";
-            RectTransform rect = battleGO.GetComponent<RectTransform>();
-            rect.anchoredPosition3D = new Vector3(240, 400, 0);
-            rect.anchorMin = rect.anchorMax = new Vector2(0, 0);
+            RectTransform rect;
 
             // Create Battle Menu
             battleMenu = Instantiate(Instantiate(GameObject.FindObjectOfType<SRUIManager>().MenuExit));
@@ -414,12 +447,6 @@ namespace WarmTofuMod
             trackDropdown.AddOptions(trackList);
             trackDropdown.template.sizeDelta = new Vector2(0, 500f);
 
-            // tpButtons[0].GetComponentInChildren<Text>().text = "Downhill";
-            // tpButtons[1].GetComponentInChildren<Text>().text = "Uphill";
-            // tpButtons[0].onClick = new Button.ButtonClickedEvent();
-            // tpButtons[1].onClick = new Button.ButtonClickedEvent();
-            // tpButtons[0].onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Downhill));
-            // tpButtons[1].onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Uphill));
 
             playerListItems.Clear();
             Text[] texts = self.PlayerListUI.GetComponentsInChildren<Text>();
@@ -427,7 +454,9 @@ namespace WarmTofuMod
             {
                 if (text.gameObject.name == "P1 (0)")
                 {
-                    Button smallButton = Instantiate(battle);
+                    Button smallButton = Instantiate(GameObject.FindObjectOfType<SRUIManager>().BtnLobby.GetComponent<Button>());
+                    smallButton.GetComponentInChildren<Text>().text = "Battle";
+
                     BattleHover bh = smallButton.gameObject.AddComponent<BattleHover>();
                     smallButton.transform.SetParent(text.gameObject.transform);
                     RectTransform r = smallButton.GetComponent<RectTransform>();
@@ -439,6 +468,7 @@ namespace WarmTofuMod
                     t.fontSize = t.resizeTextMaxSize = 20;
                     t.resizeTextMinSize = 1;
                     playerListItems.Add(smallButton.gameObject);
+                    smallButton.onClick = new Button.ButtonClickedEvent();
                     smallButton.onClick.AddListener(() => BattleOptions(bh.rival));
                 }
             }
@@ -585,7 +615,12 @@ namespace WarmTofuMod
         IEnumerator RaceManager_DecompteRunningIE(On.RaceManager.orig_DecompteRunningIE orig, RaceManager self)
         {
             yield return orig(self);
-            if (CustomRaceManager.isWarmTofuModRace && CustomRaceManager.raceSettings.collision == true)
+            if (CustomRaceManager.customRaceInvite)
+            {
+                CustomRaceManager.customRaceInvite = false;
+                CustomRaceManager.customRaceStarted = true;
+            }
+            if (CustomRaceManager.customRaceStarted && CustomRaceManager.raceSettings.collision == true)
             {
                 RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponentInParent<SRPlayerCollider>().AppelRPCSetGhostModeV2(8);
             }
@@ -593,7 +628,7 @@ namespace WarmTofuMod
 
         void SRNosManager_Update(On.SRNosManager.orig_Update orig, SRNosManager self)
         {
-            if (CustomRaceManager.isWarmTofuModRace && !CustomRaceManager.raceSettings.nitro)
+            if (CustomRaceManager.customRaceStarted && !CustomRaceManager.raceSettings.nitro)
                 return;
             else
                 orig(self);
@@ -603,9 +638,8 @@ namespace WarmTofuMod
         void RCC_CarControllerV3_Inputs(On.RCC_CarControllerV3.orig_Inputs orig, RCC_CarControllerV3 self)
         {
             orig(self);
-            if (CustomRaceManager.isWarmTofuModRace && !CustomRaceManager.raceSettings.nitro)
+            if (CustomRaceManager.customRaceStarted && !CustomRaceManager.raceSettings.nitro)
                 self.boostInput = 0f;
         }
-
     }
 }
