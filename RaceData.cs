@@ -99,5 +99,29 @@ namespace WarmTofuMod
                 }
             }
         };
+
+        static Dictionary<string, RacePositionsData> defaultRaceData = new Dictionary<string, RacePositionsData>
+        {
+            { "Irohazaka", new RacePositionsData(
+                        new Vector3(1232.7f, 260.2f, 55.5f), new Quaternion(0.0f, 1.0f, 0.0f, -0.3f), new Vector3(1230.2f, 260.2f, 57.0f), new Quaternion(0.0f, 1.0f, 0.0f, -0.3f),
+                        new Vector3(1232.7f, 260.2f, 59.0f), new Quaternion(0.0f, -1.0f, 0.0f, 0.3f),
+                        new Vector3(-1321.0f, -289.0f, 218.1f), new Quaternion(0.0f, 0.4f, 0.0f, -0.9f)
+            )},
+            { "Akina", new RacePositionsData(
+                        new Vector3(875.1f, 136.2f, 1144.5f), new Quaternion(0.0f, 1.0f, 0.0f, -0.1f), new Vector3(871.8f, 136.0f, 1145.4f), new Quaternion(0.0f, 1.0f, 0.0f, -0.1f),
+                        new Vector3(875.1f, 136.2f, 1144.5f), new Quaternion(0.0f, 1.0f, 0.0f, -0.1f),
+                        new Vector3(-1382.4f, -146.0f, -1103.6f), new Quaternion(0.0f, 0.3f, 0.0f, 1.0f)
+            )},
+            { "Akagi", new RacePositionsData(
+                        new Vector3(686.5f, -134.1f, 332.0f), new Quaternion(0.0f, -0.5f, 0.0f, 0.9f), new Vector3(684.1f, -134.1f, 328.2f), new Quaternion(0.0f, -0.5f, 0.0f, 0.9f),
+                        new Vector3(686.5f, -134.1f, 332.0f), new Quaternion(0.0f, -0.5f, 0.0f, 0.9f),
+                        new Vector3(-291.2f, 140.5f, -1058.0f), new Quaternion(0.0f, -0.7f, 0.0f, 0.7f)
+            )},
+            { "USUI", new RacePositionsData(
+                        new Vector3(1366.8f, 66.1f, 784.3f), new Quaternion(0.0f, -0.7f, 0.0f, 0.7f), new Vector3(1366.6f, 66.1f, 779.1f), new Quaternion(0.0f, -0.7f, 0.0f, 0.7f),
+                        new Vector3(1366.8f, 66.1f, 784.3f), new Quaternion(0.0f, -0.7f, 0.0f, 0.7f),
+                        new Vector3(-1554.9f, -211.4f, -711.5f), new Quaternion(0.0f, 0.7f, 0.0f, -0.7f)
+            )}
+        };
     }
 }

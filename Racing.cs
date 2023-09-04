@@ -142,15 +142,13 @@ namespace WarmTofuMod
 
         void RaceManager_LetsGoRaceP1(On.RaceManager.orig_LetsGoRaceP1 orig, RaceManager self)
         {
-            if (CustomRaceManager.customRaceInvite)
-                ApplyBattleSettings();
+            ChangeRacePositionData();
             orig(self);
         }
 
         void RaceManager_LetsGoRaceP2(On.RaceManager.orig_LetsGoRaceP2 orig, RaceManager self)
         {
-            if (CustomRaceManager.customRaceInvite)
-                ApplyBattleSettings();
+            ChangeRacePositionData();
             orig(self);
         }
 
@@ -178,13 +176,22 @@ namespace WarmTofuMod
             CustomRaceManager.RaceEnd();
         }
 
-        public void ApplyBattleSettings()
+        public void ChangeRacePositionData()
         {
-            CustomRaceManager.BattleSettings battleSettings = CustomRaceManager.raceSettings;
-
-            var mapData = customRaceData[SceneManager.GetActiveScene().name][battleSettings.direction];
             RaceManager rm = GameObject.FindObjectOfType<RaceManager>();
+            if (!CustomRaceManager.customRaceInvite)
+            {
+                var defaultData = defaultRaceData[SceneManager.GetActiveScene().name];
+                rm.StartingPointP1.position = defaultData.posP1;
+                rm.StartingPointP1.rotation = defaultData.rotP1;
+                rm.StartingPointP2.position = defaultData.posP2;
+                rm.StartingPointP2.rotation = defaultData.rotP2;
+                GameObject.FindObjectOfType<FinishZone>().transform.SetPositionAndRotation(defaultData.posFinish, defaultData.rotFinish);
+                return;
+            }
 
+            CustomRaceManager.BattleSettings battleSettings = CustomRaceManager.raceSettings;
+            var mapData = customRaceData[SceneManager.GetActiveScene().name][battleSettings.direction];
             switch (battleSettings.order)
             {
                 case "Parallel":
@@ -237,23 +244,6 @@ namespace WarmTofuMod
             //HUDNavigationElement woo = fz.gameObject.AddComponent<HUDNavigationElement>();
             //Destroy(fz.gameObject.GetComponentInChildren<HUDNavigationElement>());
             //fz.gameObject.transform.GetChild(0).gameObject.AddComponent<HUDNavigationElement>();
-        }
-
-        void SRPlayerListRoom_Update(On.SRPlayerListRoom.orig_Update orig, SRPlayerListRoom self)
-        {
-            if (Input.GetKeyDown(KeyCode.Tab) ||
-            (Input.GetKeyDown(KeyCode.Joystick1Button8) && ObscuredPrefs.GetBool("TooglePlayerListXbox", false) && PlayerPrefs.GetString("ControllerTypeChoose") == "Xbox360One") ||
-            (Input.GetButtonDown("PS4_ClickLeft") && ObscuredPrefs.GetBool("TooglePlayerListXbox", false) && PlayerPrefs.GetString("ControllerTypeChoose") == "PS4"))
-            {
-                self.PlayerListUI.SetActive(!self.PlayerListUI.activeSelf);
-                if (self.PlayerListUI.activeSelf)
-                {
-                    self.SteamIcon();
-                    self.PlayerListing();
-                }
-                else
-                    CustomRaceMenu.menu.SetActive(false);
-            }
         }
 
         public class CustomRaceMenu : MonoBehaviour
@@ -365,7 +355,7 @@ namespace WarmTofuMod
                 trackDropdown.template.sizeDelta = new Vector2(0, 500f);
             }
 
-            public void SetBattleSettings()
+            public static void SetBattleSettings()
             {
                 Debug.Log("Setting battle settings");
                 CustomRaceManager.raceSettings.direction = trackDropdown.options[trackDropdown.value].text;
@@ -401,6 +391,7 @@ namespace WarmTofuMod
                     Text t = smallButton.GetComponentInChildren<Text>();
                     t.fontSize = t.resizeTextMaxSize = 20;
                     t.resizeTextMinSize = 1;
+                    smallButton.gameObject.SetActive(false);
                     playerListItems.Add(smallButton.gameObject);
                     smallButton.onClick = new Button.ButtonClickedEvent();
                     smallButton.onClick.AddListener(() => BattleOptions(bh.rival));
@@ -454,21 +445,21 @@ namespace WarmTofuMod
             string playerPhotonName = RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<SRPlayerCollider>().name;
             foreach (GameObject playerItem in playerListItems)
             {
-
-                playerItem.SetActive(true);
-                BattleHover asd = playerItem.gameObject.GetComponent<BattleHover>();
-                asd.rival = RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<RCC_CarControllerV3>();
-                continue;
+                // playerItem.SetActive(true);
+                // BattleHover asd = playerItem.gameObject.GetComponent<BattleHover>();
+                // asd.rival = RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<RCC_CarControllerV3>();
+                // continue;
 
                 SRCheckOtherPlayerCam obj = playerItem.transform.GetParent().transform.GetParent().GetComponentInChildren<SRCheckOtherPlayerCam>();
-                if (!obj.MyTargetPlayer_Go)
+                RCC_CarControllerV3 photonCar = (RCC_CarControllerV3)typeof(SRCheckOtherPlayerCam).GetField("jack", bindingFlags).GetValue(obj);
+                int state = (int)typeof(SRCheckOtherPlayerCam).GetField("State", bindingFlags).GetValue(obj);
+                if (state == 0 || !photonCar)
                 {
                     playerItem.SetActive(false);
                     continue;
                 }
-                RCC_CarControllerV3 photonCar = (RCC_CarControllerV3)typeof(SRCheckOtherPlayerCam).GetField("jack", bindingFlags).GetValue(obj);
-                string photonName = obj.MyTargetPlayer_Go.name;
-                if (!photonCar || photonName == playerPhotonName)
+                string photonName = photonCar.gameObject.name;
+                if (photonName == playerPhotonName)
                 {
                     playerItem.SetActive(false);
                     continue;
@@ -476,10 +467,17 @@ namespace WarmTofuMod
 
                 // disable everyone who is not warmtofu
                 Text buttonText = playerItem.gameObject.GetComponentInChildren<Text>();
+                // if (!NetworkTest.PlayerHasMod(photonName))
+                //     buttonText.color = Color.blue;
+                // else
+                //     buttonText.color = Color.yellow;
+
                 if (!NetworkTest.PlayerHasMod(photonName))
-                    buttonText.color = Color.blue;
-                else
-                    buttonText.color = Color.yellow;
+                {
+                    playerItem.SetActive(false);
+                    continue;
+                }
+
 
                 BattleHover bh = playerItem.gameObject.GetComponent<BattleHover>();
                 buttonText.text = bh.playerName = playerItem.gameObject.transform.GetParent().GetComponent<Text>().text;
@@ -491,23 +489,40 @@ namespace WarmTofuMod
             }
         }
 
+        void SRPlayerListRoom_Update(On.SRPlayerListRoom.orig_Update orig, SRPlayerListRoom self)
+        {
+            if (Input.GetKeyDown(KeyCode.Tab) ||
+            (Input.GetKeyDown(KeyCode.Joystick1Button8) && ObscuredPrefs.GetBool("TooglePlayerListXbox", false) && PlayerPrefs.GetString("ControllerTypeChoose") == "Xbox360One") ||
+            (Input.GetButtonDown("PS4_ClickLeft") && ObscuredPrefs.GetBool("TooglePlayerListXbox", false) && PlayerPrefs.GetString("ControllerTypeChoose") == "PS4"))
+            {
+                self.PlayerListUI.SetActive(!self.PlayerListUI.activeSelf);
+                if (self.PlayerListUI.activeSelf)
+                {
+                    self.SteamIcon();
+                    self.PlayerListing();
+                    self.StartCoroutine(PlayerListUpdate(self));
+                }
+                else
+                    CustomRaceMenu.menu.SetActive(false);
+            }
+        }
+
         void SRPlayerListRoom_PlayerListing(On.SRPlayerListRoom.orig_PlayerListing orig, SRPlayerListRoom self)
         {
+            UpdateBattleHovers();
             orig(self);
-            self.StartCoroutine(PlayerListUpdate(self));
         }
 
         void SRPlayerListRoom_PlayerListingRefresh(On.SRPlayerListRoom.orig_PlayerListingRefresh orig, SRPlayerListRoom self)
         {
             orig(self);
-            UpdateBattleHovers();
         }
 
         IEnumerator PlayerListUpdate(SRPlayerListRoom sRPlayerListRoom)
         {
             while (true)
             {
-                sRPlayerListRoom.PlayerListingRefresh();
+                sRPlayerListRoom.PlayerListing();
                 yield return new WaitForSeconds(1);
                 if (!sRPlayerListRoom.PlayerListUI.active)
                     break;
