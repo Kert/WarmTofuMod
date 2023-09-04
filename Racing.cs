@@ -581,5 +581,14 @@ namespace WarmTofuMod
             }
             yield break;
         }
+
+        IEnumerator RaceManager_DecompteRunningIE(On.RaceManager.orig_DecompteRunningIE orig, RaceManager self)
+        {
+            yield return orig(self);
+            if (CustomRaceManager.isWarmTofuModRace && CustomRaceManager.raceSettings.collision == true)
+            {
+                RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponentInParent<SRPlayerCollider>().AppelRPCSetGhostModeV2(8);
+            }
+        }
     }
 }
