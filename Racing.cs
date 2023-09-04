@@ -590,5 +590,22 @@ namespace WarmTofuMod
                 RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponentInParent<SRPlayerCollider>().AppelRPCSetGhostModeV2(8);
             }
         }
+
+        void SRNosManager_Update(On.SRNosManager.orig_Update orig, SRNosManager self)
+        {
+            if (CustomRaceManager.isWarmTofuModRace && !CustomRaceManager.raceSettings.nitro)
+                return;
+            else
+                orig(self);
+
+        }
+
+        void RCC_CarControllerV3_Inputs(On.RCC_CarControllerV3.orig_Inputs orig, RCC_CarControllerV3 self)
+        {
+            orig(self);
+            if (CustomRaceManager.isWarmTofuModRace && !CustomRaceManager.raceSettings.nitro)
+                self.boostInput = 0f;
+        }
+
     }
 }
