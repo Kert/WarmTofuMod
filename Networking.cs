@@ -119,13 +119,11 @@ namespace WarmTofuMod
         {
             orig(self);
             Debug.Log("Photon network started");
+            WarmTofuNetwork nt = self.gameObject.GetComponent<WarmTofuNetwork>();
+            if (!nt)
+                nt = self.gameObject.AddComponent<WarmTofuNetwork>();
             if (self.gameObject.GetComponent<PhotonView>().IsMine)
-            {
-                WarmTofuNetwork nt = self.gameObject.GetComponent<WarmTofuNetwork>();
-                if (!nt)
-                    nt = self.gameObject.AddComponent<WarmTofuNetwork>();
                 nt.SendModInfo(WarmTofuNetwork.oldPhotonName);
-            }
         }
     }
 }
