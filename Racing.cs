@@ -437,5 +437,11 @@ namespace WarmTofuMod
             if (CustomRaceManager.customRaceStarted && !CustomRaceManager.raceSettings.nitro)
                 self.boostInput = 0f;
         }
+
+        void RaceManager_Start(On.RaceManager.orig_Start orig, RaceManager self)
+        {
+            orig(self);
+            self.FightTouch = KeyCode.E;
+        }
     }
 }

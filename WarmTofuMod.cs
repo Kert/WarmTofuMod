@@ -77,6 +77,7 @@ namespace WarmTofuMod
                 On.RaceManager.StopRun += RaceManager_StopRun;
                 On.RaceManager.FinishFirst += RaceManager_FinishFirst;
                 On.RaceManager.FinishSecond += RaceManager_FinishSecond;
+                On.RaceManager.Start += RaceManager_Start;
 
                 // Front suspension not saving fix
                 On.GarageManager.Start += GarageManager_Start;
