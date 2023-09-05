@@ -3,7 +3,6 @@ using UnityEngine;
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using CodeStage.AntiCheat.Storage;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -15,7 +14,7 @@ namespace WarmTofuMod
 {
     public partial class WarmTofuMod : BaseUnityPlugin
     {
-        public class CustomRaceManager : MonoBehaviour
+        public partial class CustomRaceManager : MonoBehaviour
         {
             private CustomRaceManager instance = null;
             private static RCC_CarControllerV3 rival = null;
@@ -37,12 +36,13 @@ namespace WarmTofuMod
             public static bool customRaceStarted = false;
             public static bool customRaceInvite = false;
             public static bool isMyInvitation = true;
-
             CustomRaceManager()
             {
                 if (instance)
                     Debug.Log("Trying to create CustomRaceManager when it already exists");
                 instance = this;
+                new CustomRaceMenu(this.gameObject);
+                new CustomRacePlayerBattleButtons(GameObject.FindObjectOfType<SRPlayerListRoom>().PlayerListUI);
             }
 
             void OnDestroy()
@@ -78,6 +78,11 @@ namespace WarmTofuMod
 
                 typeof(RaceManager).GetField("CibleName", bindingFlags).SetValue(rm, (ObscuredString)GetPlayerPhotonName());
                 typeof(RaceManager).GetField("CiblePhotonName", bindingFlags).SetValue(rm, (ObscuredString)GetRivalPhotonName());
+                typeof(RaceManager).GetField("TuPeuxAsk", bindingFlags).SetValue(rm, (ObscuredInt)1);
+                rm.UIAskToPlayer.SetActive(true);
+                rm.UIAskToPlayer.GetComponent<Text>().text = rm.InvitationSentTo + GetRivalPlayerName();
+                rm.UIAskToPlayer.GetComponent<Animator>().Play("UATPappear");
+                rm.CocheInvitationSent.SetActive(true);
                 rm.SendRaceInvitation();
             }
 
@@ -109,6 +114,11 @@ namespace WarmTofuMod
             public static void RaceEnd()
             {
                 customRaceStarted = false;
+            }
+
+            public static GameObject GetCustomRaceMenu()
+            {
+                return CustomRaceMenu.GetMenu();
             }
         }
 
@@ -229,246 +239,131 @@ namespace WarmTofuMod
             }
         }
 
-        public class CustomRaceMenu : MonoBehaviour
+        class CustomRacePlayerBattleButtons
         {
-            public static GameObject menu;
-            private static Button start;
-            private static GameObject parentUI;
-            private static Dropdown directionDropdown;
-            private static Dropdown orderDropdown;
-            private static Toggle nitroToggle;
-            private static Toggle collisionToggle;
-            private static List<string> trackList;
-
-            public CustomRaceMenu(GameObject parent)
+            static List<GameObject> playerListItems = new();
+            public CustomRacePlayerBattleButtons(GameObject parent)
             {
-                Debug.Log("doing stuff");
-                menu = Instantiate(Instantiate(GameObject.FindObjectOfType<SRUIManager>().MenuExit));
-                menu.name = "Custom Race Menu";
-
-                Debug.Log("doing ui");
-                parentUI = parent.GetComponent<SRPlayerListRoom>().PlayerListUI;
-                Transform transform = menu.transform;
-                transform.SetParent(parentUI.transform);
-                transform.position = new Vector3(0, 0, 0);
-                transform.localScale = new Vector3(1f, 1f, 1f);
-
-                Debug.Log("doing text");
-                menu.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(0, 0, 0);
-                menu.GetComponentInChildren<Text>().text = "Battle settings";
-
-                Debug.Log("doing buttons");
-                Button[] battleButtons = menu.GetComponentsInChildren<Button>();
-                Destroy(battleButtons[1].gameObject);
-                start = battleButtons[0];
-
-                start.gameObject.GetComponentInChildren<Text>().text = "Send race invitation";
-                start.onClick = new Button.ButtonClickedEvent();
-                start.onClick.AddListener(SetRaceSettings);
-                start.onClick.AddListener(() => parentUI.SetActive(false));
-                start.onClick.AddListener(() => menu.SetActive(false));
-                start.onClick.AddListener(CustomRaceManager.SendBattleInvitation);
-
-                RectTransform rect = start.GetComponent<RectTransform>();
-                rect.anchorMin = new Vector2(0.6f, 0.5f);
-                rect.anchorMax = new Vector2(0.78f, 0.5f);
-                rect.anchoredPosition = new Vector2(0f, -110f);
-
-                Dropdown dummyDropdown = GameObject.FindObjectOfType<SRUIManager>().MenuSettings.GetComponentInChildren<Dropdown>();
-                Toggle dummyToggle = GameObject.FindObjectOfType<SRUIManager>().MenuSettings.GetComponentInChildren<Toggle>();
-
-                directionDropdown = Instantiate(dummyDropdown);
-                orderDropdown = Instantiate(dummyDropdown);
-                nitroToggle = Instantiate(dummyToggle);
-                collisionToggle = Instantiate(dummyToggle);
-                nitroToggle.onValueChanged = new Toggle.ToggleEvent();
-                collisionToggle.onValueChanged = new Toggle.ToggleEvent();
-                directionDropdown.transform.SetParent(menu.transform);
-                Destroy(directionDropdown.gameObject.transform.FindChild("EnTutoPS4").gameObject);
-                orderDropdown.transform.SetParent(menu.transform);
-                Destroy(orderDropdown.gameObject.transform.FindChild("EnTutoPS4").gameObject);
-                nitroToggle.transform.SetParent(menu.transform);
-                collisionToggle.transform.SetParent(menu.transform);
-                directionDropdown.name = "TrackDropdown";
-                orderDropdown.name = "OrderDropdown";
-                nitroToggle.name = "NitroToggle";
-                collisionToggle.name = "CollisionToggle";
-
-                rect = directionDropdown.GetComponent<RectTransform>();
-                rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
-                rect.anchoredPosition3D = new Vector3(-335f, 100, 0);
-                rect.sizeDelta = new Vector2(450f, 100f);
-
-                rect = orderDropdown.GetComponent<RectTransform>();
-                rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
-                rect.anchoredPosition3D = new Vector3(-25f, 100, 0);
-                rect.sizeDelta = new Vector2(450f, 100f);
-
-                rect = nitroToggle.GetComponent<RectTransform>();
-                rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
-                rect.anchoredPosition3D = new Vector3(300f, 100, 0);
-                rect.sizeDelta = new Vector2(280f, 85f);
-
-                rect = collisionToggle.GetComponent<RectTransform>();
-                rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
-                rect.anchoredPosition3D = new Vector3(300f, 0, 0);
-                rect.sizeDelta = new Vector2(280f, 85f);
-
-                rect = menu.GetComponent<RectTransform>();
-                rect.anchorMin = new Vector2(0.2f, 0.1f);
-                rect.anchorMax = new Vector2(0.8f, 0.7f);
-                rect.anchoredPosition3D = new Vector3(0, 0, 0);
-                rect.sizeDelta = new Vector2(490f, 150f);
-
-                rect = menu.transform.FindChild("White_BG").gameObject.GetComponent<RectTransform>();
-                rect.anchorMin = new Vector2(0.2f, 0.22f);
-                rect.anchorMax = new Vector2(0.8f, 0.68f);
-                rect.anchoredPosition3D = new Vector3(0, 0, 0);
-                rect.sizeDelta = new Vector2(410f, 200f);
-
-                nitroToggle.gameObject.GetComponentInChildren<Text>().text = "Nitro";
-                collisionToggle.gameObject.GetComponentInChildren<Text>().text = "Collision";
-
-                orderDropdown.ClearOptions();
-                orderDropdown.AddOptions(new List<string> { "Parallel", "You lead", "You chase" });
-
-                directionDropdown.ClearOptions();
-                trackList = customRaceData[SceneManager.GetActiveScene().name].Keys.ToList();
-                directionDropdown.AddOptions(trackList);
-                directionDropdown.template.sizeDelta = new Vector2(0, 500f);
-            }
-
-            public static void SetRaceSettings()
-            {
-                CustomRaceManager.raceSettings.direction = directionDropdown.options[directionDropdown.value].text;
-                CustomRaceManager.raceSettings.order = orderDropdown.options[orderDropdown.value].text;
-                CustomRaceManager.raceSettings.nitro = nitroToggle.isOn;
-                CustomRaceManager.raceSettings.collision = collisionToggle.isOn;
-            }
-        }
-
-        List<GameObject> playerListItems = new();
-        void SRPlayerListRoom_Start(On.SRPlayerListRoom.orig_Start orig, SRPlayerListRoom self)
-        {
-            orig(self);
-            self.gameObject.AddComponent<CustomRaceManager>();
-            new CustomRaceMenu(self.gameObject);
-
-            playerListItems.Clear();
-            Text[] texts = self.PlayerListUI.GetComponentsInChildren<Text>();
-            foreach (Text text in texts)
-            {
-                if (text.gameObject.name == "P1 (0)")
+                playerListItems.Clear();
+                Text[] texts = parent.GetComponentsInChildren<Text>();
+                foreach (Text text in texts)
                 {
-                    Button smallButton = Instantiate(GameObject.FindObjectOfType<SRUIManager>().BtnLobby.GetComponent<Button>());
-                    smallButton.GetComponentInChildren<Text>().text = "Battle";
+                    if (text.gameObject.name == "P1 (0)")
+                    {
+                        Button playerButton = Instantiate(GameObject.FindObjectOfType<SRUIManager>().BtnLobby.GetComponent<Button>());
+                        playerButton.GetComponentInChildren<Text>().text = "Battle";
 
-                    BattleHover bh = smallButton.gameObject.AddComponent<BattleHover>();
-                    smallButton.transform.SetParent(text.gameObject.transform);
-                    RectTransform r = smallButton.GetComponent<RectTransform>();
-                    r.anchoredPosition = new Vector3(120, 0, 0);
-                    r.anchorMin = r.anchorMax = new Vector2(0, 0.5f);
-                    r.sizeDelta = new Vector2(260f, 27f);
-                    r.localScale = new Vector3(1, 1, 1);
-                    Text t = smallButton.GetComponentInChildren<Text>();
-                    t.fontSize = t.resizeTextMaxSize = 20;
-                    t.resizeTextMinSize = 1;
-                    smallButton.gameObject.SetActive(false);
-                    playerListItems.Add(smallButton.gameObject);
-                    smallButton.onClick = new Button.ButtonClickedEvent();
-                    smallButton.onClick.AddListener(() => OpenCustomRaceMenu(bh.rival));
+                        BattleButtonExtension bh = playerButton.gameObject.AddComponent<BattleButtonExtension>();
+                        playerButton.transform.SetParent(text.gameObject.transform);
+                        RectTransform r = playerButton.GetComponent<RectTransform>();
+                        r.anchoredPosition = new Vector3(120, 0, 0);
+                        r.anchorMin = r.anchorMax = new Vector2(0, 0.5f);
+                        r.sizeDelta = new Vector2(260f, 27f);
+                        r.localScale = new Vector3(1, 1, 1);
+                        Text t = playerButton.GetComponentInChildren<Text>();
+                        t.fontSize = t.resizeTextMaxSize = 20;
+                        t.resizeTextMinSize = 1;
+                        playerButton.gameObject.SetActive(false);
+                        playerListItems.Add(playerButton.gameObject);
+                        playerButton.onClick = new Button.ButtonClickedEvent();
+                        playerButton.onClick.AddListener(() => OpenCustomRaceMenu(bh.rival));
+                    }
+                }
+            }
+
+            public static void Update()
+            {
+                string playerPhotonName = RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<SRPlayerCollider>().name;
+                foreach (GameObject playerItem in playerListItems)
+                {
+                    // playerItem.SetActive(true);
+                    // BattleButtonExtension asd = playerItem.gameObject.GetComponent<BattleButtonExtension>();
+                    // asd.rival = RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<RCC_CarControllerV3>();
+                    // continue;
+
+                    SRCheckOtherPlayerCam obj = playerItem.transform.GetParent().transform.GetParent().GetComponentInChildren<SRCheckOtherPlayerCam>();
+                    RCC_CarControllerV3 photonCar = (RCC_CarControllerV3)typeof(SRCheckOtherPlayerCam).GetField("jack", bindingFlags).GetValue(obj);
+                    int state = (int)typeof(SRCheckOtherPlayerCam).GetField("State", bindingFlags).GetValue(obj);
+                    if (state == 0 || !photonCar)
+                    {
+                        playerItem.SetActive(false);
+                        continue;
+                    }
+                    string photonName = photonCar.gameObject.name;
+                    if (photonName == playerPhotonName)
+                    {
+                        playerItem.SetActive(false);
+                        continue;
+                    }
+
+                    // disable everyone who is not warmtofu
+                    Text buttonText = playerItem.gameObject.GetComponentInChildren<Text>();
+                    // if (!NetworkTest.PlayerHasMod(photonName))
+                    //     buttonText.color = Color.blue;
+                    // else
+                    //     buttonText.color = Color.yellow;
+
+                    if (!WarmTofuNetwork.PlayerHasMod(photonName))
+                    {
+                        Debug.Log(photonName + " doesn't have a mod");
+                        playerItem.SetActive(false);
+                        continue;
+                    }
+
+                    BattleButtonExtension bh = playerItem.gameObject.GetComponent<BattleButtonExtension>();
+                    buttonText.text = bh.playerName = playerItem.gameObject.transform.GetParent().GetComponent<Text>().text;
+                    if (bh.hovered)
+                        buttonText.text = "Battle\n" + buttonText.text;
+                    bh.rival = photonCar;
+                }
+            }
+
+            private class BattleButtonExtension : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+            {
+                public string playerName;
+                private Text hoverText;
+                public bool hovered;
+                RectTransform rect;
+                public RCC_CarControllerV3 rival = null;
+                void Start()
+                {
+                    rect = gameObject.GetComponent<RectTransform>();
+                    hoverText = GetComponentInChildren<Text>();
+                    playerName = gameObject.transform.GetParent().GetComponent<Text>().text;
+                    hoverText.text = playerName;
+                    hovered = false;
+                }
+
+                public void OnPointerEnter(PointerEventData eventData)
+                {
+                    hoverText.text = "Battle\n" + playerName;
+                    rect.anchorMax = new Vector2(rect.anchorMax.x, 1.1f);
+                    hovered = true;
+                }
+
+                public void OnPointerExit(PointerEventData eventData)
+                {
+                    hoverText.text = playerName;
+                    rect.anchorMax = new Vector2(rect.anchorMax.x, 0.5f);
+                    hovered = false;
                 }
             }
         }
 
-        void OpenCustomRaceMenu(RCC_CarControllerV3 carControllerV3)
+        void SRPlayerListRoom_Start(On.SRPlayerListRoom.orig_Start orig, SRPlayerListRoom self)
+        {
+            orig(self);
+            self.gameObject.AddComponent<CustomRaceManager>();
+        }
+
+        static void OpenCustomRaceMenu(RCC_CarControllerV3 carControllerV3)
         {
             Debug.Log("rival is " + carControllerV3);
             CustomRaceManager.SetRival(carControllerV3);
 
             Debug.Log("Opened battle options against " + CustomRaceManager.GetRivalPhotonName() + " " + CustomRaceManager.GetRivalPlayerName());
-            CustomRaceMenu.menu.SetActive(true);
-            CustomRaceMenu.menu.GetComponentInChildren<Text>().text = "Race against " + CustomRaceManager.GetRivalPlayerName();
-        }
-
-        public class BattleHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
-        {
-            public string playerName;
-            private Text hoverText;
-            public bool hovered;
-            RectTransform rect;
-            public RCC_CarControllerV3 rival = null;
-            void Start()
-            {
-                rect = gameObject.GetComponent<RectTransform>();
-                hoverText = GetComponentInChildren<Text>();
-                playerName = gameObject.transform.GetParent().GetComponent<Text>().text;
-                hoverText.text = playerName;
-                hovered = false;
-            }
-
-            public void OnPointerEnter(PointerEventData eventData)
-            {
-                hoverText.text = "Battle\n" + playerName;
-                rect.anchorMax = new Vector2(rect.anchorMax.x, 1.1f);
-                hovered = true;
-            }
-
-            public void OnPointerExit(PointerEventData eventData)
-            {
-                hoverText.text = playerName;
-                rect.anchorMax = new Vector2(rect.anchorMax.x, 0.5f);
-                hovered = false;
-            }
-        }
-
-        void UpdateBattleHovers()
-        {
-            string playerPhotonName = RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<SRPlayerCollider>().name;
-            foreach (GameObject playerItem in playerListItems)
-            {
-                // playerItem.SetActive(true);
-                // BattleHover asd = playerItem.gameObject.GetComponent<BattleHover>();
-                // asd.rival = RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<RCC_CarControllerV3>();
-                // continue;
-
-                SRCheckOtherPlayerCam obj = playerItem.transform.GetParent().transform.GetParent().GetComponentInChildren<SRCheckOtherPlayerCam>();
-                RCC_CarControllerV3 photonCar = (RCC_CarControllerV3)typeof(SRCheckOtherPlayerCam).GetField("jack", bindingFlags).GetValue(obj);
-                int state = (int)typeof(SRCheckOtherPlayerCam).GetField("State", bindingFlags).GetValue(obj);
-                if (state == 0 || !photonCar)
-                {
-                    playerItem.SetActive(false);
-                    continue;
-                }
-                string photonName = photonCar.gameObject.name;
-                if (photonName == playerPhotonName)
-                {
-                    playerItem.SetActive(false);
-                    continue;
-                }
-
-                // disable everyone who is not warmtofu
-                Text buttonText = playerItem.gameObject.GetComponentInChildren<Text>();
-                // if (!NetworkTest.PlayerHasMod(photonName))
-                //     buttonText.color = Color.blue;
-                // else
-                //     buttonText.color = Color.yellow;
-
-                if (!WarmTofuNetwork.PlayerHasMod(photonName))
-                {
-                    playerItem.SetActive(false);
-                    continue;
-                }
-
-
-                BattleHover bh = playerItem.gameObject.GetComponent<BattleHover>();
-                buttonText.text = bh.playerName = playerItem.gameObject.transform.GetParent().GetComponent<Text>().text;
-                if (bh.hovered)
-                    buttonText.text = "Battle\n" + buttonText.text;
-                if (playerItem.transform.GetParent().transform.GetParent().GetComponentInChildren<Image>().enabled)
-                    playerItem.SetActive(true);
-                bh.rival = photonCar;
-            }
+            CustomRaceManager.GetCustomRaceMenu().SetActive(true);
+            CustomRaceManager.GetCustomRaceMenu().GetComponentInChildren<Text>().text = "Race against " + CustomRaceManager.GetRivalPlayerName();
         }
 
         void SRPlayerListRoom_Update(On.SRPlayerListRoom.orig_Update orig, SRPlayerListRoom self)
@@ -485,13 +380,13 @@ namespace WarmTofuMod
                     self.StartCoroutine(PlayerListUpdate(self));
                 }
                 else
-                    CustomRaceMenu.menu.SetActive(false);
+                    CustomRaceManager.GetCustomRaceMenu().SetActive(false);
             }
         }
 
         void SRPlayerListRoom_PlayerListing(On.SRPlayerListRoom.orig_PlayerListing orig, SRPlayerListRoom self)
         {
-            UpdateBattleHovers();
+            CustomRacePlayerBattleButtons.Update();
             orig(self);
         }
 
@@ -532,7 +427,6 @@ namespace WarmTofuMod
                 return;
             else
                 orig(self);
-
         }
 
         void RCC_CarControllerV3_Inputs(On.RCC_CarControllerV3.orig_Inputs orig, RCC_CarControllerV3 self)
