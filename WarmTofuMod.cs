@@ -379,14 +379,17 @@ namespace WarmTofuMod
             tofuTimerLabel.SetActive(false);
 
             modInfoLabel = Instantiate(tofuTimerLabel);
+            Destroy(modInfoLabel.GetComponent<SRMessageOther>());
+            Destroy(modInfoLabel.GetComponent<Animator>());
             modInfoLabel.transform.SetParent(tofuTimerLabel.transform.GetParent().transform);
             r = modInfoLabel.GetComponent<RectTransform>();
             r.anchorMin = r.anchorMax = r.anchoredPosition = r.pivot = new Vector2(0, 0);
-            r.sizeDelta = new Vector2(400f, 20f);
+            r.sizeDelta = new Vector2(400f, 40f);
             Text t = modInfoLabel.GetComponent<Text>();
             t.text = $"{PluginInfo.PLUGIN_NAME} v{PluginInfo.PLUGIN_VERSION} by Kert";
             t.alignment = TextAnchor.LowerLeft;
-            t.resizeTextMaxSize = 18;
+            t.transform.localScale = new Vector3(1, 1, 1);
+            t.resizeTextMaxSize = 20;
             t.color = Color.gray;
             modInfoLabel.SetActive(true);
         }
