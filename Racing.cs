@@ -315,6 +315,7 @@ namespace WarmTofuMod
                     if (bh.hovered)
                         buttonText.text = "Battle\n" + buttonText.text;
                     bh.rival = photonCar;
+                    playerItem.SetActive(true);
                 }
             }
 
@@ -392,6 +393,7 @@ namespace WarmTofuMod
 
         void SRPlayerListRoom_PlayerListingRefresh(On.SRPlayerListRoom.orig_PlayerListingRefresh orig, SRPlayerListRoom self)
         {
+            CustomRacePlayerBattleButtons.Update();
             orig(self);
         }
 
@@ -399,7 +401,7 @@ namespace WarmTofuMod
         {
             while (true)
             {
-                sRPlayerListRoom.PlayerListing();
+                sRPlayerListRoom.PlayerListingRefresh();
                 yield return new WaitForSeconds(1);
                 if (!sRPlayerListRoom.PlayerListUI.active)
                     break;
