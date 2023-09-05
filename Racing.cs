@@ -79,11 +79,12 @@ namespace WarmTofuMod
                 typeof(RaceManager).GetField("CibleName", bindingFlags).SetValue(rm, (ObscuredString)GetPlayerPhotonName());
                 typeof(RaceManager).GetField("CiblePhotonName", bindingFlags).SetValue(rm, (ObscuredString)GetRivalPhotonName());
                 typeof(RaceManager).GetField("TuPeuxAsk", bindingFlags).SetValue(rm, (ObscuredInt)1);
+
                 rm.UIAskToPlayer.SetActive(true);
-                rm.UIAskToPlayer.GetComponent<Text>().text = rm.InvitationSentTo + GetRivalPlayerName();
                 rm.UIAskToPlayer.GetComponent<Animator>().Play("UATPappear");
                 rm.CocheInvitationSent.SetActive(true);
                 rm.SendRaceInvitation();
+                rm.UIAskToPlayer.GetComponent<Text>().text = rm.InvitationSentTo + GetRivalPlayerName();
             }
 
             public static void SendBattleInvitationRPC()
@@ -387,7 +388,6 @@ namespace WarmTofuMod
 
         void SRPlayerListRoom_PlayerListing(On.SRPlayerListRoom.orig_PlayerListing orig, SRPlayerListRoom self)
         {
-            CustomRacePlayerBattleButtons.Update();
             orig(self);
         }
 
