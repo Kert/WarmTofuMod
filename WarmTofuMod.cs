@@ -59,6 +59,7 @@ namespace WarmTofuMod
                 On.RCC_PhotonManager.OnGUI += RCC_PhotonManager_OnGUI;
                 On.SRToffuManager.StopDelivery += SRToffuManager_StopDelivery;
                 On.SRToffuManager.YesBTN += SRToffuManager_YesBTN;
+                On.SRToffuManager.FinDeLivraison += SRToffuManager_FinDeLivraison;
 
                 // Mod network code
                 On.ZionBandwidthOptimizer.Examples.RCC_PhotonNetwork.Start += RCC_PhotonNetwork_Start;
@@ -305,6 +306,11 @@ namespace WarmTofuMod
             tofuTimerLabel.SetActive(true);
         }
 
+        void SRToffuManager_FinDeLivraison(On.SRToffuManager.orig_FinDeLivraison orig, SRToffuManager self)
+        {
+            orig(self);
+            tofuTimerLabel.SetActive(false);
+        }
         void OnGUI()
         {
             if (ObscuredPrefs.GetBool("TOFU RUN", false))
