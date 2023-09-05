@@ -157,8 +157,12 @@ namespace WarmTofuMod
 
             // Akagi race without finish fix
             if (SceneManager.GetActiveScene().name == "Akagi")
+            {
                 GameObject.Find("Scene Objects").transform.Find("Zone_RACE_Arriver").gameObject.SetActive(true);
-
+                FinishZone fz = GameObject.FindObjectOfType<FinishZone>();
+                fz.gameObject.transform.GetChild(1).rotation = GameObject.FindObjectOfType<SR_Minimap_Manager_RaceMap>().LaMegacam.transform.rotation;
+                fz.gameObject.transform.GetChild(1).localPosition = new Vector3(0f, 5f, 0f);
+            }
             if (SceneManager.GetActiveScene().name != "Akina")
                 return;
 

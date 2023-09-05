@@ -230,13 +230,13 @@ namespace WarmTofuMod
             fz.transform.SetPositionAndRotation(mapData.posFinish, mapData.rotFinish);
             if (SceneManager.GetActiveScene().name == "Akagi")
             {
+                fz.gameObject.transform.GetChild(1).rotation = GameObject.FindObjectOfType<SR_Minimap_Manager_RaceMap>().LaMegacam.transform.rotation;
                 fz.gameObject.transform.GetChild(1).localPosition = new Vector3(0f, 0f, 0f);
-                fz.gameObject.transform.GetChild(1).localEulerAngles = new Vector3(90f, 90f, 0f);
             }
             else
             {
+                fz.gameObject.transform.GetChild(0).transform.GetChild(0).rotation = GameObject.FindObjectOfType<SR_Minimap_Manager_RaceMap>().LaMegacam.transform.rotation;
                 fz.gameObject.transform.GetChild(0).transform.GetChild(0).localPosition = new Vector3(0f, 0f, 0f);
-                fz.gameObject.transform.GetChild(0).transform.GetChild(0).localEulerAngles = new Vector3(90f, 90f, 0f);
             }
         }
 
