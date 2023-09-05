@@ -98,6 +98,8 @@ namespace WarmTofuMod
         void SRUIManager_Start(On.SRUIManager.orig_Start orig, SRUIManager self)
         {
             orig(self);
+            InitMenuStyles();
+
 
             if (SceneManager.GetActiveScene().name == "DriftSekai")
                 return;

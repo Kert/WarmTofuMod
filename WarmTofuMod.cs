@@ -57,6 +57,8 @@ namespace WarmTofuMod
 
                 // mod GUI and logic
                 On.RCC_PhotonManager.OnGUI += RCC_PhotonManager_OnGUI;
+                On.SRToffuManager.StopDelivery += SRToffuManager_StopDelivery;
+                On.SRToffuManager.YesBTN += SRToffuManager_YesBTN;
 
                 // Mod network code
                 On.ZionBandwidthOptimizer.Examples.RCC_PhotonNetwork.Start += RCC_PhotonNetwork_Start;
@@ -290,12 +292,22 @@ namespace WarmTofuMod
             OnGUI();
         }
 
+        void SRToffuManager_StopDelivery(On.SRToffuManager.orig_StopDelivery orig, SRToffuManager self)
+        {
+            orig(self);
+            tofuTimerLabel.SetActive(false);
+        }
+
+        void SRToffuManager_YesBTN(On.SRToffuManager.orig_YesBTN orig, SRToffuManager self)
+        {
+            orig(self);
+            tofuTimerLabel.SetActive(true);
+        }
+
         void OnGUI()
         {
             if (ObscuredPrefs.GetBool("TOFU RUN", false))
                 ShowTofuTimer();
-
-            ShowFooter();
 
             // Additional suspension settings menus
             if (inTuningMenu)
@@ -334,6 +346,8 @@ namespace WarmTofuMod
             }
         }
 
+        static GameObject tofuTimerLabel;
+        static GameObject modInfoLabel;
         static void InitMenuStyles()
         {
             buttonStyle = new GUIStyle("Button");
@@ -350,6 +364,30 @@ namespace WarmTofuMod
             boxStyle.font = buttonStyle.font;
             boxStyle.fontSize = buttonStyle.fontSize;
             boxStyle.normal.textColor = Color.white;
+            GameObject dummyMessage = GameObject.Find("UIMessage");
+            tofuTimerLabel = Instantiate(dummyMessage);
+            tofuTimerLabel.transform.SetParent(dummyMessage.transform.GetParent().transform);
+            Destroy(tofuTimerLabel.GetComponent<SRMessageOther>());
+            Destroy(tofuTimerLabel.GetComponent<Animator>());
+            RectTransform r = tofuTimerLabel.GetComponent<RectTransform>();
+            r.anchorMin = r.anchorMax = new Vector2(0.5f, 0);
+            r.pivot = new Vector2(0.5f, 0.1f);
+            r.anchoredPosition = new Vector2(0, 0);
+            r.sizeDelta = new Vector2(300f, 40f);
+            tofuTimerLabel.GetComponent<Text>().color = Color.white;
+            tofuTimerLabel.SetActive(false);
+
+            modInfoLabel = Instantiate(tofuTimerLabel);
+            modInfoLabel.transform.SetParent(tofuTimerLabel.transform.GetParent().transform);
+            r = modInfoLabel.GetComponent<RectTransform>();
+            r.anchorMin = r.anchorMax = r.anchoredPosition = r.pivot = new Vector2(0, 0);
+            r.sizeDelta = new Vector2(400f, 20f);
+            Text t = modInfoLabel.GetComponent<Text>();
+            t.text = $"{PluginInfo.PLUGIN_NAME} v{PluginInfo.PLUGIN_VERSION} by Kert";
+            t.alignment = TextAnchor.LowerLeft;
+            t.resizeTextMaxSize = 18;
+            t.color = Color.gray;
+            modInfoLabel.SetActive(true);
         }
 
         static void SettingsBackButton()
@@ -395,13 +433,6 @@ namespace WarmTofuMod
                 RCC_Customization.SetFrontSuspensionsSpringDamper(activePlayerVehicle, targetValue2);
                 RCC_Customization.SetRearSuspensionsSpringDamper(activePlayerVehicle, targetValue2);
             }
-            GUILayout.EndArea();
-        }
-
-        static void ShowFooter()
-        {
-            GUILayout.BeginArea(new Rect(5f, (float)Screen.height - 20f, 800f, 20f));
-            GUILayout.Label($"{PluginInfo.PLUGIN_NAME} v{PluginInfo.PLUGIN_VERSION} by Kert", Array.Empty<GUILayoutOption>());
             GUILayout.EndArea();
         }
 
@@ -452,18 +483,10 @@ namespace WarmTofuMod
 
         static void ShowTofuTimer()
         {
-            if (buttonStyle == null)
-                InitMenuStyles();
             if (!tofuManager)
                 tofuManager = GameObject.FindObjectOfType<SRToffuManager>();
-            int tofuTimer = (ObscuredInt)typeof(SRToffuManager).GetField("Compteur", bindingFlags).GetValue(tofuManager);
-            GUILayout.BeginArea(new Rect((float)(Screen.width / 2) - 120f, (float)Screen.height - 50f, 800f, 100f));
-            GUIStyle guistyle = new GUIStyle();
-            guistyle.font = buttonStyle.font;
-            guistyle.fontSize = buttonStyle.fontSize;
-            guistyle.normal.textColor = Color.white;
-            GUILayout.Label("Tofu Time: " + tofuTimer.ToString() + " 's", guistyle, Array.Empty<GUILayoutOption>());
-            GUILayout.EndArea();
+            int time = (ObscuredInt)typeof(SRToffuManager).GetField("Compteur", bindingFlags).GetValue(tofuManager);
+            tofuTimerLabel.GetComponent<Text>().text = "Tofu Time: " + time.ToString() + " 's";
         }
     }
 }
