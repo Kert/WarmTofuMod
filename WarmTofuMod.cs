@@ -382,6 +382,7 @@ namespace WarmTofuMod
             r.anchoredPosition = new Vector2(0, 0);
             r.sizeDelta = new Vector2(300f, 40f);
             tofuTimerLabel.GetComponent<Text>().color = Color.white;
+            tofuTimerLabel.GetComponent<Text>().transform.localScale = new Vector3(1, 1, 1);
             tofuTimerLabel.SetActive(false);
 
             modInfoLabel = Instantiate(tofuTimerLabel);
