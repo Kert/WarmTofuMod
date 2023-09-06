@@ -406,16 +406,58 @@ namespace WarmTofuMod
 
         IEnumerator RaceManager_DecompteRunningIE(On.RaceManager.orig_DecompteRunningIE orig, RaceManager self)
         {
-            yield return orig(self);
+            typeof(RaceManager).GetField("mononcleone", bindingFlags).SetValue(self, (ObscuredInt)0);
+            self.MenuUI.SetActive(false);
+            TextMeshPro text3d = self.TxtCompteur;
+
+            Text text2d = self.StartingCount.GetComponentInChildren<Text>();
+            GameObject playerVehicle = RCC_SceneManager.Instance.activePlayerVehicle.gameObject;
+            RCC_CarControllerV3 rccCar = playerVehicle.GetComponent<RCC_CarControllerV3>();
+            Rigidbody rigidBody = playerVehicle.GetComponent<Rigidbody>();
+            AudioSource audio = self.GetComponent<AudioSource>();
+
+            text2d.text = "5";
+            rccCar.speed = 0f;
+            typeof(RCC_CarControllerV3).GetField("engineRPM", bindingFlags).SetValue(rccCar, (float)0);
+            audio.PlayOneShot(self.CountClick);
+            rigidBody.drag = 1000f;
+            yield return new WaitForSeconds(1f);
+            text2d.text = "4";
+            audio.PlayOneShot(self.CountClick);
+            yield return new WaitForSeconds(1f);
+            text2d.text = "3";
+            audio.PlayOneShot(self.CountClick);
+            rccCar.speed = 0f;
+            typeof(RCC_CarControllerV3).GetField("engineRPM", bindingFlags).SetValue(rccCar, (float)0);
+            yield return new WaitForSeconds(1f);
+            text2d.text = "2";
+            audio.PlayOneShot(self.CountClick);
+            rccCar.speed = 0f;
+            typeof(RCC_CarControllerV3).GetField("engineRPM", bindingFlags).SetValue(rccCar, (float)0);
+            rccCar.currentGear = 0;
+            yield return new WaitForSeconds(1f);
+            self.MenuUI.SetActive(false);
+            text2d.text = "1";
+            audio.PlayOneShot(self.CountClick);
+            rigidBody.drag = 1000f;
+            yield return new WaitForSeconds(1f);
+            rccCar.enabled = true;
+            rccCar.currentGear = 0;
+            text2d.text = "GO";
+            rigidBody.drag = 0.01f;
             if (CustomRaceManager.customRaceInvite)
             {
                 CustomRaceManager.customRaceInvite = false;
                 CustomRaceManager.customRaceStarted = true;
+                if (CustomRaceManager.raceSettings.collision == true)
+                    playerVehicle.GetComponentInParent<SRPlayerCollider>().AppelRPCSetGhostModeV2(8);
             }
-            if (CustomRaceManager.customRaceStarted && CustomRaceManager.raceSettings.collision == true)
-            {
-                RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponentInParent<SRPlayerCollider>().AppelRPCSetGhostModeV2(8);
-            }
+            else
+                playerVehicle.GetComponentInParent<SRPlayerCollider>().AppelRPCSetGhostModeV2(10);
+            self.RunningLogo.SetActive(true);
+            yield return new WaitForSeconds(1f);
+            self.StartingCount.SetActive(false);
+            yield break;
         }
 
         void SRNosManager_Update(On.SRNosManager.orig_Update orig, SRNosManager self)
