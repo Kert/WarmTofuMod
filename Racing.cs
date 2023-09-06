@@ -383,6 +383,7 @@ namespace WarmTofuMod
         void SRPlayerListRoom_PlayerListing(On.SRPlayerListRoom.orig_PlayerListing orig, SRPlayerListRoom self)
         {
             orig(self);
+            WarmTofuNetwork.myInstance.SendModInfo();
         }
 
         void SRPlayerListRoom_PlayerListingRefresh(On.SRPlayerListRoom.orig_PlayerListingRefresh orig, SRPlayerListRoom self)

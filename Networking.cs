@@ -13,9 +13,12 @@ namespace WarmTofuMod
             public PhotonView view;
             public static string oldPhotonName = "";
             static Dictionary<string, string> playerModVersions = new();
+            public static WarmTofuNetwork myInstance = null;
             WarmTofuNetwork()
             {
                 view = this.gameObject.GetComponent<PhotonView>();
+                if (view.IsMine)
+                    myInstance = this;
             }
 
             void OnDestroy()
@@ -24,7 +27,7 @@ namespace WarmTofuMod
                 playerModVersions.Remove(view.gameObject.name);
             }
 
-            public void SendModInfo(string oldPhotonName)
+            public void SendModInfo()
             {
                 playerModVersions.Clear();
                 Debug.Log("Sending mod info");
@@ -121,7 +124,7 @@ namespace WarmTofuMod
             if (!nt)
                 nt = self.gameObject.AddComponent<WarmTofuNetwork>();
             if (self.gameObject.GetComponent<PhotonView>().IsMine)
-                nt.SendModInfo(WarmTofuNetwork.oldPhotonName);
+                nt.SendModInfo();
         }
     }
 }
