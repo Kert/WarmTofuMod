@@ -436,6 +436,7 @@ namespace WarmTofuMod
         void RaceManager_Start(On.RaceManager.orig_Start orig, RaceManager self)
         {
             orig(self);
+            // Fixed E button not working for race invitations on maps apart from Irohazaka and Haruna
             self.FightTouch = KeyCode.E;
         }
     }

@@ -311,10 +311,11 @@ namespace WarmTofuMod
             orig(self);
             tofuTimerLabel.SetActive(false);
         }
+
         void OnGUI()
         {
             if (ObscuredPrefs.GetBool("TOFU RUN", false))
-                ShowTofuTimer();
+                UpdateTofuTimer();
 
             // Additional suspension settings menus
             if (inTuningMenu)
@@ -330,9 +331,6 @@ namespace WarmTofuMod
 
         static void ShowModTuningMenu()
         {
-            if (buttonStyle == null)
-                InitMenuStyles();
-
             if (currentMenu == Menus.MENU_NONE)
                 currentMenu = Menus.MENU_TUNING;
 
@@ -492,7 +490,7 @@ namespace WarmTofuMod
             RCC_Customization.SetRearSuspensionsSpringDamper(activePlayerVehicle, damper);
         }
 
-        static void ShowTofuTimer()
+        static void UpdateTofuTimer()
         {
             if (!tofuManager)
                 tofuManager = GameObject.FindObjectOfType<SRToffuManager>();
