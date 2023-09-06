@@ -299,14 +299,8 @@ namespace WarmTofuMod
 
                     // disable everyone who is not warmtofu
                     Text buttonText = playerItem.gameObject.GetComponentInChildren<Text>();
-                    // if (!NetworkTest.PlayerHasMod(photonName))
-                    //     buttonText.color = Color.blue;
-                    // else
-                    //     buttonText.color = Color.yellow;
-
                     if (!WarmTofuNetwork.PlayerHasMod(photonName))
                     {
-                        Debug.Log(photonName + " doesn't have a mod");
                         playerItem.SetActive(false);
                         continue;
                     }

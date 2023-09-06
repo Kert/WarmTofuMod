@@ -20,7 +20,7 @@ namespace WarmTofuMod
 
             void OnDestroy()
             {
-                Debug.Log("network test destroyed for " + view.gameObject.name);
+                Debug.Log("WarmTofuNetwork destroyed for " + view.gameObject.name);
                 playerModVersions.Remove(view.gameObject.name);
             }
 
@@ -90,7 +90,6 @@ namespace WarmTofuMod
                 if (RCC_SceneManager.Instance.activePlayerVehicle.gameObject.transform.name == rivalPhotonName)
                 {
                     Debug.Log("Received battle invitation from " + playerName + " " + playerPhotonName + " " + direction + " " + order + " Nitro: " + nitro + " Collision: " + collision);
-                    CustomRaceManager warmTofuBattleManager = GameObject.FindObjectOfType<CustomRaceManager>();
                     CustomRaceManager.customRaceInvite = true;
                     CustomRaceManager.isMyInvitation = false;
                     CustomRaceManager.raceSettings.direction = direction;
@@ -118,7 +117,6 @@ namespace WarmTofuMod
         public void RCC_PhotonNetwork_Start(On.ZionBandwidthOptimizer.Examples.RCC_PhotonNetwork.orig_Start orig, ZionBandwidthOptimizer.Examples.RCC_PhotonNetwork self)
         {
             orig(self);
-            Debug.Log("Photon network started");
             WarmTofuNetwork nt = self.gameObject.GetComponent<WarmTofuNetwork>();
             if (!nt)
                 nt = self.gameObject.AddComponent<WarmTofuNetwork>();
