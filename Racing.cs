@@ -121,6 +121,16 @@ namespace WarmTofuMod
             {
                 return CustomRaceMenu.GetMenu();
             }
+
+            public static void OpenCustomRaceMenu()
+            {
+                CustomRaceMenu.OpenMenu();
+            }
+
+            public static void CloseCustomRaceMenu()
+            {
+                CustomRaceMenu.CloseMenu();
+            }
         }
 
         void SRPlayerCollider_SendRaceInvitation(On.SRPlayerCollider.orig_SendRaceInvitation orig, SRPlayerCollider self, string rivalPhotonName, string playerName)
@@ -242,7 +252,8 @@ namespace WarmTofuMod
 
         class CustomRacePlayerBattleButtons
         {
-            static List<GameObject> playerListItems = new();
+            public static List<GameObject> playerListItems = new();
+            public static int selectedButton = -1;
             public CustomRacePlayerBattleButtons(GameObject parent)
             {
                 playerListItems.Clear();
@@ -275,6 +286,7 @@ namespace WarmTofuMod
             public static void Update()
             {
                 string playerPhotonName = RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<SRPlayerCollider>().name;
+                Button previousButton = null;
                 foreach (GameObject playerItem in playerListItems)
                 {
                     // playerItem.SetActive(true);
@@ -311,6 +323,22 @@ namespace WarmTofuMod
                         buttonText.text = "Battle\n" + buttonText.text;
                     bh.rival = photonCar;
                     playerItem.SetActive(true);
+                    Button currentButton = playerItem.GetComponentInChildren<Button>();
+                    Navigation newNav = new Navigation();
+                    newNav.mode = Navigation.Mode.Explicit;
+                    if (previousButton != null)
+                    {
+                        newNav.selectOnDown = currentButton;
+                        newNav.selectOnUp = previousButton.navigation.selectOnUp;
+                        previousButton.navigation = newNav;
+
+                        newNav = new Navigation();
+                        newNav.mode = Navigation.Mode.Explicit;
+                        newNav.selectOnUp = previousButton;
+                        currentButton.navigation = newNav;
+                    }
+
+                    previousButton = currentButton;
                 }
             }
 
@@ -358,7 +386,7 @@ namespace WarmTofuMod
             CustomRaceManager.SetRival(carControllerV3);
 
             Debug.Log("Opened battle options against " + CustomRaceManager.GetRivalPhotonName() + " " + CustomRaceManager.GetRivalPlayerName());
-            CustomRaceManager.GetCustomRaceMenu().SetActive(true);
+            CustomRaceManager.OpenCustomRaceMenu();
             CustomRaceManager.GetCustomRaceMenu().GetComponentInChildren<Text>().text = "Race against " + CustomRaceManager.GetRivalPlayerName();
         }
 
@@ -369,14 +397,19 @@ namespace WarmTofuMod
             (Input.GetButtonDown("PS4_ClickLeft") && ObscuredPrefs.GetBool("TooglePlayerListXbox", false) && PlayerPrefs.GetString("ControllerTypeChoose") == "PS4"))
             {
                 self.PlayerListUI.SetActive(!self.PlayerListUI.activeSelf);
+                CustomRaceManager.CloseCustomRaceMenu();
                 if (self.PlayerListUI.activeSelf)
                 {
                     self.SteamIcon();
                     self.PlayerListing();
                     self.StartCoroutine(PlayerListUpdate(self));
+                    Button button = CustomRacePlayerBattleButtons.playerListItems[0].GetComponentInChildren<Button>();
+                    button.interactable = false;
+                    button.interactable = true;
+                    button.Select();
                 }
                 else
-                    CustomRaceManager.GetCustomRaceMenu().SetActive(false);
+                    CustomRacePlayerBattleButtons.selectedButton = -1;
             }
         }
 

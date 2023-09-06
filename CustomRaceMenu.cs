@@ -114,6 +114,37 @@ namespace WarmTofuMod
                     trackList = customRaceData[SceneManager.GetActiveScene().name].Keys.ToList();
                     directionDropdown.AddOptions(trackList);
                     directionDropdown.template.sizeDelta = new Vector2(0, 500f);
+
+                    Navigation newNav = new Navigation();
+                    newNav.mode = Navigation.Mode.Explicit;
+                    newNav.selectOnDown = start;
+                    newNav.selectOnRight = orderDropdown;
+                    directionDropdown.navigation = newNav;
+
+                    newNav = new Navigation();
+                    newNav.mode = Navigation.Mode.Explicit;
+                    newNav.selectOnDown = start;
+                    newNav.selectOnLeft = directionDropdown;
+                    newNav.selectOnRight = nitroToggle;
+                    orderDropdown.navigation = newNav;
+
+                    newNav = new Navigation();
+                    newNav.mode = Navigation.Mode.Explicit;
+                    newNav.selectOnDown = collisionToggle;
+                    newNav.selectOnLeft = orderDropdown;
+                    nitroToggle.navigation = newNav;
+
+                    newNav = new Navigation();
+                    newNav.mode = Navigation.Mode.Explicit;
+                    newNav.selectOnDown = start;
+                    newNav.selectOnUp = nitroToggle;
+                    newNav.selectOnLeft = orderDropdown;
+                    collisionToggle.navigation = newNav;
+
+                    newNav = new Navigation();
+                    newNav.mode = Navigation.Mode.Explicit;
+                    newNav.selectOnUp = collisionToggle;
+                    start.navigation = newNav;
                 }
 
                 public static void SetRaceSettings()
@@ -127,6 +158,17 @@ namespace WarmTofuMod
                 public static GameObject GetMenu()
                 {
                     return menu;
+                }
+
+                public static void OpenMenu()
+                {
+                    menu.SetActive(true);
+                    directionDropdown.Select();
+                }
+
+                public static void CloseMenu()
+                {
+                    menu.SetActive(false);
                 }
             }
         }
