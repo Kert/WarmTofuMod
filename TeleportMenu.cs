@@ -124,6 +124,34 @@ namespace WarmTofuMod
             tpButtons[0].onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Downhill));
             tpButtons[1].onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Uphill));
 
+            if (SceneManager.GetActiveScene().name == "Irohazaka")
+            {
+                Button dh2 = Instantiate(tpButtons[0]);
+                dh2.transform.SetParent(tpButtons[0].transform.GetParent().transform);
+                dh2.GetComponentInChildren<Text>().text = "Downhill 2";
+                RectTransform t = dh2.GetComponent<RectTransform>();
+                t.localScale = new Vector3(1, 1, 1);
+                t.localPosition = new Vector3(200, 0, 0);
+                tpButtons[0].GetComponent<RectTransform>().localPosition = new Vector3(-200, 0, 0);
+                tpButtons[1].GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
+                GameObject whiteBG = dh2.transform.GetParent().gameObject;
+                whiteBG.GetComponent<RectTransform>().sizeDelta = new Vector2(670.4f, 151.4f);
+                GameObject menuOverlay = whiteBG.transform.GetParent().gameObject;
+                menuOverlay.GetComponent<RectTransform>().sizeDelta = new Vector2(668.9f, 190.6f);
+
+                dh2.onClick = new Button.ButtonClickedEvent();
+                dh2.onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Downhill2));
+                Navigation newNav = new Navigation();
+                newNav.mode = Navigation.Mode.Explicit;
+                newNav.selectOnLeft = tpButtons[1];
+                dh2.navigation = newNav;
+                newNav = new Navigation();
+                newNav.mode = Navigation.Mode.Explicit;
+                newNav.selectOnLeft = tpButtons[0];
+                newNav.selectOnRight = dh2;
+                tpButtons[1].navigation = newNav;
+            }
+
             lobby.onClick.AddListener(TeleportMenu);
         }
 
