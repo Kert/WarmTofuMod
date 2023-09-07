@@ -448,6 +448,9 @@ namespace WarmTofuMod
             RCC_CarControllerV3 rccCar = playerVehicle.GetComponent<RCC_CarControllerV3>();
             Rigidbody rigidBody = playerVehicle.GetComponent<Rigidbody>();
             AudioSource audio = self.GetComponent<AudioSource>();
+            GameObject enemyCar = (GameObject)typeof(RaceManager).GetField("Enemyy", bindingFlags).GetValue(self);
+            // don't show distance indicator with an arrow
+            enemyCar.GetComponent<HUDNavigationElement>().showIndicator = false;
 
             text2d.text = "5";
             rccCar.speed = 0f;
