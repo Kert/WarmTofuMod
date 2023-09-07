@@ -9,6 +9,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using TMPro;
 using CodeStage.AntiCheat.ObscuredTypes;
+using SickscoreGames.HUDNavigationSystem;
 
 namespace WarmTofuMod
 {
@@ -253,7 +254,7 @@ namespace WarmTofuMod
         class CustomRacePlayerBattleButtons
         {
             public static List<GameObject> playerListItems = new();
-            public static int selectedButton = -1;
+            public static bool isButtonSelected = false;
             public CustomRacePlayerBattleButtons(GameObject parent)
             {
                 playerListItems.Clear();
@@ -337,7 +338,13 @@ namespace WarmTofuMod
                         newNav.selectOnUp = previousButton;
                         currentButton.navigation = newNav;
                     }
-
+                    if (!isButtonSelected)
+                    {
+                        currentButton.interactable = false;
+                        currentButton.interactable = true;
+                        currentButton.Select();
+                        isButtonSelected = true;
+                    }
                     previousButton = currentButton;
                 }
             }
@@ -403,13 +410,9 @@ namespace WarmTofuMod
                     self.SteamIcon();
                     self.PlayerListing();
                     self.StartCoroutine(PlayerListUpdate(self));
-                    Button button = CustomRacePlayerBattleButtons.playerListItems[0].GetComponentInChildren<Button>();
-                    button.interactable = false;
-                    button.interactable = true;
-                    button.Select();
                 }
                 else
-                    CustomRacePlayerBattleButtons.selectedButton = -1;
+                    CustomRacePlayerBattleButtons.isButtonSelected = false;
             }
         }
 
