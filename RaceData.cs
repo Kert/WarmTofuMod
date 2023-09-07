@@ -66,7 +66,7 @@ namespace WarmTofuMod
                     { "Uphill", new RacePositionsData(
                         new Vector3(-1372.4f, -145.4f, -1081.3f), new Quaternion(0.0f, 0.2f, 0.0f, 1.0f), new Vector3(-1369.9f, -145.4f, -1082.9f), new Quaternion(0.0f, 0.2f, 0.0f, 1.0f),
                         new Vector3(-1372.4f, -145.4f, -1081.3f), new Quaternion(0.0f, 0.2f, 0.0f, 1.0f),
-                        new Vector3(912.4f, 137.0f, 1323.0f), new Quaternion(0.0f, 0.2f, 0.0f, 1.0f)
+                        new Vector3(872.4f, 137.0f, 1143.0f), new Quaternion(0.0f, 0.2f, 0.0f, 1.0f)
                     )}
                 }
             },
