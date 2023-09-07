@@ -84,3 +84,21 @@ After that you just run **build.bat**
 The project expects that your game folder is ```C:\Program Files (x86)\Steam\steamapps\common\Initial Drift Online\```
 
 You should change all instances of that in **.csproj** and **build.bat** if yours is different 
+
+# Установка
+Для начала необходимо подготовить игру к использованию модов
+## Установка и настройка BepInEx 5
+- Скачать zip-архив [BepInEx 5](https://github.com/BepInEx/BepInEx/releases/tag/v5.4.21) версии x64
+- Распаковать архив в папку игры (Найти папку игры можно через Steam: ПКМ на игре в списке->Управление->Посмотреть локальные файлы)
+- Запустить игру и закрыть, чтобы появились файлы настроек BepInEx 5
+- Открыть любым текстовым редактором (например блокнотом) файл ```BepInEx.cfg``` из папки ```%папка с игрой%/BepInEx/config/```
+- Найти в файле текст ```[Preloader.Entrypoint]``` и на следующей строке добавить ```Type = MonoBehaviour```. Должно выглядеть так:
+```
+[Preloader.Entrypoint]
+Type = MonoBehaviour
+```
+- Скачать ```MMHOOK.zip``` [отсюда](https://github.com/Kert/WarmTofuMod/releases/tag/MMHOOK) и распаковать в папку игры
+
+## Установка мода WarmTofuMod
+- Скачать файл мода WarmTofuMod *.dll [тут](https://github.com/Kert/WarmTofuMod/releases)
+- Скопировать файл *.dll в папку ```%папка игры%/BepInEx/plugins/```
