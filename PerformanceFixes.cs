@@ -4,6 +4,7 @@ using CodeStage.AntiCheat.Storage;
 using MonoMod.Cil;
 using Photon.Pun;
 using System;
+using TMPro;
 
 namespace WarmTofuMod
 {
@@ -143,6 +144,12 @@ namespace WarmTofuMod
                 for (int i = 0; i < array.Length; i++)
                 {
                     array[i].transform.rotation = rotation;
+                    // set font smaller and add transparency
+                    array[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 1);
+                    TextMeshPro t = array[i].GetComponentInChildren<TextMeshPro>();
+                    t.fontSize = 10;
+                    t.color = Color.white - new Color(0, 0, 0, 0.3f);
+                    t.outlineWidth = 0.2f;
                 }
             }
             if (base.gameObject.transform.rotation.z <= -0.2507755f || base.gameObject.transform.rotation.z >= 0.2507755f)
