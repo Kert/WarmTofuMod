@@ -277,6 +277,9 @@ namespace WarmTofuMod
                         t.fontSize = t.resizeTextMaxSize = 20;
                         t.resizeTextMinSize = 1;
                         playerButton.gameObject.SetActive(false);
+                        ColorBlock colors = playerButton.colors;
+                        colors.selectedColor = Color.green;
+                        playerButton.colors = colors;
                         playerListItems.Add(playerButton.gameObject);
                         playerButton.onClick = new Button.ButtonClickedEvent();
                         playerButton.onClick.AddListener(() => OpenCustomRaceMenu(bh.rival));
