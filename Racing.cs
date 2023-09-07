@@ -288,8 +288,14 @@ namespace WarmTofuMod
             {
                 string playerPhotonName = RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<SRPlayerCollider>().name;
                 Button previousButton = null;
+                int raceInProgress = PlayerPrefs.GetInt("ImInRun");
                 foreach (GameObject playerItem in playerListItems)
                 {
+                    if (raceInProgress == 1)
+                    {
+                        playerItem.SetActive(false);
+                        continue;
+                    }
                     // playerItem.SetActive(true);
                     // BattleButtonExtension asd = playerItem.gameObject.GetComponent<BattleButtonExtension>();
                     // asd.rival = RCC_SceneManager.Instance.activePlayerVehicle.gameObject.GetComponent<RCC_CarControllerV3>();
