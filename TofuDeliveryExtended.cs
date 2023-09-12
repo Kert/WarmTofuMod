@@ -113,12 +113,11 @@ namespace WarmTofuMod
             tofuFinish.transform.position = new Vector3(1295.0f, 260.1f, 129.2f);
             tofuFinish.transform.FindChild("Target3D_minimap").transform.position = tofuFinish.transform.position + tofuFinish.transform.TransformDirection(Vector3.up * 50f);
 
-            // move existing streetlight a bit
-            Vector3 lightPos = new Vector3(-50.5f, -354.0f, 489.8f);
-            GameObject.Find("iroa2019_streetlightremap_obj_22_SUB0").transform.position = lightPos;
-            GameObject.Find("iroa2019_streetlightremap_obj_22_SUB1").transform.position = lightPos;
-            GameObject.Find("iroa2019_streetlightremap_obj_22_SUB2").transform.position = lightPos;
-            GameObject.Find("1WALL_xxiroa2019_streetlightremap_obj_22_sub1").transform.position = lightPos;
+            // delete existing streetlight
+            Destroy(GameObject.Find("iroa2019_streetlightremap_obj_22_SUB0"));
+            Destroy(GameObject.Find("iroa2019_streetlightremap_obj_22_SUB1"));
+            Destroy(GameObject.Find("iroa2019_streetlightremap_obj_22_SUB2"));
+            Destroy(GameObject.Find("1WALL_xxiroa2019_streetlightremap_obj_22_sub1"));
 
             GameObject tofuRadarLogoParent = GameObject.Find("Radar_Logo_Tofu");
             GameObject mapLabel = Instantiate(tofuRadarLogoParent.transform.FindChild("HUD Element Pivot").gameObject);
