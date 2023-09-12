@@ -13,7 +13,7 @@ using UnityEngine.SceneManagement;
 
 namespace WarmTofuMod
 {
-    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.6.0")]
+    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.7.0")]
     public partial class WarmTofuMod : BaseUnityPlugin
     {
         public enum Menus
