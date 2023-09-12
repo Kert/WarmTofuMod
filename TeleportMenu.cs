@@ -12,7 +12,8 @@ namespace WarmTofuMod
         {
             TP_Downhill,
             TP_Uphill,
-            TP_Downhill2
+            TP_Downhill2,
+            TP_Uphill2
         }
 
         void TeleportPlayer(TeleportPoints tp)
@@ -76,6 +77,11 @@ namespace WarmTofuMod
                             pos = new Vector3(-1218.8f, -135.7f, -1187.5f);
                             rot = new Quaternion(0.0f, 1.0f, 0.0f, 0.0f);
                             break;
+                        case TeleportPoints.TP_Uphill2:
+                            pos = new Vector3(-1328.8f, -146.0f, -992.4f);
+                            rot = new Quaternion(0.0f, 0.3f, 0.0f, 1.0f);
+                            break;
+
                     }
                     break;
             }
