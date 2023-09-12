@@ -34,8 +34,8 @@ namespace WarmTofuMod
                             rot = new Quaternion(0.0f, 0.9f, 0.0f, 0.4f);
                             break;
                         case TeleportPoints.TP_Downhill2:
-                            pos = new Vector3(-285.0f, 204.4f, 505.8f);
-                            rot = new Quaternion(0.0f, 0.0f, 0.0f, -1.0f);
+                            pos = new Vector3(-295.3f, 204.5f, 534.2f);
+                            rot = new Quaternion(0, 1, 0, 0);
                             break;
                     }
                     break;
