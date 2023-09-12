@@ -189,12 +189,13 @@ namespace WarmTofuMod
             if (jack)
             {
                 self.EnableLB.GetComponentInChildren<SteamworksLeaderboardList>().QueryTopEntries(5);
-                UpdateLeaderboard3D(self);
+                StartCoroutine(UpdateLeaderboard3D(self));
             }
         }
 
-        void UpdateLeaderboard3D(SR3DLB leaderboard)
+        IEnumerator UpdateLeaderboard3D(SR3DLB leaderboard)
         {
+            yield return new WaitForSeconds(1f);
             BasicLeaderboardEntry[] entries = leaderboard.EnableLB.GetComponentsInChildren<BasicLeaderboardEntry>();
             if (SceneManager.GetActiveScene().name == "USUI")
             {
