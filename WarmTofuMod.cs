@@ -80,6 +80,12 @@ namespace WarmTofuMod
                 On.RaceManager.FinishSecond += RaceManager_FinishSecond;
                 On.RaceManager.Start += RaceManager_Start;
 
+                // More tofu routes
+                On.LeaderboardUsersManager.sendInfo += LeaderboardUsersManager_sendInfo;
+                On.LeaderboardUsersManager.Start += LeaderboardUsersManager_Start;
+                On.SRToffuLivraison.OnTriggerEnter += SRToffuLivraison_OnTriggerEnter;
+                On.SRToffuLivraison.OnTriggerExit += SRToffuLivraison_OnTriggerExit;
+
                 // Front suspension not saving fix
                 On.GarageManager.Start += GarageManager_Start;
 

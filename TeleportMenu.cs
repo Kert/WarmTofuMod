@@ -106,9 +106,12 @@ namespace WarmTofuMod
             orig(self);
             InitMenuStyles();
 
+            string currentScene = SceneManager.GetActiveScene().name;
 
-            if (SceneManager.GetActiveScene().name == "DriftSekai")
+            if (currentScene == "DriftSekai")
                 return;
+
+            InitLeaderboards();
 
             // Change lobby button behaviour
             Button lobby = self.BtnLobby.gameObject.GetComponent<Button>();
@@ -130,31 +133,49 @@ namespace WarmTofuMod
             tpButtons[0].onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Downhill));
             tpButtons[1].onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Uphill));
 
-            if (SceneManager.GetActiveScene().name == "Irohazaka")
+            if (currentScene == "Irohazaka")
             {
-                Button dh2 = Instantiate(tpButtons[0]);
-                dh2.transform.SetParent(tpButtons[0].transform.GetParent().transform);
-                dh2.GetComponentInChildren<Text>().text = "Downhill 2";
-                RectTransform t = dh2.GetComponent<RectTransform>();
+                CreateIrohazakTofuDownhill2();
+                StartCoroutine(CreateIrohazakTofuUphill2());
+            }
+            if (currentScene == "Akina")
+            {
+                StartCoroutine(CreateAkinaTofuUphill2());
+            }
+
+            if (currentScene == "Irohazaka" || currentScene == "Akina")
+            {
+                Button additionalTP = Instantiate(tpButtons[0]);
+                additionalTP.transform.SetParent(tpButtons[0].transform.GetParent().transform);
+                RectTransform t = additionalTP.GetComponent<RectTransform>();
                 t.localScale = new Vector3(1, 1, 1);
                 t.localPosition = new Vector3(200, 0, 0);
                 tpButtons[0].GetComponent<RectTransform>().localPosition = new Vector3(-200, 0, 0);
                 tpButtons[1].GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
-                GameObject whiteBG = dh2.transform.GetParent().gameObject;
+                GameObject whiteBG = additionalTP.transform.GetParent().gameObject;
                 whiteBG.GetComponent<RectTransform>().sizeDelta = new Vector2(670.4f, 151.4f);
                 GameObject menuOverlay = whiteBG.transform.GetParent().gameObject;
                 menuOverlay.GetComponent<RectTransform>().sizeDelta = new Vector2(668.9f, 190.6f);
 
-                dh2.onClick = new Button.ButtonClickedEvent();
-                dh2.onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Downhill2));
+                additionalTP.onClick = new Button.ButtonClickedEvent();
+                if (currentScene == "Irohazaka")
+                {
+                    additionalTP.GetComponentInChildren<Text>().text = "Downhill 2";
+                    additionalTP.onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Downhill2));
+                }
+                else if (currentScene == "Akina")
+                {
+                    additionalTP.GetComponentInChildren<Text>().text = "Uphill 2";
+                    additionalTP.onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Uphill2));
+                }
                 Navigation newNav = new Navigation();
                 newNav.mode = Navigation.Mode.Explicit;
                 newNav.selectOnLeft = tpButtons[1];
-                dh2.navigation = newNav;
+                additionalTP.navigation = newNav;
                 newNav = new Navigation();
                 newNav.mode = Navigation.Mode.Explicit;
                 newNav.selectOnLeft = tpButtons[0];
-                newNav.selectOnRight = dh2;
+                newNav.selectOnRight = additionalTP;
                 tpButtons[1].navigation = newNav;
             }
 
