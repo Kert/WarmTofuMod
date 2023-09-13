@@ -407,11 +407,9 @@ namespace WarmTofuMod
 
             r = lb.FindChild("AKINA_RunCount").gameObject.GetComponent<RectTransform>();
             r.anchoredPosition = new Vector2(-327.6f, 138.6f);
-            r.sizeDelta = new Vector2(-997.1f, -478.9f);
 
             r = lb.FindChild("IROHAZAKA_RunCount").gameObject.GetComponent<RectTransform>();
             r.anchoredPosition = new Vector2(-30.4f, 138.6f);
-            r.sizeDelta = new Vector2(-997.1f, -478.9f);
         }
 
         void SRToffuLivraison_OnTriggerEnter(On.SRToffuLivraison.orig_OnTriggerEnter orig, SRToffuLivraison self, Collider other)
