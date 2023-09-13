@@ -2,6 +2,8 @@
 using BepInEx;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using HeathenEngineering.SteamApi.Foundation;
+using Steamworks;
 
 namespace WarmTofuMod
 {
@@ -110,6 +112,10 @@ namespace WarmTofuMod
 
             if (currentScene == "DriftSekai")
                 return;
+
+            // fix empty player name in leaderboards
+            SteamSettings.GameClient sfm = GameObject.FindObjectOfType<SteamworksFoundationManager>().settings.client;
+            sfm.RegisterFriendsSystem(sfm.user);
 
             InitLeaderboards();
 
