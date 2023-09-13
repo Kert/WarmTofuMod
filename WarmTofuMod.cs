@@ -171,21 +171,17 @@ namespace WarmTofuMod
 
         void SR3DLBZONE_OnTriggerEnter(On.SR3DLBZONE.orig_OnTriggerEnter orig, SR3DLBZONE self, Collider other)
         {
-            if (other.GetComponentInParent<RCC_PhotonNetwork>().isMine)
+            if (other.GetComponentInParent<RCC_PhotonNetwork>().isMine && other.name.Contains("(Clone)"))
             {
-                SR3DLB[] lbs = GameObject.FindObjectsOfType<SR3DLB>();
-                foreach (SR3DLB lb in lbs)
-                    lb.EnableLBB(true);
+                self.gameObject.GetComponent<SR3DLB>().EnableLBB(true);
             }
         }
 
         void SR3DLBZONE_OnTriggerExit(On.SR3DLBZONE.orig_OnTriggerExit orig, SR3DLBZONE self, Collider other)
         {
-            if (other.GetComponentInParent<RCC_PhotonNetwork>().isMine)
+            if (other.GetComponentInParent<RCC_PhotonNetwork>().isMine && other.name.Contains("(Clone)"))
             {
-                SR3DLB[] lbs = GameObject.FindObjectsOfType<SR3DLB>();
-                foreach (SR3DLB lb in lbs)
-                    lb.EnableLBB(false);
+                self.gameObject.GetComponent<SR3DLB>().EnableLBB(false);
             }
         }
 
