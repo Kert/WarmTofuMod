@@ -85,6 +85,7 @@ namespace WarmTofuMod
                 On.LeaderboardUsersManager.Start += LeaderboardUsersManager_Start;
                 On.SRToffuLivraison.OnTriggerEnter += SRToffuLivraison_OnTriggerEnter;
                 On.SRToffuLivraison.OnTriggerExit += SRToffuLivraison_OnTriggerExit;
+                On.SRUIManager.SetValue += SRUIManager_SetValue;
 
                 // Front suspension not saving fix
                 On.GarageManager.Start += GarageManager_Start;

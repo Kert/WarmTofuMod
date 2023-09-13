@@ -496,5 +496,32 @@ namespace WarmTofuMod
             ObscuredPrefs.SetInt("BestRunTimeIrohazakaUphill2", 0);
             ObscuredPrefs.SetInt("BestRunTimeAkinaUphill2", 0);
         }
+
+        void SRUIManager_SetValue(On.SRUIManager.orig_SetValue orig, SRUIManager self)
+        {
+            orig(self);
+            Transform lb = self.MenuLeaderboard.transform.FindChild("LB");
+
+            GameObject board = lb.FindChild("IROHAZAKA_downhill2").gameObject;
+            Debug.Log("what");
+            board.transform.FindChild("CarsIcon").GetComponent<Image>().sprite = self.CarsIcon[ObscuredPrefs.GetInt("UsedCarsIrohazakaDownhill2", 0)];
+            Debug.Log("dat");
+            board.transform.FindChild("Iro_Best_Time").GetComponent<Text>().text = ObscuredPrefs.GetInt("BestRunTimeIrohazakaDownhill2", 0) + "<size=10> 's </size>";
+            Debug.Log("bat");
+            if (ObscuredPrefs.GetInt("BestRunTimeIrohazakaDownhill2", 0) == 999)
+                board.transform.FindChild("Iro_Best_Time").GetComponent<Text>().text = "0<size=10> 's </size>";
+            Debug.Log("shat");
+            board = lb.FindChild("IROHAZAKA_uphill2").gameObject;
+            board.transform.FindChild("CarsIcon").GetComponent<Image>().sprite = self.CarsIcon[ObscuredPrefs.GetInt("UsedCarsIrohazakaUphill2", 0)];
+            board.transform.FindChild("Iro_Best_Time").GetComponent<Text>().text = ObscuredPrefs.GetInt("BestRunTimeIrohazakaUphill2", 0) + "<size=10> 's </size>";
+            if (ObscuredPrefs.GetInt("BestRunTimeIrohazakaUphill2", 0) == 999)
+                board.transform.FindChild("Iro_Best_Time").GetComponent<Text>().text = "0<size=10> 's </size>";
+
+            board = lb.FindChild("AKINA_uphill2").gameObject;
+            board.transform.FindChild("CarsIcon").GetComponent<Image>().sprite = self.CarsIcon[ObscuredPrefs.GetInt("UsedCarsAkinaUphill2", 0)];
+            board.transform.FindChild("Akina_Best_Time").GetComponent<Text>().text = ObscuredPrefs.GetInt("BestRunTimeAkinaUphill2", 0) + "<size=10> 's </size>";
+            if (ObscuredPrefs.GetInt("BestRunTimeAkinaUphill2", 0) == 999)
+                board.transform.FindChild("Iro_Best_Time").GetComponent<Text>().text = "0<size=10> 's </size>";
+        }
     }
 }
