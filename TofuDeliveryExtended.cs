@@ -8,6 +8,7 @@ using HeathenEngineering.SteamApi.PlayerServices;
 using Steamworks;
 using ZionBandwidthOptimizer.Examples;
 using System.Linq;
+using UnityEngine.UI;
 
 namespace WarmTofuMod
 {
@@ -16,6 +17,10 @@ namespace WarmTofuMod
         SteamworksLeaderboardData boardIroDH2;
         SteamworksLeaderboardData boardIroUH2;
         SteamworksLeaderboardData boardAkinaUH2;
+        GameObject LB_IroBT2;
+        GameObject LB_IroBTReverse2;
+        GameObject LB_HarunaBTReverse2;
+
         void CreateIrohazakTofuDownhill2()
         {
             GameObject tofuZone = Instantiate(GameObject.Find("[UP]Zone_TOFU_Grossiste"));
@@ -229,17 +234,140 @@ namespace WarmTofuMod
             boardIroDH2.name = "IROBESTTIMEDH2";
             boardIroDH2.Register();
 
+            SRUIManager uiMgr = GameObject.FindObjectOfType<SRUIManager>();
+            GameObject lb_parent = uiMgr.MenuGeneral.transform.FindChild("LB_IroBT").gameObject;
+            LB_IroBT2 = Instantiate(lb_parent);
+            LB_IroBT2.transform.SetParent(lb_parent.transform.GetParent().transform);
+            LB_IroBT2.transform.position = lb_parent.transform.position;
+            LB_IroBT2.GetComponent<RectTransform>().anchoredPosition = lb_parent.GetComponent<RectTransform>().anchoredPosition;
+            LB_IroBT2.GetComponent<RectTransform>().sizeDelta = lb_parent.GetComponent<RectTransform>().sizeDelta;
+            LB_IroBT2.transform.localScale = lb_parent.transform.localScale;
+            LB_IroBT2.name = "LB_IroBT2";
+            LB_IroBT2.GetComponentInChildren<SteamworksLeaderboardList>().Settings = boardIroDH2;
+
             boardIroUH2 = ScriptableObject.CreateInstance<SteamworksLeaderboardData>();
             boardIroUH2.MaxDetailEntries = 2;
             boardIroUH2.leaderboardName = "REVERSE2IROBESTTIME";
             boardIroUH2.name = "REVERSE2IROBESTTIME";
             boardIroUH2.Register();
 
+            lb_parent = uiMgr.MenuGeneral.transform.FindChild("LB_IroBTReverse").gameObject;
+            LB_IroBTReverse2 = Instantiate(lb_parent);
+            LB_IroBTReverse2.transform.SetParent(lb_parent.transform.GetParent().transform);
+            LB_IroBTReverse2.transform.position = lb_parent.transform.position;
+            LB_IroBTReverse2.GetComponent<RectTransform>().anchoredPosition = lb_parent.GetComponent<RectTransform>().anchoredPosition;
+            LB_IroBTReverse2.GetComponent<RectTransform>().sizeDelta = lb_parent.GetComponent<RectTransform>().sizeDelta;
+            LB_IroBTReverse2.transform.localScale = lb_parent.transform.localScale;
+            LB_IroBTReverse2.name = "LB_IroBTReverse2";
+            LB_IroBTReverse2.GetComponentInChildren<SteamworksLeaderboardList>().Settings = boardIroUH2;
+
+
             boardAkinaUH2 = ScriptableObject.CreateInstance<SteamworksLeaderboardData>();
             boardAkinaUH2.MaxDetailEntries = 2;
             boardAkinaUH2.leaderboardName = "REVERSE2HARUNABESTTIME";
             boardAkinaUH2.name = "REVERSE2HARUNABESTTIME";
             boardAkinaUH2.Register();
+
+            lb_parent = uiMgr.MenuGeneral.transform.FindChild("LB_HarunaBTReverse").gameObject;
+            LB_HarunaBTReverse2 = Instantiate(lb_parent);
+            LB_HarunaBTReverse2.transform.SetParent(lb_parent.transform.GetParent().transform);
+            LB_HarunaBTReverse2.transform.position = lb_parent.transform.position;
+            LB_HarunaBTReverse2.GetComponent<RectTransform>().anchoredPosition = lb_parent.GetComponent<RectTransform>().anchoredPosition;
+            LB_HarunaBTReverse2.GetComponent<RectTransform>().sizeDelta = lb_parent.GetComponent<RectTransform>().sizeDelta;
+            LB_HarunaBTReverse2.transform.localScale = lb_parent.transform.localScale;
+            LB_HarunaBTReverse2.name = "LB_HarunaBTReverse2";
+            LB_HarunaBTReverse2.GetComponentInChildren<SteamworksLeaderboardList>().Settings = boardAkinaUH2;
+
+
+            // menu leaderboards
+            Vector2 DELTA_SIZE = new Vector2(120.9f, 103.1f);
+            LeaderboardUsersManager lum = GameObject.FindObjectOfType<LeaderboardUsersManager>();
+
+            Transform lb = uiMgr.MenuLeaderboard.transform.FindChild("LB");
+
+            GameObject src = lb.FindChild("IROHAZAKA_downhill").gameObject;
+            GameObject iroDownhill2 = Instantiate(src);
+            iroDownhill2.transform.SetParent(src.transform.GetParent());
+            iroDownhill2.name = "IROHAZAKA_downhill2";
+            RectTransform r = iroDownhill2.GetComponent<RectTransform>();
+            r.localScale = new Vector3(1.2f, 1.2f, 1.2f);
+            r.anchoredPosition = new Vector2(44.0f, -52.0f);
+            r.sizeDelta = DELTA_SIZE;
+            iroDownhill2.transform.FindChild("AKINA_TITLE").gameObject.GetComponent<Text>().text = "Downhill2";
+            Button btn = iroDownhill2.transform.FindChild("Button").gameObject.GetComponent<Button>();
+            btn.onClick = new Button.ButtonClickedEvent();
+            btn.onClick.AddListener(() => lum.RefreshScore(16));
+            btn.onClick.AddListener(uiMgr.DisableOtherbtn);
+            btn.onClick.AddListener(() => LB_IroBT2.SetActive(true));
+            btn.onClick.AddListener(() => uiMgr.MenuLeaderboard.SetActive(false));
+
+            src = lb.FindChild("IROHAZAKA_uphill").gameObject;
+            GameObject iroUphill2 = Instantiate(src);
+            iroUphill2.transform.SetParent(src.transform.GetParent());
+            iroUphill2.name = "IROHAZAKA_uphill2";
+            r = iroUphill2.GetComponent<RectTransform>();
+            r.localScale = new Vector3(1.2f, 1.2f, 1.2f);
+            r.anchoredPosition = new Vector2(44.0f, -180.3f);
+            r.sizeDelta = DELTA_SIZE;
+            iroUphill2.transform.FindChild("AKINA_TITLE").gameObject.GetComponent<Text>().text = "Uphill2";
+            btn = iroUphill2.transform.FindChild("Button").gameObject.GetComponent<Button>();
+            btn.onClick = new Button.ButtonClickedEvent();
+            btn.onClick.AddListener(() => lum.RefreshScore(17));
+            btn.onClick.AddListener(uiMgr.DisableOtherbtn);
+            btn.onClick.AddListener(() => LB_IroBTReverse2.SetActive(true));
+            btn.onClick.AddListener(() => uiMgr.MenuLeaderboard.SetActive(false));
+
+            src = lb.FindChild("AKINA_uphil").gameObject;
+            GameObject akinaUphill2 = Instantiate(src);
+            akinaUphill2.transform.SetParent(src.transform.GetParent());
+            akinaUphill2.name = "AKINA_uphill2";
+            r = akinaUphill2.GetComponent<RectTransform>();
+            r.localScale = new Vector3(1.2f, 1.2f, 1.2f);
+            r.anchoredPosition = new Vector2(-254.0f, -180.3f);
+            r.sizeDelta = DELTA_SIZE;
+            akinaUphill2.transform.FindChild("AKINA_TITLE").gameObject.GetComponent<Text>().text = "Uphill2";
+            btn = akinaUphill2.transform.FindChild("AKINA_UPHILL_BTN").gameObject.GetComponent<Button>();
+            btn.onClick = new Button.ButtonClickedEvent();
+            btn.onClick.AddListener(() => lum.RefreshScore(18));
+            btn.onClick.AddListener(uiMgr.DisableOtherbtn);
+            btn.onClick.AddListener(() => LB_HarunaBTReverse2.SetActive(true));
+            btn.onClick.AddListener(() => uiMgr.MenuLeaderboard.SetActive(false));
+
+            r = lb.FindChild("IROHAZAKA_downhill").gameObject.GetComponent<RectTransform>();
+            r.anchoredPosition = new Vector2(-104.4f, -52.1f);
+            r.sizeDelta = DELTA_SIZE;
+
+            r = lb.FindChild("IROHAZAKA_uphill").gameObject.GetComponent<RectTransform>();
+            r.anchoredPosition = new Vector2(-104.4f, -180.5f);
+            r.sizeDelta = DELTA_SIZE;
+
+            r = lb.FindChild("AKINA_downhill").gameObject.GetComponent<RectTransform>();
+            r.anchoredPosition = new Vector2(-327.5f, -52.1f);
+            r.sizeDelta = new Vector2(242.9f, 103.1f);
+
+            r = lb.FindChild("AKINA_uphil").gameObject.GetComponent<RectTransform>();
+            r.anchoredPosition = new Vector2(-403.5f, -180.5f);
+            r.sizeDelta = DELTA_SIZE;
+
+            r = lb.FindChild(">BestLvl").gameObject.GetComponent<RectTransform>();
+            r.anchoredPosition = new Vector2(-542.0f, 138.8f);
+            r.sizeDelta = new Vector2(102.1f, 102.7f);
+
+            r = lb.FindChild(">TOPWIN").gameObject.GetComponent<RectTransform>();
+            r.anchoredPosition = new Vector2(-542.0f, -51.8f);
+            r.sizeDelta = new Vector2(102.1f, 102.7f);
+
+            r = lb.FindChild(">TOPCHASE").gameObject.GetComponent<RectTransform>();
+            r.anchoredPosition = new Vector2(-542.0f, -180.0f);
+            r.sizeDelta = new Vector2(102.1f, 102.7f);
+
+            r = lb.FindChild("AKINA_RunCount").gameObject.GetComponent<RectTransform>();
+            r.anchoredPosition = new Vector2(-327.6f, 138.6f);
+            r.sizeDelta = new Vector2(-997.1f, -478.9f);
+
+            r = lb.FindChild("IROHAZAKA_RunCount").gameObject.GetComponent<RectTransform>();
+            r.anchoredPosition = new Vector2(-30.4f, 138.6f);
+            r.sizeDelta = new Vector2(-997.1f, -478.9f);
         }
 
         void SRToffuLivraison_OnTriggerEnter(On.SRToffuLivraison.orig_OnTriggerEnter orig, SRToffuLivraison self, Collider other)

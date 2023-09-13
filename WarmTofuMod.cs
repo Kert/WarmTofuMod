@@ -241,6 +241,21 @@ namespace WarmTofuMod
                         self.AkagiBT.QueryTopEntries(100);
                     }
                     break;
+                case 16:
+                    boardIroDH2.QueryPeerEntries(0);
+                    yield return new WaitForSeconds(0.4f);
+                    boardIroDH2.QueryTopEntries(100);
+                    break;
+                case 17:
+                    boardIroUH2.QueryPeerEntries(0);
+                    yield return new WaitForSeconds(0.4f);
+                    boardIroUH2.QueryTopEntries(100);
+                    break;
+                case 18:
+                    boardAkinaUH2.QueryPeerEntries(0);
+                    yield return new WaitForSeconds(0.4f);
+                    boardAkinaUH2.QueryTopEntries(100);
+                    break;
                 default:
                     yield return orig(self, target);
                     break;
