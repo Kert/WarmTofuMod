@@ -7,6 +7,7 @@ using HeathenEngineering.SteamApi.PlayerServices.UI;
 using HeathenEngineering.SteamApi.PlayerServices;
 using Steamworks;
 using ZionBandwidthOptimizer.Examples;
+using System.Linq;
 
 namespace WarmTofuMod
 {
@@ -118,6 +119,14 @@ namespace WarmTofuMod
             Destroy(GameObject.Find("iroa2019_streetlightremap_obj_22_SUB1"));
             Destroy(GameObject.Find("iroa2019_streetlightremap_obj_22_SUB2"));
             Destroy(GameObject.Find("1WALL_xxiroa2019_streetlightremap_obj_22_sub1"));
+
+            DayNightManager dayNightManager = GameObject.FindObjectOfType<DayNightManager>();
+            dayNightManager.Lampadaires = dayNightManager.Lampadaires.Where(val =>
+                val.name != "iroa2019_streetlightremap_obj_22_SUB0" &&
+                val.name != "iroa2019_streetlightremap_obj_22_SUB1" &&
+                val.name != "iroa2019_streetlightremap_obj_22_SUB2" &&
+                val.name != "1WALL_xxiroa2019_streetlightremap_obj_22_sub1"
+            ).ToArray();
 
             GameObject tofuRadarLogoParent = GameObject.Find("Radar_Logo_Tofu");
             GameObject mapLabel = Instantiate(tofuRadarLogoParent.transform.FindChild("HUD Element Pivot").gameObject);
