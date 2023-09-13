@@ -300,6 +300,8 @@ namespace WarmTofuMod
             btn.onClick.AddListener(uiMgr.DisableOtherbtn);
             btn.onClick.AddListener(() => LB_IroBT2.SetActive(true));
             btn.onClick.AddListener(() => uiMgr.MenuLeaderboard.SetActive(false));
+            Button iroDh2Button = btn;
+            Button iroDhButton = src.transform.FindChild("Button").gameObject.GetComponent<Button>();
 
             src = lb.FindChild("IROHAZAKA_uphill").gameObject;
             GameObject iroUphill2 = Instantiate(src);
@@ -316,6 +318,8 @@ namespace WarmTofuMod
             btn.onClick.AddListener(uiMgr.DisableOtherbtn);
             btn.onClick.AddListener(() => LB_IroBTReverse2.SetActive(true));
             btn.onClick.AddListener(() => uiMgr.MenuLeaderboard.SetActive(false));
+            Button iroUh2Button = btn;
+            Button iroUhButton = src.transform.FindChild("Button").gameObject.GetComponent<Button>();
 
             src = lb.FindChild("AKINA_uphil").gameObject;
             GameObject akinaUphill2 = Instantiate(src);
@@ -332,6 +336,46 @@ namespace WarmTofuMod
             btn.onClick.AddListener(uiMgr.DisableOtherbtn);
             btn.onClick.AddListener(() => LB_HarunaBTReverse2.SetActive(true));
             btn.onClick.AddListener(() => uiMgr.MenuLeaderboard.SetActive(false));
+            Button akinaUh2Button = btn;
+            Button akinaUhButton = src.transform.FindChild("AKINA_UPHILL_BTN").gameObject.GetComponent<Button>();
+            Button akagiDhButton = lb.FindChild("AKAGI_downhill").FindChild("AKAGI_DOWNHILL_BTN").gameObject.GetComponent<Button>();
+            Button akagiUhButton = lb.FindChild("AKAGI_uphill").FindChild("AKAGI_UPHILL_BTN").gameObject.GetComponent<Button>();
+
+            Navigation newNav = iroDhButton.navigation;
+            newNav.selectOnRight = iroDh2Button;
+            iroDhButton.navigation = newNav;
+
+            newNav = iroDh2Button.navigation;
+            newNav.selectOnLeft = iroDhButton;
+            newNav.selectOnRight = akagiDhButton;
+            newNav.selectOnDown = iroUh2Button;
+            iroDh2Button.navigation = newNav;
+
+            newNav = iroUhButton.navigation;
+            newNav.selectOnLeft = akinaUh2Button;
+            newNav.selectOnRight = iroUh2Button;
+            iroUhButton.navigation = newNav;
+
+            newNav = iroUh2Button.navigation;
+            newNav.selectOnLeft = iroUhButton;
+            newNav.selectOnUp = iroDh2Button;
+            iroUh2Button.navigation = newNav;
+
+            newNav = akinaUhButton.navigation;
+            newNav.selectOnRight = akinaUh2Button;
+            akinaUhButton.navigation = newNav;
+
+            newNav = akinaUh2Button.navigation;
+            newNav.selectOnLeft = akinaUhButton;
+            akinaUh2Button.navigation = newNav;
+
+            newNav = akagiDhButton.navigation;
+            newNav.selectOnLeft = iroDh2Button;
+            akagiDhButton.navigation = newNav;
+
+            newNav = akagiUhButton.navigation;
+            newNav.selectOnLeft = iroUh2Button;
+            akagiUhButton.navigation = newNav;
 
             r = lb.FindChild("IROHAZAKA_downhill").gameObject.GetComponent<RectTransform>();
             r.anchoredPosition = new Vector2(-104.4f, -52.1f);
