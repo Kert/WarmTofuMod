@@ -2,7 +2,6 @@
 using BepInEx;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using HeathenEngineering.SteamApi.Foundation;
 
 namespace WarmTofuMod
 {
@@ -95,39 +94,19 @@ namespace WarmTofuMod
             prefsInt["MenuOpen"] = 0;
         }
 
-        void TeleportMenu()
+        void CreateTeleportMenu(SRUIManager uiMgr)
         {
-            teleportMenu.SetActive(true);
-            teleportMenu.GetComponentInChildren<Button>().Select();
-            GameObject.FindObjectOfType<SRUIManager>().MenuGeneral.SetActive(false);
-        }
-
-        void SRUIManager_Start(On.SRUIManager.orig_Start orig, SRUIManager self)
-        {
-            InitMenuStyles();
-
-            // fix empty player name in leaderboards
-            SteamSettings.GameClient sfm = GameObject.FindObjectOfType<SteamworksFoundationManager>().settings.client;
-            sfm.RegisterFriendsSystem(sfm.user);
-
-            self.LB3DUP_HILL.SetActive(true);
-            self.LB3DDOWN_HILL.SetActive(true);
-            self.LB3DDOWN_HILL.GetComponent<SR3DLB>().EnableLBB(true);
-            self.LB3DUP_HILL.GetComponent<SR3DLB>().EnableLBB(true);
-
-            InitLeaderboards();
-
             string currentScene = SceneManager.GetActiveScene().name;
             // Change lobby button behaviour
             if (currentScene != "DriftSekai")
             {
-                Button lobby = self.BtnLobby.gameObject.GetComponent<Button>();
+                Button lobby = uiMgr.BtnLobby.gameObject.GetComponent<Button>();
                 lobby.onClick = new Button.ButtonClickedEvent();
 
-                teleportMenu = Instantiate(self.MenuExit);
+                teleportMenu = Instantiate(uiMgr.MenuExit);
                 Transform transform = teleportMenu.transform;
-                transform.SetParent(self.MenuGeneral.transform.GetParent());
-                transform.position = self.BtnLobby.transform.position;
+                transform.SetParent(uiMgr.MenuGeneral.transform.GetParent());
+                transform.position = uiMgr.BtnLobby.transform.position;
                 transform.localScale = new Vector3(1f, 1f, 1f);
 
                 teleportMenu.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(0, 0, 0);
@@ -139,16 +118,6 @@ namespace WarmTofuMod
                 tpButtons[1].onClick = new Button.ButtonClickedEvent();
                 tpButtons[0].onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Downhill));
                 tpButtons[1].onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Uphill));
-
-                if (currentScene == "Irohazaka")
-                {
-                    CreateIrohazakTofuDownhill2();
-                    StartCoroutine(CreateIrohazakTofuUphill2());
-                }
-                if (currentScene == "Akina")
-                {
-                    StartCoroutine(CreateAkinaTofuUphill2());
-                }
 
                 if (currentScene == "Irohazaka" || currentScene == "Akina")
                 {
@@ -188,35 +157,13 @@ namespace WarmTofuMod
 
                 lobby.onClick.AddListener(TeleportMenu);
             }
-
-            orig(self);
-            SetLeaderboardBetterParams(self.LB1);
-            SetLeaderboardBetterParams(self.LB2);
-            SetLeaderboardBetterParams(self.LB3);
-            SetLeaderboardBetterParams(self.LB4);
-            SetLeaderboardBetterParams(self.LB5);
-            SetLeaderboardBetterParams(self.LB6);
-            SetLeaderboardBetterParams(self.LB7);
-            SetLeaderboardBetterParams(self.LB8);
-            SetLeaderboardBetterParams(self.LB9);
-            SetLeaderboardBetterParams(self.LB10);
-            SetLeaderboardBetterParams(self.LB11);
-            SetLeaderboardBetterParams(self.LB12);
-            SetLeaderboardBetterParams(self.LB13);
-            SetLeaderboardBetterParams(self.LB14);
-            SetLeaderboardBetterParams(self.LB15);
-            SetLeaderboardBetterParams(LB_IroBT2);
-            SetLeaderboardBetterParams(LB_IroBTReverse2);
-            SetLeaderboardBetterParams(LB_HarunaBTReverse2);
         }
 
-        void SetLeaderboardBetterParams(GameObject gameObject)
+        void TeleportMenu()
         {
-            GameObject scrollView = gameObject.transform.FindChild("Scroll View").gameObject;
-            ScrollRect scrollRect = scrollView.GetComponent<ScrollRect>();
-            scrollRect.movementType = ScrollRect.MovementType.Clamped;
-            scrollRect.scrollSensitivity = 50;
-            scrollView.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -4);
+            teleportMenu.SetActive(true);
+            teleportMenu.GetComponentInChildren<Button>().Select();
+            GameObject.FindObjectOfType<SRUIManager>().MenuGeneral.SetActive(false);
         }
 
         void SRUIManager_OpenMenu(On.SRUIManager.orig_OpenMenu orig, SRUIManager self)

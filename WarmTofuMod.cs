@@ -10,6 +10,7 @@ using UnityEngine.UI;
 using HeathenEngineering.SteamApi.PlayerServices;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using HeathenEngineering.SteamApi.Foundation;
 
 namespace WarmTofuMod
 {
@@ -331,6 +332,55 @@ namespace WarmTofuMod
             orig(self);
             tofuTimerLabel.SetActive(false);
             GameObject.FindObjectOfType<LeaderboardUsersManager>().Start();
+        }
+
+        void SRUIManager_Start(On.SRUIManager.orig_Start orig, SRUIManager self)
+        {
+            InitMenuStyles();
+
+            // fix empty player name in leaderboards
+            SteamSettings.GameClient sfm = GameObject.FindObjectOfType<SteamworksFoundationManager>().settings.client;
+            sfm.RegisterFriendsSystem(sfm.user);
+
+            self.LB3DUP_HILL.SetActive(true);
+            self.LB3DDOWN_HILL.SetActive(true);
+            self.LB3DDOWN_HILL.GetComponent<SR3DLB>().EnableLBB(true);
+            self.LB3DUP_HILL.GetComponent<SR3DLB>().EnableLBB(true);
+
+            InitLeaderboards();
+
+            CreateTeleportMenu(self);
+
+            CreateNewTofuDeliveryRoutes();
+
+            orig(self);
+            SetLeaderboardBetterParams(self.LB1);
+            SetLeaderboardBetterParams(self.LB2);
+            SetLeaderboardBetterParams(self.LB3);
+            SetLeaderboardBetterParams(self.LB4);
+            SetLeaderboardBetterParams(self.LB5);
+            SetLeaderboardBetterParams(self.LB6);
+            SetLeaderboardBetterParams(self.LB7);
+            SetLeaderboardBetterParams(self.LB8);
+            SetLeaderboardBetterParams(self.LB9);
+            SetLeaderboardBetterParams(self.LB10);
+            SetLeaderboardBetterParams(self.LB11);
+            SetLeaderboardBetterParams(self.LB12);
+            SetLeaderboardBetterParams(self.LB13);
+            SetLeaderboardBetterParams(self.LB14);
+            SetLeaderboardBetterParams(self.LB15);
+            SetLeaderboardBetterParams(LB_IroBT2);
+            SetLeaderboardBetterParams(LB_IroBTReverse2);
+            SetLeaderboardBetterParams(LB_HarunaBTReverse2);
+        }
+
+        void SetLeaderboardBetterParams(GameObject gameObject)
+        {
+            GameObject scrollView = gameObject.transform.FindChild("Scroll View").gameObject;
+            ScrollRect scrollRect = scrollView.GetComponent<ScrollRect>();
+            scrollRect.movementType = ScrollRect.MovementType.Clamped;
+            scrollRect.scrollSensitivity = 50;
+            scrollView.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -4);
         }
 
         void OnGUI()

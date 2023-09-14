@@ -9,6 +9,7 @@ using Steamworks;
 using ZionBandwidthOptimizer.Examples;
 using System.Linq;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 namespace WarmTofuMod
 {
@@ -20,6 +21,20 @@ namespace WarmTofuMod
         GameObject LB_IroBT2;
         GameObject LB_IroBTReverse2;
         GameObject LB_HarunaBTReverse2;
+
+        void CreateNewTofuDeliveryRoutes()
+        {
+            string currentScene = SceneManager.GetActiveScene().name;
+            if (currentScene == "Irohazaka")
+            {
+                CreateIrohazakTofuDownhill2();
+                StartCoroutine(CreateIrohazakTofuUphill2());
+            }
+            if (currentScene == "Akina")
+            {
+                StartCoroutine(CreateAkinaTofuUphill2());
+            }
+        }
 
         void CreateIrohazakTofuDownhill2()
         {
