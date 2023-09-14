@@ -3,7 +3,6 @@ using BepInEx;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using HeathenEngineering.SteamApi.Foundation;
-using Steamworks;
 
 namespace WarmTofuMod
 {
