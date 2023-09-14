@@ -3,9 +3,21 @@ This is a mod for Initial Drift Online. The goal is to fix various issues and ad
 
 # List of changes
 - Added suspension spring force and damper customization. Check garage for options
-- Replaced Lobby button with Teleport button that can take you Downhill or Uphill
+- Replaced Lobby button with Teleport button that can take you Downhill or Uphill. And also Dowhnill 2 on Irohazaka
 - Huge performance optimizations
 - Added realtime tofu delivery timer
+- Added a feature to invite players to battle race on every map (except Driftsekai) in both Uphill and Downhill
+
+Irohazaka has additional Uphill and Downhill from the other side of the mountain making a total of 4 directions!
+
+You can also select which one of you leads or chases or you both start in parallel
+
+And also you can enable or disable nitro and collision between both players for the duration of the race
+
+It works only with players who have WarmTofuMod 1.6.0 or newer installed
+
+Press Tab to open player list and click on player button to open race settings. Only players who have the mod will have a button
+
 - Transmission mode no longer resets when you restart the game
 - Camera mode no longer resets when you change maps/restart the game
 - Fixed front suspension not saving during tuning
@@ -17,6 +29,11 @@ This is a mod for Initial Drift Online. The goal is to fix various issues and ad
 - Fixed Akagi menu leaderboard not working sometimes
 - Optimized 3D leaderboard updating
 - Fixed player name labels sometimes not rotating properly
+- Changed the size of player name labels above cars so they don't block the view that much
+- Removed rival distance and arrow indicators during race for the same reason
+- Fixed finish not existing when racing on Akagi
+- Fixed E button not working when inviting to race battle on Usui and Akagi
+
 <details>
   <summary>Performance screenshot comparisons</summary>
   Before
@@ -27,6 +44,8 @@ This is a mod for Initial Drift Online. The goal is to fix various issues and ad
 <details>
   <summary>More feature screenshots</summary>
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/82434723-7ca5-400f-af51-5c220b583cc8">
+  <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/4f8555b6-f5cf-4df9-a432-51342c7dc907">
+  <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/9f8f3da9-d24d-4d72-ac25-2496f5e8710d">
 </details>
 
 # How to install
@@ -65,3 +84,21 @@ After that you just run **build.bat**
 The project expects that your game folder is ```C:\Program Files (x86)\Steam\steamapps\common\Initial Drift Online\```
 
 You should change all instances of that in **.csproj** and **build.bat** if yours is different 
+
+# Установка
+Для начала необходимо подготовить игру к использованию модов
+## Установка и настройка BepInEx 5
+- Скачать zip-архив [BepInEx 5](https://github.com/BepInEx/BepInEx/releases/tag/v5.4.21) версии x64
+- Распаковать архив в папку игры (Найти папку игры можно через Steam: ПКМ на игре в списке->Управление->Посмотреть локальные файлы)
+- Запустить игру и закрыть, чтобы появились файлы настроек BepInEx 5
+- Открыть любым текстовым редактором (например блокнотом) файл ```BepInEx.cfg``` из папки ```%папка с игрой%/BepInEx/config/```
+- Найти в файле текст ```[Preloader.Entrypoint]``` и на следующей строке добавить ```Type = MonoBehaviour```. Должно выглядеть так:
+```
+[Preloader.Entrypoint]
+Type = MonoBehaviour
+```
+- Скачать ```MMHOOK.zip``` [отсюда](https://github.com/Kert/WarmTofuMod/releases/tag/MMHOOK) и распаковать в папку игры
+
+## Установка мода WarmTofuMod
+- Скачать файл мода WarmTofuMod *.dll [тут](https://github.com/Kert/WarmTofuMod/releases)
+- Скопировать файл *.dll в папку ```%папка игры%/BepInEx/plugins/```
