@@ -41,6 +41,8 @@ Check feature screenshots to see the locations
 - Fixed finish not existing when racing on Akagi
 - Fixed E button not working when inviting to race battle on Usui and Akagi
 - Fixed leaderboards sometimes having empty player name
+- Fixed leaderboards hard to scroll
+- Submit new tofu time upon delivery and not when you start the game
   
 <details>
   <summary>Performance screenshot comparisons</summary>
