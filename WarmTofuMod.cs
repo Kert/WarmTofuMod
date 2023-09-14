@@ -330,6 +330,7 @@ namespace WarmTofuMod
         {
             orig(self);
             tofuTimerLabel.SetActive(false);
+            GameObject.FindObjectOfType<LeaderboardUsersManager>().Start();
         }
 
         void OnGUI()
