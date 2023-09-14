@@ -105,87 +105,92 @@ namespace WarmTofuMod
 
         void SRUIManager_Start(On.SRUIManager.orig_Start orig, SRUIManager self)
         {
-            orig(self);
             InitMenuStyles();
-
-            string currentScene = SceneManager.GetActiveScene().name;
-
-            if (currentScene == "DriftSekai")
-                return;
 
             // fix empty player name in leaderboards
             SteamSettings.GameClient sfm = GameObject.FindObjectOfType<SteamworksFoundationManager>().settings.client;
             sfm.RegisterFriendsSystem(sfm.user);
 
+            self.LB3DUP_HILL.SetActive(true);
+            self.LB3DDOWN_HILL.SetActive(true);
+            self.LB3DDOWN_HILL.GetComponent<SR3DLB>().EnableLBB(true);
+            self.LB3DUP_HILL.GetComponent<SR3DLB>().EnableLBB(true);
+
             InitLeaderboards();
 
+            string currentScene = SceneManager.GetActiveScene().name;
             // Change lobby button behaviour
-            Button lobby = self.BtnLobby.gameObject.GetComponent<Button>();
-            lobby.onClick = new Button.ButtonClickedEvent();
-
-            teleportMenu = Instantiate(self.MenuExit);
-            Transform transform = teleportMenu.transform;
-            transform.SetParent(self.MenuGeneral.transform.GetParent());
-            transform.position = self.BtnLobby.transform.position;
-            transform.localScale = new Vector3(1f, 1f, 1f);
-
-            teleportMenu.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(0, 0, 0);
-            teleportMenu.GetComponentInChildren<Text>().text = "Teleport";
-            Button[] tpButtons = teleportMenu.GetComponentsInChildren<Button>();
-            tpButtons[0].GetComponentInChildren<Text>().text = "Downhill";
-            tpButtons[1].GetComponentInChildren<Text>().text = "Uphill";
-            tpButtons[0].onClick = new Button.ButtonClickedEvent();
-            tpButtons[1].onClick = new Button.ButtonClickedEvent();
-            tpButtons[0].onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Downhill));
-            tpButtons[1].onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Uphill));
-
-            if (currentScene == "Irohazaka")
+            if (currentScene != "DriftSekai")
             {
-                CreateIrohazakTofuDownhill2();
-                StartCoroutine(CreateIrohazakTofuUphill2());
-            }
-            if (currentScene == "Akina")
-            {
-                StartCoroutine(CreateAkinaTofuUphill2());
-            }
+                Button lobby = self.BtnLobby.gameObject.GetComponent<Button>();
+                lobby.onClick = new Button.ButtonClickedEvent();
 
-            if (currentScene == "Irohazaka" || currentScene == "Akina")
-            {
-                Button additionalTP = Instantiate(tpButtons[0]);
-                additionalTP.transform.SetParent(tpButtons[0].transform.GetParent().transform);
-                RectTransform t = additionalTP.GetComponent<RectTransform>();
-                t.localScale = new Vector3(1, 1, 1);
-                t.localPosition = new Vector3(200, 0, 0);
-                tpButtons[0].GetComponent<RectTransform>().localPosition = new Vector3(-200, 0, 0);
-                tpButtons[1].GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
-                GameObject whiteBG = additionalTP.transform.GetParent().gameObject;
-                whiteBG.GetComponent<RectTransform>().sizeDelta = new Vector2(670.4f, 151.4f);
-                GameObject menuOverlay = whiteBG.transform.GetParent().gameObject;
-                menuOverlay.GetComponent<RectTransform>().sizeDelta = new Vector2(668.9f, 190.6f);
+                teleportMenu = Instantiate(self.MenuExit);
+                Transform transform = teleportMenu.transform;
+                transform.SetParent(self.MenuGeneral.transform.GetParent());
+                transform.position = self.BtnLobby.transform.position;
+                transform.localScale = new Vector3(1f, 1f, 1f);
 
-                additionalTP.onClick = new Button.ButtonClickedEvent();
+                teleportMenu.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(0, 0, 0);
+                teleportMenu.GetComponentInChildren<Text>().text = "Teleport";
+                Button[] tpButtons = teleportMenu.GetComponentsInChildren<Button>();
+                tpButtons[0].GetComponentInChildren<Text>().text = "Downhill";
+                tpButtons[1].GetComponentInChildren<Text>().text = "Uphill";
+                tpButtons[0].onClick = new Button.ButtonClickedEvent();
+                tpButtons[1].onClick = new Button.ButtonClickedEvent();
+                tpButtons[0].onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Downhill));
+                tpButtons[1].onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Uphill));
+
                 if (currentScene == "Irohazaka")
                 {
-                    additionalTP.GetComponentInChildren<Text>().text = "Downhill 2";
-                    additionalTP.onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Downhill2));
+                    CreateIrohazakTofuDownhill2();
+                    StartCoroutine(CreateIrohazakTofuUphill2());
                 }
-                else if (currentScene == "Akina")
+                if (currentScene == "Akina")
                 {
-                    additionalTP.GetComponentInChildren<Text>().text = "Uphill 2";
-                    additionalTP.onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Uphill2));
+                    StartCoroutine(CreateAkinaTofuUphill2());
                 }
-                Navigation newNav = new Navigation();
-                newNav.mode = Navigation.Mode.Explicit;
-                newNav.selectOnLeft = tpButtons[1];
-                additionalTP.navigation = newNav;
-                newNav = new Navigation();
-                newNav.mode = Navigation.Mode.Explicit;
-                newNav.selectOnLeft = tpButtons[0];
-                newNav.selectOnRight = additionalTP;
-                tpButtons[1].navigation = newNav;
+
+                if (currentScene == "Irohazaka" || currentScene == "Akina")
+                {
+                    Button additionalTP = Instantiate(tpButtons[0]);
+                    additionalTP.transform.SetParent(tpButtons[0].transform.GetParent().transform);
+                    RectTransform t = additionalTP.GetComponent<RectTransform>();
+                    t.localScale = new Vector3(1, 1, 1);
+                    t.localPosition = new Vector3(200, 0, 0);
+                    tpButtons[0].GetComponent<RectTransform>().localPosition = new Vector3(-200, 0, 0);
+                    tpButtons[1].GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
+                    GameObject whiteBG = additionalTP.transform.GetParent().gameObject;
+                    whiteBG.GetComponent<RectTransform>().sizeDelta = new Vector2(670.4f, 151.4f);
+                    GameObject menuOverlay = whiteBG.transform.GetParent().gameObject;
+                    menuOverlay.GetComponent<RectTransform>().sizeDelta = new Vector2(668.9f, 190.6f);
+
+                    additionalTP.onClick = new Button.ButtonClickedEvent();
+                    if (currentScene == "Irohazaka")
+                    {
+                        additionalTP.GetComponentInChildren<Text>().text = "Downhill 2";
+                        additionalTP.onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Downhill2));
+                    }
+                    else if (currentScene == "Akina")
+                    {
+                        additionalTP.GetComponentInChildren<Text>().text = "Uphill 2";
+                        additionalTP.onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Uphill2));
+                    }
+                    Navigation newNav = new Navigation();
+                    newNav.mode = Navigation.Mode.Explicit;
+                    newNav.selectOnLeft = tpButtons[1];
+                    additionalTP.navigation = newNav;
+                    newNav = new Navigation();
+                    newNav.mode = Navigation.Mode.Explicit;
+                    newNav.selectOnLeft = tpButtons[0];
+                    newNav.selectOnRight = additionalTP;
+                    tpButtons[1].navigation = newNav;
+                }
+
+                lobby.onClick.AddListener(TeleportMenu);
             }
 
-            lobby.onClick.AddListener(TeleportMenu);
+            orig(self);
         }
 
         void SRUIManager_OpenMenu(On.SRUIManager.orig_OpenMenu orig, SRUIManager self)
