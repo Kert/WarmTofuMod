@@ -3,7 +3,7 @@ This is a mod for Initial Drift Online. The goal is to fix various issues and ad
 
 # List of changes
 - Added suspension spring force and damper customization. Check garage for options
-- Replaced Lobby button with Teleport button that can take you Downhill or Uphill. And also Dowhnill 2 on Irohazaka
+- Replaced Lobby button with Teleport button that can take you Downhill or Uphill. And also Dowhnill 2 on Irohazaka and Uphill 2 on Haruna
 - Huge performance optimizations
 - Added realtime tofu delivery timer
 - Added a feature to invite players to battle race on every map (except Driftsekai) in both Uphill and Downhill
@@ -17,6 +17,13 @@ And also you can enable or disable nitro and collision between both players for 
 It works only with players who have WarmTofuMod 1.6.0 or newer installed
 
 Press Tab to open player list and click on player button to open race settings. Only players who have the mod will have a button
+
+- Added 3 new tofu delivery routes
+ 1. Irohazaka: Downhill from the other side of the mountain
+ 2. Irohazaka: Uphill from the other side of the mountain
+ 3. Haruna: Uphill from the very end of the map to the beggining and not the mid point
+
+Check feature screenshots to see the locations
 
 - Transmission mode no longer resets when you restart the game
 - Camera mode no longer resets when you change maps/restart the game
@@ -33,7 +40,8 @@ Press Tab to open player list and click on player button to open race settings. 
 - Removed rival distance and arrow indicators during race for the same reason
 - Fixed finish not existing when racing on Akagi
 - Fixed E button not working when inviting to race battle on Usui and Akagi
-
+- Fixed leaderboards sometimes having empty player name
+  
 <details>
   <summary>Performance screenshot comparisons</summary>
   Before
@@ -46,6 +54,9 @@ Press Tab to open player list and click on player button to open race settings. 
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/82434723-7ca5-400f-af51-5c220b583cc8">
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/4f8555b6-f5cf-4df9-a432-51342c7dc907">
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/9f8f3da9-d24d-4d72-ac25-2496f5e8710d">
+  <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/b39ee05a-3e64-4211-b6c9-b9494cf3e965">
+  <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/cfa45063-5f92-4c9a-b3e5-a9105e0f492e">
+  <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/a08cb924-0757-486d-b76a-dfe66a02c722">
 </details>
 
 # How to install
