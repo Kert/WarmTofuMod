@@ -147,8 +147,15 @@ namespace WarmTofuMod
                     // set font smaller and add transparency
                     array[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 1);
                     TextMeshPro t = array[i].GetComponentInChildren<TextMeshPro>();
-                    t.fontSize = 10;
-                    t.color = Color.white - new Color(0, 0, 0, 0.3f);
+                    float distanceToCam = Vector3.Distance(cams[camIndex].transform.position, array[i].transform.position);
+                    int CUT_OFF_DISTANCE = 30;
+                    float transparency = 0.3f;
+                    float fontSize = 7.5f * Convert.ToSingle(Math.Pow(distanceToCam, 0.3));
+                    t.fontSize = fontSize;
+
+                    if (distanceToCam > CUT_OFF_DISTANCE)
+                        transparency = 0.3f + (Math.Min(distanceToCam, CUT_OFF_DISTANCE + 10) - CUT_OFF_DISTANCE) * 0.07f;
+                    t.color = Color.white - new Color(0, 0, 0, transparency);
                     t.outlineWidth = 0.2f;
                 }
             }
