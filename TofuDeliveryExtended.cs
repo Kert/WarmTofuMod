@@ -543,5 +543,13 @@ namespace WarmTofuMod
             LB_IroBTReverse2.SetActive(false);
             LB_HarunaBTReverse2.SetActive(false);
         }
+
+        void SRUIManager_LeaderboardeMenu(On.SRUIManager.orig_LeaderboardeMenu orig, SRUIManager self)
+        {
+            orig(self);
+            LB_IroBT2.SetActive(false);
+            LB_IroBTReverse2.SetActive(false);
+            LB_HarunaBTReverse2.SetActive(false);
+        }
     }
 }

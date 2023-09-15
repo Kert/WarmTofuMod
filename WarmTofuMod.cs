@@ -14,7 +14,7 @@ using HeathenEngineering.SteamApi.Foundation;
 
 namespace WarmTofuMod
 {
-    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.7.0")]
+    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.7.1")]
     public partial class WarmTofuMod : BaseUnityPlugin
     {
         public enum Menus
@@ -88,6 +88,7 @@ namespace WarmTofuMod
                 On.SRToffuLivraison.OnTriggerExit += SRToffuLivraison_OnTriggerExit;
                 On.SRUIManager.SetValue += SRUIManager_SetValue;
                 On.SRUIManager.SetButtonBase += SRUIManager_SetButtonBase;
+                On.SRUIManager.LeaderboardeMenu += SRUIManager_LeaderboardeMenu;
 
                 // Front suspension not saving fix
                 On.GarageManager.Start += GarageManager_Start;

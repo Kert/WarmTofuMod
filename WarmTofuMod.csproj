@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>WarmTofuMod</AssemblyName>
     <Description>Initial Drift Online mod by Kert</Description>
-    <Version>1.7.0</Version>
+    <Version>1.7.1</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
