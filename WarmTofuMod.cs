@@ -12,6 +12,7 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 using HeathenEngineering.SteamApi.Foundation;
 using Photon.Pun;
+using System.Collections.Generic;
 
 namespace WarmTofuMod
 {
@@ -91,6 +92,10 @@ namespace WarmTofuMod
                 On.SRUIManager.SetButtonBase += SRUIManager_SetButtonBase;
                 On.SRUIManager.LeaderboardeMenu += SRUIManager_LeaderboardeMenu;
 
+                // map select
+                On.SpielmannSpiel_Launcher.LauncherManager.Start += LauncherManager_Start;
+                On.SRTransitionMap.Start += SRTransitionMap_Start;
+
                 // Front suspension not saving fix
                 On.GarageManager.Start += GarageManager_Start;
 
@@ -138,7 +143,6 @@ namespace WarmTofuMod
                 On.SRUIManager.Start += SRUIManager_Start;
                 On.SRUIManager.OpenMenu += SRUIManager_OpenMenu;
                 On.SRCusorManager.Update += SRCusorManager_Update;
-                On.SRTransitionMap.Start += SRTransitionMap_Start;
 
                 // missing lights fix
                 On.RCC_LightEmission.Update += RCC_LightEmission_Update;
@@ -384,6 +388,23 @@ namespace WarmTofuMod
             scrollRect.movementType = ScrollRect.MovementType.Clamped;
             scrollRect.scrollSensitivity = 50;
             scrollView.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -4);
+        }
+
+        void LauncherManager_Start(On.SpielmannSpiel_Launcher.LauncherManager.orig_Start orig, SpielmannSpiel_Launcher.LauncherManager self)
+        {
+            orig(self);
+            GameObject dummy = GameObject.Find("RegionSelector");
+            GameObject mapSelect = Instantiate(dummy);
+            mapSelect.transform.SetParent(dummy.transform.GetParent());
+            mapSelect.name = "MapSelect";
+            Destroy(mapSelect.GetComponent<RegionSelector>());
+            mapSelect.GetComponent<RectTransform>().position = new Vector2(372, 100);
+            Dropdown dd = mapSelect.GetComponent<Dropdown>();
+            dd.ClearOptions();
+            dd.AddOptions(new List<string> { "Irohazaka", "Haruna", "USUI", "Akagi" });
+            dd.onValueChanged = new Dropdown.DropdownEvent();
+            dd.value = 0;
+            dd.itemText.fontSize = 40;
         }
 
         bool firstLoad = true;
