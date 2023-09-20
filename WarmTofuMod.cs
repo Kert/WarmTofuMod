@@ -11,6 +11,7 @@ using HeathenEngineering.SteamApi.PlayerServices;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using HeathenEngineering.SteamApi.Foundation;
+using Photon.Pun;
 
 namespace WarmTofuMod
 {
@@ -137,6 +138,7 @@ namespace WarmTofuMod
                 On.SRUIManager.Start += SRUIManager_Start;
                 On.SRUIManager.OpenMenu += SRUIManager_OpenMenu;
                 On.SRCusorManager.Update += SRCusorManager_Update;
+                On.SRTransitionMap.Start += SRTransitionMap_Start;
 
                 // missing lights fix
                 On.RCC_LightEmission.Update += RCC_LightEmission_Update;
@@ -382,6 +384,17 @@ namespace WarmTofuMod
             scrollRect.movementType = ScrollRect.MovementType.Clamped;
             scrollRect.scrollSensitivity = 50;
             scrollView.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -4);
+        }
+
+        bool firstLoad = true;
+        void SRTransitionMap_Start(On.SRTransitionMap.orig_Start orig, SRTransitionMap self)
+        {
+            orig(self);
+            if (firstLoad)
+            {
+                PhotonNetwork.LoadLevel("Akagi");
+                firstLoad = false;
+            }
         }
 
         void OnGUI()
