@@ -25,6 +25,7 @@ Press Tab to open player list and click on player button to open race settings. 
 
 Check feature screenshots to see the locations
 
+- Added map selection to game launcher
 - Transmission mode no longer resets when you restart the game
 - Camera mode no longer resets when you change maps/restart the game
 - Fixed front suspension not saving during tuning
@@ -59,6 +60,7 @@ Check feature screenshots to see the locations
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/b39ee05a-3e64-4211-b6c9-b9494cf3e965">
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/cfa45063-5f92-4c9a-b3e5-a9105e0f492e">
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/a08cb924-0757-486d-b76a-dfe66a02c722">
+  <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/da36db87-a013-44ab-aa1d-bc564ea43921">
 </details>
 
 # How to install
