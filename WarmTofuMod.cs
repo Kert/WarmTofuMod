@@ -11,12 +11,10 @@ using HeathenEngineering.SteamApi.PlayerServices;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using HeathenEngineering.SteamApi.Foundation;
-using Photon.Pun;
-using System.Collections.Generic;
 
 namespace WarmTofuMod
 {
-    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.7.1")]
+    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.8.0")]
     public partial class WarmTofuMod : BaseUnityPlugin
     {
         public enum Menus
@@ -94,6 +92,8 @@ namespace WarmTofuMod
 
                 // map select
                 On.SpielmannSpiel_Launcher.LauncherManager.Start += LauncherManager_Start;
+                On.SpielmannSpiel_Launcher.LauncherManager.start += LauncherManager_start;
+                On.SpielmannSpiel_Launcher.LauncherManager.Update += LauncherManager_Update;
                 On.SRTransitionMap.Start += SRTransitionMap_Start;
 
                 // Front suspension not saving fix
@@ -388,34 +388,6 @@ namespace WarmTofuMod
             scrollRect.movementType = ScrollRect.MovementType.Clamped;
             scrollRect.scrollSensitivity = 50;
             scrollView.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -4);
-        }
-
-        void LauncherManager_Start(On.SpielmannSpiel_Launcher.LauncherManager.orig_Start orig, SpielmannSpiel_Launcher.LauncherManager self)
-        {
-            orig(self);
-            GameObject dummy = GameObject.Find("RegionSelector");
-            GameObject mapSelect = Instantiate(dummy);
-            mapSelect.transform.SetParent(dummy.transform.GetParent());
-            mapSelect.name = "MapSelect";
-            Destroy(mapSelect.GetComponent<RegionSelector>());
-            mapSelect.GetComponent<RectTransform>().position = new Vector2(372, 100);
-            Dropdown dd = mapSelect.GetComponent<Dropdown>();
-            dd.ClearOptions();
-            dd.AddOptions(new List<string> { "Irohazaka", "Haruna", "USUI", "Akagi" });
-            dd.onValueChanged = new Dropdown.DropdownEvent();
-            dd.value = 0;
-            dd.itemText.fontSize = 40;
-        }
-
-        bool firstLoad = true;
-        void SRTransitionMap_Start(On.SRTransitionMap.orig_Start orig, SRTransitionMap self)
-        {
-            orig(self);
-            if (firstLoad)
-            {
-                PhotonNetwork.LoadLevel("Akagi");
-                firstLoad = false;
-            }
         }
 
         void OnGUI()
