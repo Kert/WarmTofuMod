@@ -1,4 +1,4 @@
-# >[Readme in English](#warmtofumod)<
+# >[Readme in English](#warmtofumod-english)<
 
 
 # WarmTofuMod
@@ -98,7 +98,7 @@ Type = MonoBehaviour
 
 
 
-# WarmTofuMod
+# WarmTofuMod (english)
 This is a mod for Initial Drift Online. The goal is to fix various issues and add some quality of life improvements and even new features
 
 # List of changes
