@@ -14,7 +14,7 @@ using HeathenEngineering.SteamApi.Foundation;
 
 namespace WarmTofuMod
 {
-    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.8.0")]
+    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.9.0")]
     public partial class WarmTofuMod : BaseUnityPlugin
     {
         public enum Menus
@@ -24,6 +24,7 @@ namespace WarmTofuMod
             MENU_SUSPENSION
         }
         public static Menus currentMenu;
+        public static float garage_front_camb;
         public static float uiScaleX;
         public static float uiScaleY;
         public static GUIStyle sliderStyle;
@@ -41,7 +42,9 @@ namespace WarmTofuMod
 
         private void Awake()
         {
-            Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
+            Type type = this.GetType();
+            BepInPlugin bepInPlugin = (BepInPlugin)Attribute.GetCustomAttribute(type, typeof(BepInPlugin));
+            Logger.LogInfo($"Plugin {bepInPlugin.GUID} is loaded!");
             try
             {
                 // hooks
@@ -53,8 +56,21 @@ namespace WarmTofuMod
                 On.RCC_Customization.SetTransmission += RCC_Customization_SetTransmission;
                 On.RCC_CarControllerV3.OnEnable += RCC_CarControllerV3_OnEnable;
 
+                //Front Camber Slider
+                On.RCC_CustomizerExample.SetFrontCambersBySlider += RCC_CustomizerExample_SetFrontCambersBySlider;
+
+                //Rear Camber Slider
+                On.RCC_CustomizerExample.SetRearCambersBySlider += RCC_CustomizerExample_SetRearCambersBySlider;
+
+                //Color Hex In Color Pickers
+                On.Becquet.Update += Becquet_Update;
+                On.SRLightTunerUI.Update += SRLightTunerUI_Update;
+
                 // additional suspension settings
                 On.RCC_Customization.LoadStatsTemp += RCC_Customization_LoadStatsTemp;
+
+                // Front suspension not saving fix
+                On.GarageManager.Start += GarageManager_Start;
 
                 // mod GUI and logic
                 On.RCC_PhotonManager.OnGUI += RCC_PhotonManager_OnGUI;
@@ -95,9 +111,6 @@ namespace WarmTofuMod
                 On.SpielmannSpiel_Launcher.LauncherManager.start += LauncherManager_start;
                 On.SpielmannSpiel_Launcher.LauncherManager.Update += LauncherManager_Update;
                 On.SRTransitionMap.Start += SRTransitionMap_Start;
-
-                // Front suspension not saving fix
-                On.GarageManager.Start += GarageManager_Start;
 
                 // Fixed player name labels not rotating properly
                 On.SRPlayerFonction.Update += SRPlayerFonction_Update;
@@ -284,7 +297,51 @@ namespace WarmTofuMod
             {
                 self.SendInfo3RPC();
             });
+            self.frontCamber.wholeNumbers = self.rearCamber.wholeNumbers = true;
+            self.frontCamber.minValue = self.rearCamber.minValue = -15f;
+            self.frontCamber.maxValue = self.rearCamber.maxValue = 30f;
+            self.frontSuspensionDistances.maxValue = self.rearSuspensionDistances.maxValue = 0.3f;
+
+            self.frontCamber.onValueChanged.AddListener(delegate
+            {
+                PlayerPrefs.SetFloat("FrontCamber", self.frontCamber.value);
+                RCC_CustomizerExample.Instance.SaveStatsTemp();
+                self.SendInfo3RPC();
+            });
+
+            self.rearCamber.onValueChanged.AddListener(delegate
+            {
+                PlayerPrefs.SetFloat("RearCamber", self.rearCamber.value);
+                RCC_CustomizerExample.Instance.SaveStatsTemp();
+                self.SendInfo3RPC();
+            });
+
         }
+
+        void Becquet_Update(On.Becquet.orig_Update orig, Becquet self)
+        {
+            orig(self);
+            self.CoveringMen.GetComponent<SRCheckSkinNumberTuningShop>().g1.transform.Find("ColorField").gameObject.SetActive(true);
+            self.WheelMenu.GetComponent<TuningWheelColor>().ColorPicker.transform.Find("ColorField").gameObject.SetActive(true);
+        }
+
+        void SRLightTunerUI_Update(On.SRLightTunerUI.orig_Update orig, SRLightTunerUI self)
+        {
+            orig(self);
+            self.CameraPreview.SetActive(false);
+            GameObject ColorField = self.ColorSelector.transform.Find("ColorField").gameObject;
+            ColorField.SetActive(true);
+            //Fix Hex In Toshi Light
+            GameObject Color = ColorField.gameObject.transform.Find("Color").gameObject;
+            GameObject InputField = ColorField.gameObject.transform.Find("InputField (TMP)").gameObject;
+            RectTransform color_Rect = Color.GetComponent<RectTransform>();
+            RectTransform inputfield_Rect = Color.GetComponent<RectTransform>();
+            color_Rect.offsetMin = new Vector2(2.0f, -30.0f);
+            color_Rect.offsetMax = new Vector2(82.0f, 0f);
+            inputfield_Rect.offsetMin = new Vector2(82.0f, -30.0f);
+            inputfield_Rect.offsetMax = new Vector2(132.0f, 0.0f);
+        }
+
 
         void RCC_Camera_ChangeCamera(On.RCC_Camera.orig_ChangeCamera orig, RCC_Camera self)
         {
@@ -302,6 +359,16 @@ namespace WarmTofuMod
         {
             orig(automatic);
             PlayerPrefs.SetInt("AutomaticTransmission", Convert.ToInt32(automatic));
+        }
+
+        void RCC_CustomizerExample_SetFrontCambersBySlider(On.RCC_CustomizerExample.orig_SetFrontCambersBySlider orig, RCC_CustomizerExample self, Slider slider)
+        {
+            RCC_Customization.SetFrontCambers(RCC_SceneManager.Instance.activePlayerVehicle, PlayerPrefs.GetFloat("FrontCamber"));
+        }
+
+        void RCC_CustomizerExample_SetRearCambersBySlider(On.RCC_CustomizerExample.orig_SetRearCambersBySlider orig, RCC_CustomizerExample self, Slider slider)
+        {
+            RCC_Customization.SetRearCambers(RCC_SceneManager.Instance.activePlayerVehicle, PlayerPrefs.GetFloat("RearCamber"));
         }
 
         void RCC_Customization_LoadStatsTemp(On.RCC_Customization.orig_LoadStatsTemp orig, RCC_CarControllerV3 vehicle)
@@ -397,7 +464,9 @@ namespace WarmTofuMod
 
             // Additional suspension settings menus
             if (inTuningMenu)
+            {
                 ShowModTuningMenu();
+            }
             else if (currentMenu != Menus.MENU_NONE)
             {
                 RCC_CarControllerV3 activePlayerVehicle = RCC_SceneManager.Instance.activePlayerVehicle;
@@ -414,6 +483,7 @@ namespace WarmTofuMod
 
             if (currentMenu != Menus.MENU_TUNING)
             {
+
                 if (currentMenu != Menus.MENU_SUSPENSION)
                 {
                     return;
@@ -422,7 +492,7 @@ namespace WarmTofuMod
                 SettingsBackButton();
                 return;
             }
-            else if (GUI.Button(new Rect((float)((double)Screen.width / 1.73), (float)((double)Screen.height / 1.4), uiScaleX * 125f, uiScaleY * 22f), "WarmTofuMod Options", buttonStyle))
+            else if (GUI.Button(new Rect((float)((double)Screen.width / 1.73), (float)((double)Screen.height / 1.4), uiScaleX * 128f, uiScaleY * 22f), "WarmTofuMod Options", buttonStyle))
             {
                 currentMenu = Menus.MENU_SUSPENSION;
                 return;
@@ -433,6 +503,8 @@ namespace WarmTofuMod
         static GameObject modInfoLabel;
         static void InitMenuStyles()
         {
+            Type type = typeof(WarmTofuMod);
+            BepInPlugin bepInPlugin = (BepInPlugin)Attribute.GetCustomAttribute(type, typeof(BepInPlugin));
             buttonStyle = new GUIStyle("Button");
             Vector2 vector = new Vector2(640f, 480f);
             buttonStyle.fontSize = (int)(12f * ((float)Screen.height / vector.y));
@@ -469,7 +541,7 @@ namespace WarmTofuMod
             r.anchorMin = r.anchorMax = r.anchoredPosition = r.pivot = new Vector2(0, 0);
             r.sizeDelta = new Vector2(400f, 40f);
             Text t = modInfoLabel.GetComponent<Text>();
-            t.text = $"{PluginInfo.PLUGIN_NAME} v{PluginInfo.PLUGIN_VERSION} by Kert";
+            t.text = $"{bepInPlugin.Name} v{bepInPlugin.Version} by Kert";
             t.alignment = TextAnchor.LowerLeft;
             t.transform.localScale = new Vector3(1, 1, 1);
             t.resizeTextMaxSize = 20;
@@ -479,7 +551,7 @@ namespace WarmTofuMod
 
         static void SettingsBackButton()
         {
-            if (GUI.Button(new Rect((float)((double)Screen.width / 1.73), (float)((double)Screen.height / 1.4), uiScaleX * 125f, uiScaleY * 22f), "Back", buttonStyle))
+            if (GUI.Button(new Rect((float)((double)Screen.width / 1.73), (float)((double)Screen.height / 1.4), uiScaleX * 128f, uiScaleY * 22f), "Back", buttonStyle))
             {
                 currentMenu = Menus.MENU_TUNING;
                 RCC_Customization.SaveStats(RCC_SceneManager.Instance.activePlayerVehicle);
