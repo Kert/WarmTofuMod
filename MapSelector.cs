@@ -22,7 +22,7 @@ namespace WarmTofuMod
                 mapSelect.name = "MapSelect";
                 mapSelectDropdown = mapSelect.GetComponent<Dropdown>();
                 mapSelectDropdown.ClearOptions();
-                mapSelectDropdown.AddOptions(new List<string> { "Irohazaka", "Akina", "USUI", "Akagi" });
+                mapSelectDropdown.AddOptions(new List<string> { "Irohazaka", "Akina", "USUI", "Akagi", "DriftSekai" });
                 mapSelectDropdown.onValueChanged = new Dropdown.DropdownEvent();
                 initialMap = PlayerPrefs.GetString("InitialMap", "Irohazaka");
                 mapSelectDropdown.value = mapSelectDropdown.options.FindIndex(option => option.text == initialMap);
