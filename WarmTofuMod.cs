@@ -472,6 +472,9 @@ namespace WarmTofuMod
                 RCC_CarControllerV3 activePlayerVehicle = RCC_SceneManager.Instance.activePlayerVehicle;
                 PlayerPrefs.SetFloat("SuspensionDamper", activePlayerVehicle.FrontLeftWheelCollider.GetComponent<WheelCollider>().suspensionSpring.damper);
                 PlayerPrefs.SetFloat("SuspensionSpring", activePlayerVehicle.FrontLeftWheelCollider.GetComponent<WheelCollider>().suspensionSpring.spring);
+                //Advanced Cambers
+                PlayerPrefs.SetFloat("FrontCamber", activePlayerVehicle.FrontLeftWheelCollider.camber);
+                PlayerPrefs.SetFloat("RearCamber", activePlayerVehicle.RearLeftWheelCollider.camber);
                 currentMenu = Menus.MENU_NONE;
             }
         }
@@ -577,6 +580,26 @@ namespace WarmTofuMod
             {
                     GUILayout.MaxWidth(uiScaleX * 40f)
             });
+
+            //Advanced Chambers
+            GUILayout.EndHorizontal();
+            GUILayout.Box("Advanced Chamber Options", boxStyle, Array.Empty<GUILayoutOption>());
+            GUILayout.Box("Front Cambers", boxStyle, Array.Empty<GUILayoutOption>());
+            GUILayout.BeginHorizontal(Array.Empty<GUILayoutOption>());
+            float targetValue3 = (float)Math.Round(GUILayout.HorizontalSlider(activePlayerVehicle.FrontLeftWheelCollider.camber, -15f, 30f, sliderStyle, sliderStyleThumb, Array.Empty<GUILayoutOption>()), 1);
+            GUILayout.Box(targetValue3.ToString(), boxStyle, new GUILayoutOption[]
+            {
+                    GUILayout.MaxWidth(uiScaleX * 40f)
+            });
+            GUILayout.EndHorizontal();
+            GUILayout.Box("Rear Cambers", boxStyle, Array.Empty<GUILayoutOption>());
+            GUILayout.BeginHorizontal(Array.Empty<GUILayoutOption>());
+            float targetValue4 = (float)Math.Round(GUILayout.HorizontalSlider(activePlayerVehicle.RearLeftWheelCollider.camber, -15f, 30f, sliderStyle, sliderStyleThumb, Array.Empty<GUILayoutOption>()), 1);
+            GUILayout.Box(targetValue4.ToString(), boxStyle, new GUILayoutOption[]
+            {
+                    GUILayout.MaxWidth(uiScaleX * 40f)
+            });
+
             GUILayout.EndHorizontal();
             if (GUILayout.Button("Reset", buttonStyle, Array.Empty<GUILayoutOption>()))
             {
@@ -584,6 +607,9 @@ namespace WarmTofuMod
                 RCC_Customization.SetRearSuspensionsSpringForce(activePlayerVehicle, 40000f);
                 RCC_Customization.SetFrontSuspensionsSpringDamper(activePlayerVehicle, 1500f);
                 RCC_Customization.SetRearSuspensionsSpringDamper(activePlayerVehicle, 1500f);
+                //Advanced Chambers
+                RCC_Customization.SetFrontCambers(activePlayerVehicle, 0f);
+                RCC_Customization.SetRearCambers(activePlayerVehicle, 0f);
             }
             else
             {
@@ -591,6 +617,9 @@ namespace WarmTofuMod
                 RCC_Customization.SetRearSuspensionsSpringForce(activePlayerVehicle, targetValue);
                 RCC_Customization.SetFrontSuspensionsSpringDamper(activePlayerVehicle, targetValue2);
                 RCC_Customization.SetRearSuspensionsSpringDamper(activePlayerVehicle, targetValue2);
+                //Advanced Chambers
+                RCC_Customization.SetFrontCambers(activePlayerVehicle, targetValue3);
+                RCC_Customization.SetRearCambers(activePlayerVehicle, targetValue4);
             }
             GUILayout.EndArea();
         }
@@ -634,10 +663,17 @@ namespace WarmTofuMod
             RCC_CarControllerV3 activePlayerVehicle = RCC_SceneManager.Instance.activePlayerVehicle;
             float spring = PlayerPrefs.GetFloat("SuspensionSpring", 40000f);
             float damper = PlayerPrefs.GetFloat("SuspensionDamper", 1500f);
+            //Advanced Chambers
+            float front_camb = PlayerPrefs.GetFloat("FrontCamber", 0f);
+            float rear_camb = PlayerPrefs.GetFloat("RearCamber", 0f);
+
             RCC_Customization.SetFrontSuspensionsSpringForce(activePlayerVehicle, spring);
             RCC_Customization.SetRearSuspensionsSpringForce(activePlayerVehicle, spring);
             RCC_Customization.SetFrontSuspensionsSpringDamper(activePlayerVehicle, damper);
             RCC_Customization.SetRearSuspensionsSpringDamper(activePlayerVehicle, damper);
+            //Advanced Chambers
+            RCC_Customization.SetFrontCambers(activePlayerVehicle, front_camb);
+            RCC_Customization.SetRearCambers(activePlayerVehicle, rear_camb);
         }
 
         static void UpdateTofuTimer()
