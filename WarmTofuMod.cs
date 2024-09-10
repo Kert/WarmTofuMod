@@ -24,7 +24,6 @@ namespace WarmTofuMod
             MENU_SUSPENSION
         }
         public static Menus currentMenu;
-        public static float garage_front_camb;
         public static float uiScaleX;
         public static float uiScaleY;
         public static GUIStyle sliderStyle;
