@@ -61,6 +61,12 @@ namespace WarmTofuMod
                 //Rear Camber Slider
                 On.RCC_CustomizerExample.SetRearCambersBySlider += RCC_CustomizerExample_SetRearCambersBySlider;
 
+                // Front FrontSuspension Distances
+                On.RCC_CustomizerExample.SetFrontSuspensionDistancesBySlider += RCC_CustomizerExample_SetFrontSuspensionDistancesBySlider;
+
+                // Rear FrontSuspension Distances
+                On.RCC_CustomizerExample.SetRearSuspensionDistancesBySlider += RCC_CustomizerExample_SetRearSuspensionDistancesBySlider;
+
                 //Color Hex In Color Pickers
                 On.Becquet.Update += Becquet_Update;
                 On.SRLightTunerUI.Update += SRLightTunerUI_Update;
@@ -315,6 +321,20 @@ namespace WarmTofuMod
                 self.SendInfo3RPC();
             });
 
+            self.frontSuspensionDistances.onValueChanged.AddListener(delegate
+            {
+                PlayerPrefs.SetFloat("FrontSuspensionDistances", self.frontSuspensionDistances.value);
+                RCC_CustomizerExample.Instance.SaveStatsTemp();
+                self.SendInfo3RPC();
+            });
+
+            self.rearSuspensionDistances.onValueChanged.AddListener(delegate
+            {
+                PlayerPrefs.SetFloat("RearSuspensionDistances", self.rearSuspensionDistances.value);
+                RCC_CustomizerExample.Instance.SaveStatsTemp();
+                self.SendInfo3RPC();
+            });
+
         }
 
         void Becquet_Update(On.Becquet.orig_Update orig, Becquet self)
@@ -366,6 +386,7 @@ namespace WarmTofuMod
             PlayerPrefs.SetInt("AutomaticTransmission", Convert.ToInt32(automatic));
         }
 
+
         void RCC_CustomizerExample_SetFrontCambersBySlider(On.RCC_CustomizerExample.orig_SetFrontCambersBySlider orig, RCC_CustomizerExample self, Slider slider)
         {
             RCC_Customization.SetFrontCambers(RCC_SceneManager.Instance.activePlayerVehicle, PlayerPrefs.GetFloat("FrontCamber"));
@@ -374,6 +395,16 @@ namespace WarmTofuMod
         void RCC_CustomizerExample_SetRearCambersBySlider(On.RCC_CustomizerExample.orig_SetRearCambersBySlider orig, RCC_CustomizerExample self, Slider slider)
         {
             RCC_Customization.SetRearCambers(RCC_SceneManager.Instance.activePlayerVehicle, PlayerPrefs.GetFloat("RearCamber"));
+        }
+
+        void RCC_CustomizerExample_SetFrontSuspensionDistancesBySlider(On.RCC_CustomizerExample.orig_SetFrontSuspensionDistancesBySlider orig, RCC_CustomizerExample self, Slider slider)
+        {
+            RCC_Customization.SetFrontSuspensionsDistances(RCC_SceneManager.Instance.activePlayerVehicle, PlayerPrefs.GetFloat("FrontSuspensionDistances"));
+        }
+
+        void RCC_CustomizerExample_SetRearSuspensionDistancesBySlider(On.RCC_CustomizerExample.orig_SetRearSuspensionDistancesBySlider orig, RCC_CustomizerExample self, Slider slider)
+        {
+            RCC_Customization.SetRearSuspensionsDistances(RCC_SceneManager.Instance.activePlayerVehicle, PlayerPrefs.GetFloat("RearSuspensionDistances"));
         }
 
         void RCC_Customization_LoadStatsTemp(On.RCC_Customization.orig_LoadStatsTemp orig, RCC_CarControllerV3 vehicle)
