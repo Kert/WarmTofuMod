@@ -171,7 +171,7 @@ namespace WarmTofuMod
                         t_3.localScale = new Vector3(1, 1, 1);
                         t_3.localPosition = new Vector3(100, -45, 0);
 
-                        whiteBG.GetComponent<RectTransform>().anchoredPosition = new Vector2(0.0f, -75.0f);
+                        whiteBG.GetComponent<RectTransform>().anchoredPosition = new Vector2(0.0f, -55.0f);
                         whiteBG.GetComponent<RectTransform>().sizeDelta = new Vector2(670.4f, 210.0f);
 
                         additionalTP_CarDealer.onClick = new Button.ButtonClickedEvent();
