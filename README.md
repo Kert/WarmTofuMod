@@ -5,8 +5,10 @@
 Это мод на Initial Drift Online. Исправлено большое кол-во багов и добавлены новые возможности
 
 # Список изменений
+- Увеличены значения настроек ​​регулировки развала колес и ​​регулировки высоты подвески в гараже с тюнингом
 - Добавлена настройка жёсткости пружины и демпфера подвески в гараже с тюнингом
-- Вместо кнопки Лобби теперь кнопка Teleport. Позволяет моментально переместиться для заезда на спуск или подъём. На Ирохазаке также можно попасть на спуск с другой стороны горы. На Харуне - на подъём возле нового магазина тофу
+- Вместо кнопки Лобби теперь кнопка Teleport. Позволяет моментально переместиться для заезда на спуск или подъём. На Ирохазаке также можно попасть в автосалон, в магазин тюнинга и на спуск с другой стороны горы. На Харуне - на подъём возле нового магазина тофу. На Усуи - в мастерскую по настройке освещения.
+- Добавлены поля для ввода цветов в шестнадцатеричном представлении (пример: ```#FEE5AC```) во всех цветовых палитрах.
 - Сильно оптимизирован игровой код. В скриншотах ниже есть сравнение
 - Добавлен таймер доставки тофу
 - Добавлена возможность вызывать противника на гонку и на спуск и на подъём на любой трассе (кроме Driftsekai)
@@ -58,12 +60,19 @@
 </details>
 <details>
   <summary>Ещё скриншоты с нововведениями</summary>
-  <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/82434723-7ca5-400f-af51-5c220b583cc8">
+  Menu in Irohazaka
+  <img src="https://github.com/user-attachments/assets/451a7fe4-fd83-454f-98a4-8ffe9addb087" height="100%" width="100%">
+  Menu in USUI
+  <img src="https://github.com/user-attachments/assets/58b261b4-beb7-4da6-8ed0-890183267081" height="100%" width="100%">
+  Parameters in the garage
+ 
+  <img src="https://github.com/user-attachments/assets/8da4b6a0-7b99-4c84-9703-032e2f5e1c04" height="50%" width="49.5%">&nbsp;&nbsp;<img src="https://github.com/user-attachments/assets/924454d8-bccc-41c5-91d3-97657bcca9ad" height="50%" width="49.5%" margin-left=10px>
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/4f8555b6-f5cf-4df9-a432-51342c7dc907">
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/9f8f3da9-d24d-4d72-ac25-2496f5e8710d">
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/b39ee05a-3e64-4211-b6c9-b9494cf3e965">
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/cfa45063-5f92-4c9a-b3e5-a9105e0f492e">
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/a08cb924-0757-486d-b76a-dfe66a02c722">
+  <img src="https://github.com/user-attachments/assets/2707741d-42b4-4e06-ae9f-30060569ce4f" height="100%" width="100%"> 
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/da36db87-a013-44ab-aa1d-bc564ea43921">
 </details>
 
@@ -102,8 +111,10 @@ Type = MonoBehaviour
 This is a mod for Initial Drift Online. The goal is to fix various issues and add some quality of life improvements and even new features
 
 # List of changes
-- Added suspension spring force and damper customization. Check garage for options
-- Replaced Lobby button with Teleport button that can take you Downhill or Uphill. And also Dowhnill 2 on Irohazaka and Uphill 2 on Haruna
+- Increased the values of the settings for adjusting the camber of the wheels and adjusting the height of the suspension in the garage with tuning
+- Added adjustment of the stiffness of the spring and suspension damper in the garage with tuning
+- Instead of the Lobby button, there is now a Teleport button. Allows you to instantly move for a descent or ascent. On Irohazak you can also get to a car dealership, a tuning shop and a descent from the other side of the mountain. On Haruna - on the rise near the new tofu store. On Usui, to the lighting setup workshop.
+- Added fields for entering colors in hexadecimal representation (example: ``#FEE5AC``) in all color palettes
 - Huge performance optimizations
 - Added realtime tofu delivery timer
 - Added a feature to invite players to battle race on every map (except Driftsekai) in both Uphill and Downhill
@@ -154,12 +165,19 @@ Check feature screenshots to see the locations
 </details>
 <details>
   <summary>More feature screenshots</summary>
-  <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/82434723-7ca5-400f-af51-5c220b583cc8">
+  Menu in Irohazaka
+  <img src="https://github.com/user-attachments/assets/451a7fe4-fd83-454f-98a4-8ffe9addb087" height="100%" width="100%">
+  Menu in USUI
+  <img src="https://github.com/user-attachments/assets/58b261b4-beb7-4da6-8ed0-890183267081" height="100%" width="100%">
+  Parameters in the garage
+ 
+  <img src="https://github.com/user-attachments/assets/8da4b6a0-7b99-4c84-9703-032e2f5e1c04" height="50%" width="49.5%">&nbsp;&nbsp;<img src="https://github.com/user-attachments/assets/924454d8-bccc-41c5-91d3-97657bcca9ad" height="50%" width="49.5%" margin-left=10px>
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/4f8555b6-f5cf-4df9-a432-51342c7dc907">
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/9f8f3da9-d24d-4d72-ac25-2496f5e8710d">
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/b39ee05a-3e64-4211-b6c9-b9494cf3e965">
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/cfa45063-5f92-4c9a-b3e5-a9105e0f492e">
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/a08cb924-0757-486d-b76a-dfe66a02c722">
+  <img src="https://github.com/user-attachments/assets/2707741d-42b4-4e06-ae9f-30060569ce4f" height="100%" width="100%"> 
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/da36db87-a013-44ab-aa1d-bc564ea43921">
 </details>
 
