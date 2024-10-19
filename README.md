@@ -111,10 +111,10 @@ Type = MonoBehaviour
 This is a mod for Initial Drift Online. The goal is to fix various issues and add some quality of life improvements and even new features
 
 # List of changes
-- Increased the values of the settings for adjusting the camber of the wheels and adjusting the height of the suspension in the garage with tuning
+- The values for the wheel camber adjustment and suspension height adjustment settings in the tuning garage have been increased
 - Added adjustment of the stiffness of the spring and suspension damper in the garage with tuning
-- Instead of the Lobby button, there is now a Teleport button. Allows you to instantly move for a descent or ascent. On Irohazak you can also get to a car dealership, a tuning shop and a descent from the other side of the mountain. On Haruna - on the rise near the new tofu store. On Usui, to the lighting setup workshop.
-- Added fields for entering colors in hexadecimal representation (example: ``#FEE5AC``) in all color palettes
+- The Lobby button has been replaced with a Teleport button. It allows for instant teleportation to either a descent or an ascent. On Irohazaka, you can also teleport to the car dealership, the tuning shop, or the descent on the other side of the mountain. On Haruna, you can teleport to the ascent near the new tofu shop. On Usui, you can teleport to the lighting adjustment workshop
+- Fields for entering colors in hexadecimal format (e.g., #FEE5AC) have been added to all color palettes
 - Huge performance optimizations
 - Added realtime tofu delivery timer
 - Added a feature to invite players to battle race on every map (except Driftsekai) in both Uphill and Downhill
