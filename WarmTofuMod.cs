@@ -41,9 +41,7 @@ namespace WarmTofuMod
 
         private void Awake()
         {
-            Type type = this.GetType();
-            BepInPlugin bepInPlugin = (BepInPlugin)Attribute.GetCustomAttribute(type, typeof(BepInPlugin));
-            Logger.LogInfo($"Plugin {bepInPlugin.GUID} is loaded!");
+            Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
             try
             {
                 // hooks
@@ -539,8 +537,6 @@ namespace WarmTofuMod
         static GameObject modInfoLabel;
         static void InitMenuStyles()
         {
-            Type type = typeof(WarmTofuMod);
-            BepInPlugin bepInPlugin = (BepInPlugin)Attribute.GetCustomAttribute(type, typeof(BepInPlugin));
             buttonStyle = new GUIStyle("Button");
             Vector2 vector = new Vector2(640f, 480f);
             buttonStyle.fontSize = (int)(12f * ((float)Screen.height / vector.y));
@@ -577,7 +573,7 @@ namespace WarmTofuMod
             r.anchorMin = r.anchorMax = r.anchoredPosition = r.pivot = new Vector2(0, 0);
             r.sizeDelta = new Vector2(400f, 40f);
             Text t = modInfoLabel.GetComponent<Text>();
-            t.text = $"{bepInPlugin.Name} v{bepInPlugin.Version} by Kert";
+            t.text = $"{PluginInfo.PLUGIN_NAME} v{PluginInfo.PLUGIN_VERSION} by Kert";
             t.alignment = TextAnchor.LowerLeft;
             t.transform.localScale = new Vector3(1, 1, 1);
             t.resizeTextMaxSize = 20;
