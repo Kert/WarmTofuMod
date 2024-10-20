@@ -517,7 +517,6 @@ namespace WarmTofuMod
 
             if (currentMenu != Menus.MENU_TUNING)
             {
-
                 if (currentMenu != Menus.MENU_SUSPENSION)
                 {
                     return;
