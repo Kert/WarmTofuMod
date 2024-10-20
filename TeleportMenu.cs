@@ -13,7 +13,9 @@ namespace WarmTofuMod
             TP_Downhill,
             TP_Uphill,
             TP_Downhill2,
-            TP_Uphill2
+            TP_Uphill2,
+            TP_CarDealer,
+            TP_Tuning
         }
 
         void TeleportPlayer(TeleportPoints tp)
@@ -37,6 +39,14 @@ namespace WarmTofuMod
                         case TeleportPoints.TP_Downhill2:
                             pos = new Vector3(-295.3f, 204.5f, 534.2f);
                             rot = new Quaternion(0, 1, 0, 0);
+                            break;
+                        case TeleportPoints.TP_CarDealer:
+                            pos = new Vector3(1502.4f, 258.6f, 160.6f);
+                            rot = new Quaternion(0.0f, -1.0f, 0.0f, -0.1f);
+                            break;
+                        case TeleportPoints.TP_Tuning:
+                            pos = new Vector3(1898.8f, 256.6f, 317.8f);
+                            rot = new Quaternion(0.0026f, 0.699f, -0.0014f, 0.7151f);
                             break;
                     }
                     break;
@@ -63,6 +73,11 @@ namespace WarmTofuMod
                         case TeleportPoints.TP_Uphill:
                             pos = new Vector3(-1593.9f, -212.8f, -532.2f);
                             rot = new Quaternion(0.0f, -0.3f, 0.0f, 0.9f);
+                            break;
+                        //Point for Toshi Light
+                        case TeleportPoints.TP_Uphill2:
+                            pos = new Vector3(1277.7f, 66.68f, 709.82f);
+                            rot = new Quaternion(0.003f, 0.064f, 0.0f, 1.0f);
                             break;
                     }
                     break;
@@ -119,7 +134,7 @@ namespace WarmTofuMod
                 tpButtons[0].onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Downhill));
                 tpButtons[1].onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Uphill));
 
-                if (currentScene == "Irohazaka" || currentScene == "Akina")
+                if (currentScene == "Irohazaka" || currentScene == "Akina" || currentScene == "USUI")
                 {
                     Button additionalTP = Instantiate(tpButtons[0]);
                     additionalTP.transform.SetParent(tpButtons[0].transform.GetParent().transform);
@@ -129,30 +144,127 @@ namespace WarmTofuMod
                     tpButtons[0].GetComponent<RectTransform>().localPosition = new Vector3(-200, 0, 0);
                     tpButtons[1].GetComponent<RectTransform>().localPosition = new Vector3(0, 0, 0);
                     GameObject whiteBG = additionalTP.transform.GetParent().gameObject;
-                    whiteBG.GetComponent<RectTransform>().sizeDelta = new Vector2(670.4f, 151.4f);
+                    whiteBG.GetComponent<RectTransform>().sizeDelta = new Vector2(670.4f, 150.4f);
                     GameObject menuOverlay = whiteBG.transform.GetParent().gameObject;
                     menuOverlay.GetComponent<RectTransform>().sizeDelta = new Vector2(668.9f, 190.6f);
 
                     additionalTP.onClick = new Button.ButtonClickedEvent();
+                    
+                    Navigation newNav = new Navigation();
+
                     if (currentScene == "Irohazaka")
                     {
+                        Button additionalTP_CarDealer = Instantiate(tpButtons[0]);
+                        Button additionalTP_Tuning = Instantiate(tpButtons[0]);
+                        additionalTP_CarDealer.transform.SetParent(tpButtons[0].transform.GetParent().transform);
+                        additionalTP_Tuning.transform.SetParent(tpButtons[0].transform.GetParent().transform);
+                        RectTransform t_2 = additionalTP_CarDealer.GetComponent<RectTransform>();
+                        RectTransform t_3 = additionalTP_Tuning.GetComponent<RectTransform>();
+
+                        t.localPosition = new Vector3(200, 50, 0);
+                        tpButtons[0].GetComponent<RectTransform>().localPosition = new Vector3(-200, 50, 0);
+                        tpButtons[1].GetComponent<RectTransform>().localPosition = new Vector3(0, 50, 0);
+
+                        t_2.localScale = new Vector3(1, 1, 1);
+                        t_2.localPosition = new Vector3(-100, -45, 0);
+
+                        t_3.localScale = new Vector3(1, 1, 1);
+                        t_3.localPosition = new Vector3(100, -45, 0);
+
+                        whiteBG.GetComponent<RectTransform>().anchoredPosition = new Vector2(0.0f, -55.0f);
+                        whiteBG.GetComponent<RectTransform>().sizeDelta = new Vector2(670.4f, 210.0f);
+
+                        additionalTP_CarDealer.onClick = new Button.ButtonClickedEvent();
+                        additionalTP_Tuning.onClick = new Button.ButtonClickedEvent();
+
                         additionalTP.GetComponentInChildren<Text>().text = "Downhill 2";
                         additionalTP.onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Downhill2));
+                        additionalTP_CarDealer.GetComponentInChildren<Text>().text = "Car\nDealer";
+                        additionalTP_CarDealer.onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_CarDealer));
+                        additionalTP_Tuning.GetComponentInChildren<Text>().text = "Tuning\nShop";
+                        additionalTP_Tuning.onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Tuning));
+                        
+                        // Navigation for teleport buttons
+                        newNav.mode = Navigation.Mode.Explicit;
+                        newNav.selectOnRight = tpButtons[1];
+                        newNav.selectOnLeft = additionalTP;
+                        newNav.selectOnDown = additionalTP_CarDealer;
+                        tpButtons[0].navigation = newNav;
+
+                        newNav = new Navigation();
+                        newNav.mode = Navigation.Mode.Explicit;
+                        newNav.selectOnLeft = tpButtons[0];
+                        newNav.selectOnRight = additionalTP;
+                        newNav.selectOnDown = additionalTP_CarDealer;
+                        tpButtons[1].navigation = newNav;
+
+                        newNav = new Navigation();
+                        newNav.mode = Navigation.Mode.Explicit;
+                        newNav.selectOnRight = tpButtons[0];
+                        newNav.selectOnLeft = tpButtons[1];
+                        newNav.selectOnDown = additionalTP_Tuning;
+                        additionalTP.navigation = newNav;
+
+                        newNav = new Navigation();
+                        newNav.mode = Navigation.Mode.Explicit;
+                        newNav.selectOnUp = tpButtons[0];
+                        newNav.selectOnRight = additionalTP_Tuning;
+                        newNav.selectOnLeft = additionalTP_Tuning;
+                        additionalTP_CarDealer.navigation = newNav;
+
+                        newNav = new Navigation();
+                        newNav.mode = Navigation.Mode.Explicit;
+                        newNav.selectOnUp = additionalTP;
+                        newNav.selectOnRight = additionalTP_CarDealer;
+                        newNav.selectOnLeft = additionalTP_CarDealer;
+                        additionalTP_Tuning.navigation = newNav;
                     }
+
+                    else if (currentScene == "USUI")
+                    {
+                        additionalTP.GetComponentInChildren<Text>().text = "Toshi\nLight";
+                        additionalTP.onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Uphill2));
+
+                        newNav.mode = Navigation.Mode.Explicit;
+                        newNav.selectOnLeft = additionalTP;
+                        newNav.selectOnRight = tpButtons[1];
+                        tpButtons[0].navigation = newNav;
+
+                        newNav = new Navigation();
+                        newNav.mode = Navigation.Mode.Explicit;
+                        newNav.selectOnLeft = tpButtons[0];
+                        newNav.selectOnRight = additionalTP;
+                        tpButtons[1].navigation = newNav;
+
+                        newNav.mode = Navigation.Mode.Explicit;
+                        newNav.selectOnLeft = tpButtons[1];
+                        newNav.selectOnRight = tpButtons[0];
+                        additionalTP.navigation = newNav;
+                        
+                    }
+
                     else if (currentScene == "Akina")
                     {
                         additionalTP.GetComponentInChildren<Text>().text = "Uphill 2";
                         additionalTP.onClick.AddListener(() => TeleportPlayer(TeleportPoints.TP_Uphill2));
+
+                        newNav.mode = Navigation.Mode.Explicit;
+                        newNav.selectOnLeft = additionalTP;
+                        newNav.selectOnRight = tpButtons[1];
+                        tpButtons[0].navigation = newNav;
+
+                        newNav = new Navigation();
+                        newNav.mode = Navigation.Mode.Explicit;
+                        newNav.selectOnLeft = tpButtons[0];
+                        newNav.selectOnRight = additionalTP;
+                        tpButtons[1].navigation = newNav;
+
+                        newNav.mode = Navigation.Mode.Explicit;
+                        newNav.selectOnLeft = tpButtons[1];
+                        newNav.selectOnRight = tpButtons[0];
+                        additionalTP.navigation = newNav;
                     }
-                    Navigation newNav = new Navigation();
-                    newNav.mode = Navigation.Mode.Explicit;
-                    newNav.selectOnLeft = tpButtons[1];
-                    additionalTP.navigation = newNav;
-                    newNav = new Navigation();
-                    newNav.mode = Navigation.Mode.Explicit;
-                    newNav.selectOnLeft = tpButtons[0];
-                    newNav.selectOnRight = additionalTP;
-                    tpButtons[1].navigation = newNav;
+
                 }
 
                 lobby.onClick.AddListener(TeleportMenu);

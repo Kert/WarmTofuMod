@@ -21,11 +21,11 @@ namespace WarmTofuMod
             private static RCC_CarControllerV3 rival = null;
             public struct RaceSettings
             {
-                public string direction = "Downhill";
-                public string order = "Parallel";
-                public bool nitro = false;
-                public bool collision = true;
-                RaceSettings(string direction, string order, bool nitro, bool collision)
+               public string direction;
+                public string order;
+                public bool nitro;
+                public bool collision;
+                public RaceSettings(string direction = "Downhill", string order = "Parallel", bool nitro = false, bool collision = true)
                 {
                     this.direction = direction;
                     this.order = order;
