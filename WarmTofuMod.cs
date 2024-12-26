@@ -14,7 +14,7 @@ using HeathenEngineering.SteamApi.Foundation;
 
 namespace WarmTofuMod
 {
-    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.9.0")]
+    [BepInPlugin("com.kert.warmtofumod", "WarmTofuMod", "1.9.5")]
     public partial class WarmTofuMod : BaseUnityPlugin
     {
         public enum Menus
@@ -53,21 +53,21 @@ namespace WarmTofuMod
                 On.RCC_Customization.SetTransmission += RCC_Customization_SetTransmission;
                 On.RCC_CarControllerV3.OnEnable += RCC_CarControllerV3_OnEnable;
 
-                //Front Camber Slider
+                //Camber Sliders
                 On.RCC_CustomizerExample.SetFrontCambersBySlider += RCC_CustomizerExample_SetFrontCambersBySlider;
-
-                //Rear Camber Slider
                 On.RCC_CustomizerExample.SetRearCambersBySlider += RCC_CustomizerExample_SetRearCambersBySlider;
 
-                // Front FrontSuspension Distances
+                //Suspension Distances
                 On.RCC_CustomizerExample.SetFrontSuspensionDistancesBySlider += RCC_CustomizerExample_SetFrontSuspensionDistancesBySlider;
-
-                // Rear FrontSuspension Distances
                 On.RCC_CustomizerExample.SetRearSuspensionDistancesBySlider += RCC_CustomizerExample_SetRearSuspensionDistancesBySlider;
 
                 //Color Hex In Color Pickers
                 On.Becquet.Update += Becquet_Update;
                 On.SRLightTunerUI.Update += SRLightTunerUI_Update;
+
+                //Advanced Color Picker
+                On.Becquet.Start += Becquet_Start;
+                On.SRLightTunerUI.Start += SRLightTunerUI_Start;
 
                 // additional suspension settings
                 On.RCC_Customization.LoadStatsTemp += RCC_Customization_LoadStatsTemp;
@@ -335,16 +335,50 @@ namespace WarmTofuMod
 
         }
 
+        void Becquet_Start(On.Becquet.orig_Start orig, Becquet self)
+        {
+            orig(self);
+            //self.Menu.active = true; //Customization Car Menu object
+            GameObject CoveringPicker = self.CoveringMen.GetComponent<SRCheckSkinNumberTuningShop>().g1.gameObject;
+            GameObject WheelPicker = self.WheelMenu.GetComponent<TuningWheelColor>().ColorPicker.gameObject;
+            Vector3 pos = new Vector3(450f, 275f, 0f);
+
+            Advanced_ColorPicker(CoveringPicker, "", pos, scale_factor:2f, presets_count:11);
+            Advanced_ColorPicker(WheelPicker, "WheelColor_", pos, scale_factor: 2f, presets_count: 11);
+        }
+
         void Becquet_Update(On.Becquet.orig_Update orig, Becquet self)
         {
             orig(self);
-            self.CoveringMen.GetComponent<SRCheckSkinNumberTuningShop>().g1.transform.Find("ColorField").gameObject.SetActive(true);
-            self.WheelMenu.GetComponent<TuningWheelColor>().ColorPicker.transform.Find("ColorField").gameObject.SetActive(true);
+            GameObject CoveringPicker = self.CoveringMen.GetComponent<SRCheckSkinNumberTuningShop>().g1.gameObject;
+            GameObject WheelPicker = self.WheelMenu.GetComponent<TuningWheelColor>().ColorPicker.gameObject;
+
+            Active_ColorSliders_In_Picker(CoveringPicker, true);
+            Active_ColorSliders_In_Picker(WheelPicker, true);
+            
+            //enable hex input string
+            CoveringPicker.transform.Find("ColorField").gameObject.SetActive(true);
+            WheelPicker.transform.Find("ColorField").gameObject.SetActive(true);
+
+            //enable Color presets
+            CoveringPicker.transform.Find("Presets").gameObject.SetActive(true);
+            WheelPicker.transform.Find("Presets").gameObject.SetActive(true);
+
+            UpdateColor_ActivePresets(CoveringPicker, "", count_presets:11);
+            UpdateColor_ActivePresets(WheelPicker, "WheelColor_", count_presets: 11);
+        }
+
+        void SRLightTunerUI_Start(On.SRLightTunerUI.orig_Start orig, SRLightTunerUI self)
+        {
+            orig(self);
+            GameObject Light_Picker = self.LightManager.gameObject.transform.Find("Picker 2.0").gameObject;
+            Vector3 pos = new Vector3(450f, 275f, 0f);
+            Advanced_ColorPicker(Light_Picker, "LightColor_", pos, scale_factor: 2.1f, presets_count: 9);
+
         }
 
         void SRLightTunerUI_Update(On.SRLightTunerUI.orig_Update orig, SRLightTunerUI self)
         {
-            orig(self);
             self.CameraPreview.SetActive(false);
             //Fix Lock Tuner
             GameObject LockLight = self.LockTuner;
@@ -352,17 +386,23 @@ namespace WarmTofuMod
             LockLight_Rect.anchoredPosition = new Vector2(-114.0f, 90.0f);
             LockLight_Rect.offsetMin = new Vector2(-264.0f, -12.0f);
             LockLight_Rect.offsetMax = new Vector2(36.0f, 192.0f);
-            GameObject ColorField = self.ColorSelector.transform.Find("ColorField").gameObject;
+
+            //Enable Hex in Toshi Light
+            GameObject Light_Picker = self.LightManager.gameObject.transform.Find("Picker 2.0").gameObject;
+            GameObject ColorField = Light_Picker.transform.Find("ColorField").gameObject;
             ColorField.SetActive(true);
-            //Fix Hex In Toshi Light
-            GameObject Color = ColorField.gameObject.transform.Find("Color").gameObject;
-            GameObject InputField = ColorField.gameObject.transform.Find("InputField (TMP)").gameObject;
-            RectTransform color_Rect = Color.GetComponent<RectTransform>();
-            RectTransform inputfield_Rect = Color.GetComponent<RectTransform>();
+
+            //Resize Color Object
+            GameObject Field_In_Color = ColorField.gameObject.transform.Find("Color").gameObject;
+            RectTransform color_Rect = Field_In_Color.GetComponent<RectTransform>();
             color_Rect.offsetMin = new Vector2(2.0f, -30.0f);
-            color_Rect.offsetMax = new Vector2(82.0f, 0f);
-            inputfield_Rect.offsetMin = new Vector2(82.0f, -30.0f);
-            inputfield_Rect.offsetMax = new Vector2(132.0f, 0.0f);
+            color_Rect.offsetMax = new Vector2(50.0f, 0f);
+
+            GameObject ColorPresetrs = Light_Picker.transform.Find("Presets").gameObject;
+            ColorPresetrs.SetActive(true);
+
+            Active_ColorSliders_In_Picker(Light_Picker, true);
+            UpdateColor_ActivePresets(Light_Picker, "LightColor_", count_presets: 9);
         }
 
 
