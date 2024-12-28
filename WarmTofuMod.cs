@@ -364,6 +364,7 @@ namespace WarmTofuMod
             CoveringPicker.transform.Find("Presets").gameObject.SetActive(true);
             WheelPicker.transform.Find("Presets").gameObject.SetActive(true);
 
+            //Color picker changes
             UpdateColor_ActivePresets(CoveringPicker, "", count_presets:11);
             UpdateColor_ActivePresets(WheelPicker, "WheelColor_", count_presets: 11);
         }
@@ -373,6 +374,8 @@ namespace WarmTofuMod
             orig(self);
             GameObject Light_Picker = self.LightManager.gameObject.transform.Find("Picker 2.0").gameObject;
             Vector3 pos = new Vector3(450f, 275f, 0f);
+            
+            //Color picker changes
             Advanced_ColorPicker(Light_Picker, "LightColor_", pos, scale_factor: 2.1f, presets_count: 9);
 
         }
@@ -400,8 +403,10 @@ namespace WarmTofuMod
 
             GameObject ColorPresetrs = Light_Picker.transform.Find("Presets").gameObject;
             ColorPresetrs.SetActive(true);
-
+            
+            //Enable RGB/HSV Sliders
             Active_ColorSliders_In_Picker(Light_Picker, true);
+            //Color picker changes
             UpdateColor_ActivePresets(Light_Picker, "LightColor_", count_presets: 9);
         }
 

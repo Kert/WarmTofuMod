@@ -84,6 +84,7 @@ namespace WarmTofuMod
             ColorSliders.SetActive(true);
             if (type_preset == "LightColor_")
             {
+                //Resize Header in Toshi Light
                 GameObject Light_menu = Picker.transform.GetParent().gameObject;
                 GameObject Header = Light_menu.transform.Find("Header").gameObject;
                 GameObject Text_Header = Header.transform.Find("Text").gameObject;
@@ -116,6 +117,7 @@ namespace WarmTofuMod
             //Cusstomization Colors in HSV/RGB Fields Values
             Set_color_HSV_RGB_Fields(ColorSliders, Color.white);
 
+            //Initalization Active presets
             InitPresets(Picker, type_preset, presets_count);
         }
         
@@ -210,7 +212,6 @@ namespace WarmTofuMod
             }
         }
 
-        //Parametric Methods
         void Destroy_old_Presets(GameObject old_presets)
         {
             for (int i = 0; i <= 10; i++)
