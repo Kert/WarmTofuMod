@@ -8,7 +8,10 @@
 - Увеличены значения настроек ​​регулировки развала колес и ​​регулировки высоты подвески в гараже с тюнингом
 - Добавлена настройка жёсткости пружины и демпфера подвески в гараже с тюнингом
 - Вместо кнопки Лобби теперь кнопка Teleport. Позволяет моментально переместиться для заезда на спуск или подъём. На Ирохазаке также можно попасть в автосалон, в магазин тюнинга и на спуск с другой стороны горы. На Харуне - на подъём возле нового магазина тофу. На Усуи - в мастерскую по настройке освещения.
-- Добавлены поля для ввода цветов в шестнадцатеричном представлении (пример: ```#FEE5AC```) во всех цветовых палитрах.
+- Обновлена цветовая палитра:
+  - Добавлены поля для ввода цветов в шестнадцатеричном представлении (пример: ```#FEE5AC```).
+  - Добавлены дополнительные слайдеры для более точной настройки цвета.
+  - Добавлен блок пресетов для сохранения цветов.
 - Сильно оптимизирован игровой код. В скриншотах ниже есть сравнение
 - Добавлен таймер доставки тофу
 - Добавлена возможность вызывать противника на гонку и на спуск и на подъём на любой трассе (кроме Driftsekai)
@@ -72,7 +75,7 @@
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/b39ee05a-3e64-4211-b6c9-b9494cf3e965">
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/cfa45063-5f92-4c9a-b3e5-a9105e0f492e">
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/a08cb924-0757-486d-b76a-dfe66a02c722">
-  <img src="https://github.com/user-attachments/assets/2707741d-42b4-4e06-ae9f-30060569ce4f" height="100%" width="100%"> 
+  <img src="https://github.com/user-attachments/assets/38ec72da-64ad-43be-b292-ff4e98fa094f" height="100%" width="100%">  
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/da36db87-a013-44ab-aa1d-bc564ea43921">
 </details>
 
@@ -114,7 +117,10 @@ This is a mod for Initial Drift Online. The goal is to fix various issues and ad
 - The values for the wheel camber adjustment and suspension height adjustment settings in the tuning garage have been increased
 - Added adjustment of the stiffness of the spring and suspension damper in the garage with tuning
 - The Lobby button has been replaced with a Teleport button. It allows for instant teleportation to either a descent or an ascent. On Irohazaka, you can also teleport to the car dealership, the tuning shop, or the descent on the other side of the mountain. On Haruna, you can teleport to the ascent near the new tofu shop. On Usui, you can teleport to the lighting adjustment workshop
-- Fields for entering colors in hexadecimal format (e.g., #FEE5AC) have been added to all color palettes
+- Updated Color Palette:
+  - Added fields for inputting colors in hexadecimal format (example: ```#FEE5AC```).
+  - Added additional sliders for more precise color adjustment.
+  - Added a presets block for saving colors.
 - Huge performance optimizations
 - Added realtime tofu delivery timer
 - Added a feature to invite players to battle race on every map (except Driftsekai) in both Uphill and Downhill
@@ -177,7 +183,7 @@ Check feature screenshots to see the locations
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/b39ee05a-3e64-4211-b6c9-b9494cf3e965">
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/cfa45063-5f92-4c9a-b3e5-a9105e0f492e">
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/a08cb924-0757-486d-b76a-dfe66a02c722">
-  <img src="https://github.com/user-attachments/assets/2707741d-42b4-4e06-ae9f-30060569ce4f" height="100%" width="100%"> 
+  <img src="https://github.com/user-attachments/assets/38ec72da-64ad-43be-b292-ff4e98fa094f" height="100%" width="100%"> 
   <img src="https://github.com/Kert/WarmTofuMod/assets/5028587/da36db87-a013-44ab-aa1d-bc564ea43921">
 </details>
 
