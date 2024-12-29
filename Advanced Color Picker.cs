@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using BepInEx;
 using UnityEngine.UI;
-using System.IO;
-using System;
 
 namespace WarmTofuMod
 {

@@ -386,9 +386,8 @@ namespace WarmTofuMod
             //Fix Lock Tuner
             GameObject LockLight = self.LockTuner;
             RectTransform LockLight_Rect = LockLight.GetComponent<RectTransform>();
-            LockLight_Rect.anchoredPosition = new Vector2(-114.0f, 90.0f);
-            LockLight_Rect.offsetMin = new Vector2(-264.0f, -12.0f);
-            LockLight_Rect.offsetMax = new Vector2(36.0f, 192.0f);
+            LockLight_Rect.anchoredPosition = new Vector2(-77f, -20f);
+            LockLight_Rect.sizeDelta = new Vector2(360f, 495f);
 
             //Enable Hex in Toshi Light
             GameObject Light_Picker = self.LightManager.gameObject.transform.Find("Picker 2.0").gameObject;
