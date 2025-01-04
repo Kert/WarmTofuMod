@@ -120,7 +120,7 @@ This is a mod for Initial Drift Online. The goal is to fix various issues and ad
 - Updated Color Palette:
   - Added fields for inputting colors in hexadecimal format (example: ```#FEE5AC```).
   - Added additional sliders for more precise color adjustment.
-  - Added a presets block for saving colors.
+  - Added presets for saving colors.
 - Huge performance optimizations
 - Added realtime tofu delivery timer
 - Added a feature to invite players to battle race on every map (except Driftsekai) in both Uphill and Downhill
